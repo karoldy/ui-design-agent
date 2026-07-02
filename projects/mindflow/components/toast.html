@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Toast 通知 | MindFlow 组件</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-bg-primary: #FAFAFA; --color-bg-secondary: #F5F5F5; --color-bg-tertiary: #EEEEEE;
+      --color-text-primary: #1A1A1A; --color-text-secondary: #6B6B6B; --color-text-tertiary: #9E9E9E;
+      --color-text-link: #3B82F6; --color-text-on-accent: #FFFFFF;
+      --color-accent: #3B82F6; --color-accent-hover: #2563EB; --color-accent-soft: #E8F0FE;
+      --color-success: #10B981; --color-warning: #F59E0B; --color-error: #EF4444;
+      --font-family-ui: 'Inter', system-ui, -apple-system, sans-serif;
+      --font-family-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-size-xs: 11px; --font-size-sm: 13px; --font-size-base: 15px;
+      --font-size-lg: 18px; --font-size-xl: 22px; --font-size-2xl: 28px; --font-size-3xl: 36px;
+      --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 20px; --space-6: 24px;
+      --space-8: 32px; --space-10: 40px; --space-12: 48px; --space-16: 64px;
+      --radius-sm: 4px; --radius-md: 8px; --radius-lg: 12px; --radius-xl: 16px; --radius-full: 9999px;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05); --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
+      --shadow-lg: 0 8px 24px rgba(0,0,0,0.12); --shadow-xl: 0 16px 48px rgba(0,0,0,0.16);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: var(--font-family-body); background: var(--color-bg-primary); color: var(--color-text-primary); padding: var(--space-6); -webkit-font-smoothing: antialiased; }
+    .page-header { margin-bottom: var(--space-8); display: flex; align-items: flex-start; gap: var(--space-4); }
+    .page-header a { color: var(--color-accent); text-decoration: none; font-size: var(--font-size-sm); font-family: var(--font-family-ui); display: flex; align-items: center; gap: 4px; padding: 6px 12px; border-radius: var(--radius-sm); transition: background 0.15s; flex-shrink: 0; }
+    .page-header a:hover { background: var(--color-accent-soft); }
+    .page-header h1 { font-family: var(--font-family-ui); font-size: var(--font-size-2xl); font-weight: 700; }
+    .page-header p { color: var(--color-text-secondary); font-size: var(--font-size-sm); margin-top: var(--space-1); }
+    .section { margin-bottom: var(--space-10); }
+    .section-title { font-family: var(--font-family-ui); font-size: var(--font-size-base); font-weight: 600; padding-bottom: var(--space-2); margin-bottom: var(--space-4); border-bottom: 1px solid #E8E8E8; display: flex; align-items: center; gap: var(--space-2); }
+    .section-title code { font-size: var(--font-size-xs); background: var(--color-bg-secondary); padding: 2px 8px; border-radius: var(--radius-sm); color: var(--color-text-secondary); }
+    .demo-row { display: flex; flex-wrap: wrap; align-items: flex-start; gap: var(--space-4); padding: var(--space-4); background: #fff; border: 1px solid #E8E8E8; border-radius: var(--radius-md); margin-bottom: var(--space-3); }
+    .demo-row-label { width: 100%; font-size: var(--font-size-xs); color: var(--color-text-secondary); font-family: var(--font-family-ui); font-weight: 500; margin-bottom: -4px; }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-family-ui);
+      font-weight: 500; border-radius: var(--radius-sm); cursor: pointer; border: 1px solid transparent;
+      transition: all 0.15s; height: 36px; padding: 0 16px; font-size: var(--font-size-sm);
+    }
+    .btn-primary { background: var(--color-accent); color: #fff; border-color: var(--color-accent); }
+    .btn-primary:hover { background: var(--color-accent-hover); }
+    .btn-secondary { background: #fff; color: var(--color-text-primary); border-color: #D0D0D0; }
+    .btn-secondary:hover { background: var(--color-bg-secondary); }
+
+    /* ===== TOAST ===== */
+    .toast {
+      display: flex; align-items: flex-start; gap: var(--space-2);
+      padding: var(--space-3) var(--space-4); border-radius: var(--radius-sm);
+      font-family: var(--font-family-body); font-size: var(--font-size-sm);
+      line-height: 1.5; min-width: 280px; max-width: 400px;
+      box-shadow: var(--shadow-lg); position: relative; overflow: hidden;
+    }
+
+    .toast-success { background: #F0FDF4; border: 1px solid #BBF7D0; color: #065F46; }
+    .toast-warning { background: #FFFBEB; border: 1px solid #FDE68A; color: #78350F; }
+    .toast-error { background: #FEF2F2; border: 1px solid #FECACA; color: #991B1B; }
+    .toast-info { background: #EFF6FF; border: 1px solid #BFDBFE; color: #1E3A5F; }
+
+    .toast .mdi { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    .toast-success .mdi { color: var(--color-success); }
+    .toast-warning .mdi { color: var(--color-warning); }
+    .toast-error .mdi { color: var(--color-error); }
+    .toast-info .mdi { color: var(--color-accent); }
+
+    .toast-content { flex: 1; }
+    .toast-content .toast-title { font-weight: 600; margin-bottom: 2px; }
+    .toast-content .toast-message { color: inherit; opacity: 0.85; }
+
+    .toast-actions { display: flex; align-items: center; gap: var(--space-2); flex-shrink: 0; }
+    .toast-action-btn {
+      background: none; border: none; cursor: pointer; font-family: var(--font-family-ui);
+      font-weight: 600; font-size: var(--font-size-xs); padding: 2px 6px;
+      border-radius: var(--radius-sm); transition: background 0.15s;
+    }
+    .toast-success .toast-action-btn { color: #065F46; }
+    .toast-success .toast-action-btn:hover { background: rgba(0,0,0,0.06); }
+    .toast-warning .toast-action-btn { color: #78350F; }
+    .toast-warning .toast-action-btn:hover { background: rgba(0,0,0,0.06); }
+    .toast-error .toast-action-btn { color: #991B1B; }
+    .toast-error .toast-action-btn:hover { background: rgba(0,0,0,0.06); }
+    .toast-info .toast-action-btn { color: var(--color-accent); }
+    .toast-info .toast-action-btn:hover { background: var(--color-accent-soft); }
+
+    .toast-close-btn {
+      background: none; border: none; cursor: pointer; color: inherit; opacity: 0.5;
+      font-size: 14px; padding: 0; display: flex; align-items: center;
+      transition: opacity 0.15s; flex-shrink: 0;
+    }
+    .toast-close-btn:hover { opacity: 1; }
+
+    /* Progress bar on toast */
+    .toast-progress {
+      position: absolute; bottom: 0; left: 0; height: 3px;
+      background: currentColor; opacity: 0.2; transition: width 0.1s linear;
+    }
+
+    /* Stacked toasts */
+    .toast-stack { display: flex; flex-direction: column; gap: var(--space-2); }
+
+    /* Position demo */
+    .position-demo {
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--space-4);
+      padding: var(--space-4); min-height: 200px;
+    }
+    .position-demo-col {
+      display: flex; flex-direction: column; gap: var(--space-3);
+    }
+    .position-label {
+      font-family: var(--font-family-ui); font-size: var(--font-size-xs);
+      color: var(--color-text-tertiary); text-align: center; font-weight: 500;
+    }
+
+    /* Toast container for interactive demo */
+    .toast-container {
+      position: fixed; z-index: 400; display: flex; flex-direction: column; gap: 8px;
+      pointer-events: none;
+    }
+    .toast-container .toast { pointer-events: auto; }
+    .toast-container-top-right { top: 16px; right: 16px; }
+    .toast-container-bottom-center { bottom: 16px; left: 50%; transform: translateX(-50%); }
+    .toast-container-bottom-right { bottom: 16px; right: 16px; }
+  </style>
+</head>
+<body>
+  <div class="page-header">
+    <a href="index.html"><i class="mdi mdi-arrow-left"></i> 返回</a>
+    <div>
+      <h1>Toast 通知</h1>
+      <p>Success / Warning / Error / Info 四类，支持位置切换、堆叠展示、自动消失、操作按钮。</p>
+    </div>
+  </div>
+
+  <!-- 类型预览 -->
+  <div class="section">
+    <div class="section-title">类型 <code>types</code></div>
+    <div class="demo-row" style="flex-direction:column;gap:var(--space-3)">
+      <div class="demo-row-label">Success</div>
+      <div class="toast toast-success">
+        <i class="mdi mdi-check-circle"></i>
+        <div class="toast-content">
+          <div class="toast-message">笔记已保存成功</div>
+        </div>
+        <button class="toast-close-btn"><i class="mdi mdi-close"></i></button>
+      </div>
+
+      <div class="demo-row-label">Warning</div>
+      <div class="toast toast-warning">
+        <i class="mdi mdi-alert"></i>
+        <div class="toast-content">
+          <div class="toast-message">网络连接已断开，笔记将在恢复连接后同步</div>
+        </div>
+        <button class="toast-close-btn"><i class="mdi mdi-close"></i></button>
+      </div>
+
+      <div class="demo-row-label">Error</div>
+      <div class="toast toast-error">
+        <i class="mdi mdi-close-circle"></i>
+        <div class="toast-content">
+          <div class="toast-title">保存失败</div>
+          <div class="toast-message">无法连接到服务器，请检查网络后重试</div>
+        </div>
+        <button class="toast-close-btn"><i class="mdi mdi-close"></i></button>
+      </div>
+
+      <div class="demo-row-label">Info</div>
+      <div class="toast toast-info">
+        <i class="mdi mdi-information"></i>
+        <div class="toast-content">
+          <div class="toast-message">有 3 篇新笔记可同步</div>
+        </div>
+        <div class="toast-actions">
+          <button class="toast-action-btn">同步</button>
+          <button class="toast-close-btn"><i class="mdi mdi-close"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 带操作按钮 + 进度条 -->
+  <div class="section">
+    <div class="section-title">功能 <code>actions / progress / auto-dismiss</code></div>
+    <div class="demo-row" style="flex-direction:column;gap:var(--space-3)">
+      <div class="demo-row-label">带操作按钮（如「撤销」）</div>
+      <div class="toast toast-success">
+        <i class="mdi mdi-check-circle"></i>
+        <div class="toast-content">
+          <div class="toast-title">笔记已移动</div>
+          <div class="toast-message">「设计规格」已移至「档案」</div>
+        </div>
+        <div class="toast-actions">
+          <button class="toast-action-btn" style="font-weight:600">撤销</button>
+          <button class="toast-close-btn"><i class="mdi mdi-close"></i></button>
+        </div>
+      </div>
+
+      <div class="demo-row-label">带进度条（自动消失动画）</div>
+      <div class="toast toast-info">
+        <i class="mdi mdi-information"></i>
+        <div class="toast-content">
+          <div class="toast-message">3 秒后自动关闭</div>
+        </div>
+        <button class="toast-close-btn"><i class="mdi mdi-close"></i></button>
+        <div class="toast-progress" style="width:67%"></div>
+      </div>
+      <div class="toast toast-warning">
+        <i class="mdi mdi-alert"></i>
+        <div class="toast-content">
+          <div class="toast-message">即将同步（进度条 40%）</div>
+        </div>
+        <button class="toast-close-btn"><i class="mdi mdi-close"></i></button>
+        <div class="toast-progress" style="width:40%"></div>
+      </div>
+
+      <div class="demo-row-label">带标题 + 描述 + 操作</div>
+      <div class="toast toast-error">
+        <i class="mdi mdi-close-circle"></i>
+        <div class="toast-content">
+          <div class="toast-title">同步冲突</div>
+          <div class="toast-message">笔记在另一设备上已被修改，存在版本冲突</div>
+        </div>
+        <div class="toast-actions" style="flex-direction:column;gap:2px">
+          <button class="toast-action-btn">保留本地</button>
+          <button class="toast-action-btn">采用远程</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 堆叠 -->
+  <div class="section">
+    <div class="section-title">堆叠展示 <code>stacked</code></div>
+    <div class="demo-row">
+      <div class="toast-stack" style="width:380px">
+        <div class="toast toast-success">
+          <i class="mdi mdi-check-circle"></i>
+          <div class="toast-content"><div class="toast-message">笔记已保存</div></div>
+          <button class="toast-close-btn"><i class="mdi mdi-close"></i></button>
+        </div>
+        <div class="toast toast-info">
+          <i class="mdi mdi-information"></i>
+          <div class="toast-content"><div class="toast-message">已连接到同步服务器</div></div>
+          <button class="toast-close-btn"><i class="mdi mdi-close"></i></button>
+        </div>
+        <div class="toast toast-warning">
+          <i class="mdi mdi-alert"></i>
+          <div class="toast-content"><div class="toast-message">离线模式 - 修改将在恢复连接后同步</div></div>
+          <button class="toast-close-btn"><i class="mdi mdi-close"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 位置 -->
+  <div class="section">
+    <div class="section-title">位置 <code>positions</code></div>
+    <div class="position-demo">
+      <div class="position-demo-col">
+        <span class="position-label">Top-Right</span>
+        <div class="toast toast-success" style="max-width:300px">
+          <i class="mdi mdi-check-circle"></i>
+          <div class="toast-content"><div class="toast-message">保存成功</div></div>
+        </div>
+      </div>
+      <div class="position-demo-col" style="align-items:center">
+        <span class="position-label">Bottom-Center</span>
+        <div class="toast toast-info" style="max-width:300px">
+          <i class="mdi mdi-information"></i>
+          <div class="toast-content"><div class="toast-message">正在同步…</div></div>
+        </div>
+      </div>
+      <div class="position-demo-col" style="align-items:flex-end">
+        <span class="position-label">Bottom-Right</span>
+        <div class="toast toast-warning" style="max-width:300px">
+          <i class="mdi mdi-alert"></i>
+          <div class="toast-content"><div class="toast-message">网络连接不稳定</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 交互演示 -->
+  <div class="section">
+    <div class="section-title">交互演示 <code>click to trigger toast</code></div>
+    <div class="demo-row">
+      <button class="btn btn-primary" onclick="showToast('success')">Success</button>
+      <button class="btn btn-secondary" onclick="showToast('warning')">Warning</button>
+      <button class="btn btn-secondary" onclick="showToast('error')">Error</button>
+      <button class="btn btn-primary" onclick="showToast('info')">Info</button>
+      <button class="btn btn-secondary" onclick="clearToasts()" style="margin-left:8px">清除全部</button>
+    </div>
+  </div>
+
+  <!-- Toast container for interactive demo -->
+  <div class="toast-container toast-container-top-right" id="toast-container"></div>
+
+  <script>
+    function showToast(type) {
+      const container = document.getElementById('toast-container');
+      const configs = {
+        success: { icon: 'check-circle', cls: 'toast-success', msg: '笔记已保存' },
+        warning: { icon: 'alert', cls: 'toast-warning', msg: '网络连接不稳定' },
+        error: { icon: 'close-circle', cls: 'toast-error', msg: '保存失败，请重试' },
+        info: { icon: 'information', cls: 'toast-info', msg: '正在同步最新数据' }
+      };
+      const cfg = configs[type];
+      const toast = document.createElement('div');
+      toast.className = 'toast ' + cfg.cls;
+      toast.innerHTML = '<i class="mdi mdi-' + cfg.icon + '"></i>' +
+        '<div class="toast-content"><div class="toast-message">' + cfg.msg + '</div></div>' +
+        '<button class="toast-close-btn" onclick="this.closest(\'.toast\').remove()"><i class="mdi mdi-close"></i></button>';
+      container.appendChild(toast);
+      // Auto dismiss after 3s
+      const timer = setTimeout(() => { if (toast.parentNode) toast.remove(); }, 3000);
+      toast.addEventListener('click', function(e) {
+        if (e.target.closest('.toast-close-btn')) clearTimeout(timer);
+      });
+    }
+    function clearToasts() {
+      document.getElementById('toast-container').innerHTML = '';
+    }
+  </script>
+</body>
+</html>

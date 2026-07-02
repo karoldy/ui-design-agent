@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MindFlow — 移动端侧边栏</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+  <style>
+    :root {
+      --color-bg-primary: #FAFAFA;
+      --color-bg-secondary: #F5F5F5;
+      --color-bg-tertiary: #EEEEEE;
+      --color-text-primary: #1A1A1A;
+      --color-text-secondary: #6B6B6B;
+      --color-text-tertiary: #9E9E9E;
+      --color-text-link: #3B82F6;
+      --color-text-on-accent: #FFFFFF;
+      --color-accent: #3B82F6;
+      --color-accent-hover: #2563EB;
+      --color-accent-soft: #E8F0FE;
+      --color-success: #10B981;
+      --color-warning: #F59E0B;
+      --color-error: #EF4444;
+      --color-border: #E8E8E8;
+      --tag-red: #FEE2E2;
+      --tag-orange: #FFEDD5;
+      --tag-yellow: #FEF3C7;
+      --tag-green: #D1FAE5;
+      --tag-teal: #CCFBF1;
+      --tag-blue: #DBEAFE;
+      --tag-purple: #EDE9FE;
+      --tag-pink: #FCE7F3;
+      --dot-red: #EF4444;
+      --dot-orange: #F97316;
+      --dot-yellow: #EAB308;
+      --dot-green: #22C55E;
+      --dot-teal: #14B8A6;
+      --dot-blue: #3B82F6;
+      --dot-purple: #8B5CF6;
+      --dot-pink: #EC4899;
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-full: 9999px;
+      --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
+      --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --font-size-xs: 11px;
+      --font-size-sm: 13px;
+      --font-size-base: 15px;
+      --font-size-lg: 18px;
+      --drawer-width: 80%;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      height: 100%;
+      font-family: 'Noto Sans SC', 'Inter', system-ui, -apple-system, sans-serif;
+      background: #E0E0E0;
+      color: var(--color-text-primary);
+      font-size: var(--font-size-base);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .phone-frame {
+      width: 375px;
+      height: 812px;
+      background: var(--color-bg-primary);
+      border-radius: 40px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2), 0 0 0 1px rgba(0,0,0,0.06);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      /* So the drawer can be positioned within */
+    }
+
+    /* ===== Status Bar ===== */
+    .status-bar {
+      height: 44px;
+      min-height: 44px;
+      background: var(--color-bg-primary);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      flex-shrink: 0;
+      z-index: 5;
+    }
+    .status-bar .time { font-weight: 700; }
+    .status-bar .icons { display: flex; align-items: center; gap: 5px; font-size: 13px; }
+
+    /* ===== Top Navigation (blurred/behind drawer) ===== */
+    .top-nav {
+      height: 44px;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      padding: 0 var(--space-4);
+      background: var(--color-bg-primary);
+      border-bottom: 1px solid var(--color-border);
+      flex-shrink: 0;
+      z-index: 5;
+    }
+    .top-nav .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 700;
+      font-size: 17px;
+      color: var(--color-text-primary);
+    }
+    .top-nav .logo-area .logo-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--color-accent);
+      flex-shrink: 0;
+    }
+    .top-nav .spacer { flex: 1; }
+    .top-nav .nav-btn {
+      width: 36px; height: 36px;
+      display: flex; align-items: center; justify-content: center;
+      border: none; background: transparent;
+      color: var(--color-text-primary);
+      font-size: 22px;
+      cursor: pointer;
+      border-radius: var(--radius-md);
+    }
+
+    /* ===== Content area (simulated note list behind drawer) ===== */
+    .content-placeholder {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: var(--space-4);
+      gap: var(--space-3);
+      overflow: hidden;
+      z-index: 5;
+    }
+    .content-placeholder .ph-header {
+      text-align: center;
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+      padding: 6px 0;
+    }
+    .ph-card {
+      background: #FFFFFF;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--color-border);
+      padding: var(--space-4);
+      box-shadow: var(--shadow-md);
+    }
+    .ph-card .ph-title {
+      width: 65%;
+      height: 16px;
+      background: var(--color-bg-tertiary);
+      border-radius: 4px;
+      margin-bottom: 8px;
+    }
+    .ph-card .ph-summary {
+      width: 92%;
+      height: 12px;
+      background: var(--color-bg-tertiary);
+      border-radius: 4px;
+      margin-bottom: 5px;
+    }
+    .ph-card .ph-summary2 {
+      width: 70%;
+      height: 12px;
+      background: var(--color-bg-tertiary);
+      border-radius: 4px;
+      margin-bottom: 12px;
+    }
+    .ph-card .ph-tags {
+      display: flex;
+      gap: 6px;
+    }
+    .ph-card .ph-tags span {
+      width: 48px;
+      height: 18px;
+      background: var(--color-bg-tertiary);
+      border-radius: 4px;
+    }
+
+    /* ===== Drawer Overlay ===== */
+    .drawer-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0);
+      z-index: 90;
+      transition: background 300ms ease;
+      pointer-events: none;
+    }
+    .drawer-overlay.open {
+      background: rgba(0,0,0,0.35);
+      pointer-events: auto;
+    }
+
+    /* ===== Drawer ===== */
+    .drawer {
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: var(--drawer-width);
+      max-width: 300px;
+      background: #FFFFFF;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 4px 0 20px rgba(0,0,0,0.1);
+      transform: translateX(-100%);
+      transition: transform 300ms cubic-bezier(0.32, 0.72, 0, 1);
+    }
+    .drawer.open {
+      transform: translateX(0);
+    }
+
+    /* ===== Drawer Header ===== */
+    .drawer-header {
+      padding: var(--space-5) var(--space-4) var(--space-3);
+      border-bottom: 1px solid var(--color-border);
+      flex-shrink: 0;
+    }
+    .drawer-header .user-row {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+    .drawer-header .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #3B82F6, #6366F1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      font-weight: 600;
+      color: #FFFFFF;
+      flex-shrink: 0;
+    }
+    .drawer-header .user-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .drawer-header .user-info .user-name {
+      font-weight: 600;
+      font-size: var(--font-size-base);
+      color: var(--color-text-primary);
+    }
+    .drawer-header .user-info .user-email {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-tertiary);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .drawer-header .close-btn {
+      width: 36px; height: 36px;
+      display: flex; align-items: center; justify-content: center;
+      border: none; background: transparent;
+      color: var(--color-text-secondary);
+      font-size: 22px;
+      cursor: pointer;
+      border-radius: var(--radius-md);
+      flex-shrink: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .drawer-header .close-btn:active { background: var(--color-bg-tertiary); }
+
+    /* ===== Drawer Scroll Area ===== */
+    .drawer-scroll {
+      flex: 1;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .drawer-scroll::-webkit-scrollbar { width: 3px; }
+    .drawer-scroll::-webkit-scrollbar-thumb { background: #D0D0D0; border-radius: 2px; }
+
+    /* ===== Drawer Sections ===== */
+    .drawer-section { padding: var(--space-2) 0; }
+    .drawer-section-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: var(--font-size-xs);
+      font-weight: 600;
+      color: var(--color-text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: var(--space-2) var(--space-4) var(--space-1);
+      user-select: none;
+    }
+    .drawer-section-title .add-icon {
+      width: 22px; height: 22px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 16px;
+      color: var(--color-text-tertiary);
+      transition: background 150ms ease;
+    }
+    .drawer-section-title .add-icon:active { background: var(--color-bg-tertiary); }
+
+    .drawer-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: 10px var(--space-4);
+      cursor: pointer;
+      font-size: var(--font-size-base);
+      color: var(--color-text-primary);
+      transition: background 150ms ease;
+      min-height: 44px;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .drawer-item:active { background: var(--color-bg-tertiary); }
+    .drawer-item.active { background: var(--color-accent-soft); color: var(--color-accent); }
+    .drawer-item .item-icon {
+      font-size: 20px;
+      color: var(--color-text-secondary);
+      width: 24px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .drawer-item.active .item-icon { color: var(--color-accent); }
+    .drawer-item .item-label { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .drawer-item .item-count {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-tertiary);
+      background: var(--color-bg-tertiary);
+      padding: 0 8px;
+      border-radius: 8px;
+      min-width: 18px;
+      text-align: center;
+      line-height: 18px;
+      flex-shrink: 0;
+    }
+    .drawer-item .expand-icon {
+      font-size: 18px;
+      color: var(--color-text-tertiary);
+      transition: transform 200ms ease;
+      flex-shrink: 0;
+      width: 20px;
+      text-align: center;
+    }
+    .drawer-item .expand-icon.expanded { transform: rotate(90deg); }
+    .drawer-item.nested-1 { padding-left: 52px; }
+    .drawer-item.nested-2 { padding-left: 68px; }
+
+    .drawer-item .tag-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .drawer-item .tag-dot.dot-blue { background: var(--dot-blue); }
+    .drawer-item .tag-dot.dot-purple { background: var(--dot-purple); }
+    .drawer-item .tag-dot.dot-green { background: var(--dot-green); }
+    .drawer-item .tag-dot.dot-orange { background: var(--dot-orange); }
+    .drawer-item .tag-dot.dot-red { background: var(--dot-red); }
+    .drawer-item .tag-dot.dot-yellow { background: var(--dot-yellow); }
+    .drawer-item .tag-dot.dot-pink { background: var(--dot-pink); }
+
+    .drawer-divider { height: 1px; background: var(--color-border); margin: var(--space-2) var(--space-4); }
+
+    /* ===== Drawer Footer (Space Usage) ===== */
+    .drawer-footer {
+      padding: var(--space-4);
+      border-top: 1px solid var(--color-border);
+      flex-shrink: 0;
+    }
+    .drawer-footer .usage-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: var(--font-size-xs);
+      color: var(--color-text-tertiary);
+      margin-bottom: var(--space-2);
+    }
+    .drawer-footer .usage-bar {
+      height: 6px;
+      background: var(--color-bg-tertiary);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .drawer-footer .usage-bar .fill {
+      height: 100%;
+      width: 35%;
+      background: linear-gradient(90deg, var(--color-accent), #6366F1);
+      border-radius: 3px;
+      transition: width 300ms ease;
+    }
+
+    /* ===== Swipe hint ===== */
+    .swipe-hint {
+      position: absolute;
+      top: 50%;
+      left: 100%;
+      transform: translateY(-50%);
+      background: rgba(0,0,0,0.06);
+      border-radius: 0 8px 8px 0;
+      padding: 4px 6px;
+      font-size: 14px;
+      color: var(--color-text-tertiary);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 300ms ease;
+    }
+    .drawer.open + .swipe-hint { opacity: 0; }
+    /* Actually need to re-think selector — put it inside drawer */
+
+    /* ===== Control Buttons (Demo) ===== */
+    .demo-controls {
+      position: absolute;
+      bottom: 100px;
+      right: 8px;
+      z-index: 95;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      pointer-events: none;
+    }
+    .demo-controls button {
+      pointer-events: auto;
+      width: 40px;
+      height: 40px;
+      border: none;
+      background: var(--color-accent);
+      color: #FFFFFF;
+      border-radius: 50%;
+      font-size: 18px;
+      cursor: pointer;
+      box-shadow: var(--shadow-md);
+      transition: transform 150ms ease, background 150ms ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .demo-controls button:active {
+      transform: scale(0.92);
+      background: var(--color-accent-hover);
+    }
+
+    /* ===== Touch Hint ===== */
+    .touch-hint {
+      position: absolute;
+      bottom: 120px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.7);
+      color: #FFFFFF;
+      font-size: var(--font-size-sm);
+      padding: 8px 16px;
+      border-radius: var(--radius-full);
+      white-space: nowrap;
+      z-index: 96;
+      pointer-events: none;
+      opacity: 1;
+      transition: opacity 600ms ease;
+      animation: fadeOut 4s ease forwards 1s;
+    }
+    @keyframes fadeOut { to { opacity: 0; } }
+  </style>
+</head>
+<body>
+
+  <div class="phone-frame">
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span class="time">9:41</span>
+      <span class="icons">
+        <i class="mdi mdi-signal-cellular-outline" style="font-size:14px;"></i>
+        <i class="mdi mdi-wifi" style="font-size:14px;"></i>
+        <i class="mdi mdi-battery" style="font-size:16px;"></i>
+      </span>
+    </div>
+
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+      <div class="logo-area">
+        <span class="logo-dot"></span>
+        <span>MindFlow</span>
+      </div>
+      <div class="spacer"></div>
+      <button class="nav-btn"><i class="mdi mdi-magnify"></i></button>
+      <button class="nav-btn"><i class="mdi mdi-plus"></i></button>
+    </nav>
+
+    <!-- Content Placeholder (simulated note list behind drawer) -->
+    <div class="content-placeholder">
+      <div class="ph-header">&#8212; 今天 &#8212;</div>
+      <div class="ph-card">
+        <div class="ph-title"></div>
+        <div class="ph-summary"></div>
+        <div class="ph-summary2"></div>
+        <div class="ph-tags">
+          <span></span>
+          <span></span>
+          <span style="width:40px;"></span>
+        </div>
+      </div>
+      <div class="ph-card">
+        <div class="ph-title" style="width:48%;"></div>
+        <div class="ph-summary"></div>
+        <div class="ph-summary2" style="width:76%;"></div>
+        <div class="ph-tags">
+          <span></span>
+          <span style="width:56px;"></span>
+        </div>
+      </div>
+      <div class="ph-card">
+        <div class="ph-title" style="width:58%;"></div>
+        <div class="ph-summary" style="width:88%;"></div>
+        <div class="ph-summary2" style="width:64%;"></div>
+        <div class="ph-tags">
+          <span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Drawer Overlay -->
+    <div class="drawer-overlay" id="drawer-overlay"></div>
+
+    <!-- Drawer -->
+    <div class="drawer" id="drawer">
+      <!-- Drawer Header -->
+      <div class="drawer-header">
+        <div class="user-row">
+          <div class="user-avatar">JD</div>
+          <div class="user-info">
+            <div class="user-name">John Doe</div>
+            <div class="user-email">john@example.com</div>
+          </div>
+          <button class="close-btn" id="drawer-close-btn"><i class="mdi mdi-close"></i></button>
+        </div>
+      </div>
+
+      <!-- Drawer Scroll Area -->
+      <div class="drawer-scroll">
+        <!-- Quick Shortcuts -->
+        <div class="drawer-section">
+          <div class="drawer-item active">
+            <i class="mdi mdi-note-text-outline item-icon"></i>
+            <span class="item-label">所有笔记</span>
+            <span class="item-count">23</span>
+          </div>
+          <div class="drawer-item">
+            <i class="mdi mdi-calendar-text-outline item-icon"></i>
+            <span class="item-label">每日笔记</span>
+          </div>
+          <div class="drawer-item">
+            <i class="mdi mdi-graph-outline item-icon"></i>
+            <span class="item-label">知识图谱</span>
+          </div>
+          <div class="drawer-item">
+            <i class="mdi mdi-delete-outline item-icon"></i>
+            <span class="item-label">回收站</span>
+          </div>
+        </div>
+
+        <div class="drawer-divider"></div>
+
+        <!-- Notebooks -->
+        <div class="drawer-section">
+          <div class="drawer-section-title">
+            <span>笔记本</span>
+            <i class="mdi mdi-plus add-icon"></i>
+          </div>
+          <div class="drawer-item notebook-toggle" data-target="drawer-work-children">
+            <i class="mdi mdi-chevron-right expand-icon expanded" data-toggle-icon></i>
+            <i class="mdi mdi-folder-open-outline item-icon"></i>
+            <span class="item-label">工作</span>
+            <span class="item-count">8</span>
+          </div>
+          <div class="drawer-item nested-1 drawer-notebook-child" data-parent="drawer-work-children">
+            <i class="mdi mdi-file-document-outline item-icon"></i>
+            <span class="item-label">产品设计</span>
+            <span class="item-count">5</span>
+          </div>
+          <div class="drawer-item nested-1 drawer-notebook-child active" data-parent="drawer-work-children">
+            <i class="mdi mdi-file-document-outline item-icon"></i>
+            <span class="item-label">会议记录</span>
+            <span class="item-count">3</span>
+          </div>
+          <div class="drawer-item notebook-toggle" data-target="drawer-personal-children">
+            <i class="mdi mdi-chevron-right expand-icon expanded" data-toggle-icon></i>
+            <i class="mdi mdi-folder-open-outline item-icon"></i>
+            <span class="item-label">个人</span>
+            <span class="item-count">12</span>
+          </div>
+          <div class="drawer-item nested-1 drawer-notebook-child" data-parent="drawer-personal-children">
+            <i class="mdi mdi-file-document-outline item-icon"></i>
+            <span class="item-label">阅读</span>
+            <span class="item-count">7</span>
+          </div>
+          <div class="drawer-item nested-1 drawer-notebook-child" data-parent="drawer-personal-children">
+            <i class="mdi mdi-file-document-outline item-icon"></i>
+            <span class="item-label">日记</span>
+            <span class="item-count">5</span>
+          </div>
+          <div class="drawer-item notebook-toggle" data-target="drawer-study-children">
+            <i class="mdi mdi-chevron-right expand-icon" data-toggle-icon></i>
+            <i class="mdi mdi-folder-outline item-icon"></i>
+            <span class="item-label">学习</span>
+            <span class="item-count">3</span>
+          </div>
+          <div class="drawer-item nested-1 drawer-notebook-child" data-parent="drawer-study-children" style="display:none;">
+            <i class="mdi mdi-file-document-outline item-icon"></i>
+            <span class="item-label">AI 课程</span>
+            <span class="item-count">2</span>
+          </div>
+          <div class="drawer-item nested-1 drawer-notebook-child" data-parent="drawer-study-children" style="display:none;">
+            <i class="mdi mdi-file-document-outline item-icon"></i>
+            <span class="item-label">读书笔记</span>
+            <span class="item-count">1</span>
+          </div>
+        </div>
+
+        <div class="drawer-divider"></div>
+
+        <!-- Tags -->
+        <div class="drawer-section">
+          <div class="drawer-section-title">
+            <span>标签</span>
+            <i class="mdi mdi-plus add-icon"></i>
+          </div>
+          <div class="drawer-item tag-toggle" data-target="drawer-tech-tags">
+            <i class="mdi mdi-chevron-right expand-icon expanded" data-toggle-icon></i>
+            <span class="tag-dot dot-blue"></span>
+            <span class="item-label">科技/AI</span>
+            <span class="item-count">6</span>
+          </div>
+          <div class="drawer-item nested-1 drawer-tag-child" data-parent="drawer-tech-tags">
+            <span class="tag-dot dot-blue" style="width:8px;height:8px;"></span>
+            <span class="item-label">LLM</span>
+            <span class="item-count">3</span>
+          </div>
+          <div class="drawer-item nested-1 drawer-tag-child" data-parent="drawer-tech-tags">
+            <span class="tag-dot dot-blue" style="width:8px;height:8px;"></span>
+            <span class="item-label">Agent</span>
+            <span class="item-count">3</span>
+          </div>
+          <div class="drawer-item">
+            <span class="tag-dot dot-purple"></span>
+            <span class="item-label">阅读</span>
+            <span class="item-count">5</span>
+          </div>
+          <div class="drawer-item">
+            <span class="tag-dot dot-orange"></span>
+            <span class="item-label">设计</span>
+            <span class="item-count">4</span>
+          </div>
+          <div class="drawer-item">
+            <span class="tag-dot dot-green"></span>
+            <span class="item-label">工作</span>
+            <span class="item-count">8</span>
+          </div>
+          <div class="drawer-item">
+            <span class="tag-dot dot-pink"></span>
+            <span class="item-label">个人</span>
+            <span class="item-count">3</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Drawer Footer: Space Usage -->
+      <div class="drawer-footer">
+        <div class="usage-label">
+          <span>存储空间</span>
+          <span>35% &#183; 1.2 GB / 5 GB</span>
+        </div>
+        <div class="usage-bar"><div class="fill"></div></div>
+      </div>
+    </div>
+
+    <!-- Touch hint overlay -->
+    <div class="touch-hint">点击 Logo 打开侧边栏 &#8592;</div>
+
+    <!-- Demo Controls -->
+    <div class="demo-controls">
+      <button id="open-drawer-btn" title="打开侧边栏"><i class="mdi mdi-menu"></i></button>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      const drawer = document.getElementById('drawer');
+      const overlay = document.getElementById('drawer-overlay');
+      const openBtn = document.getElementById('open-drawer-btn');
+      const closeBtn = document.getElementById('drawer-close-btn');
+
+      function openDrawer() {
+        drawer.classList.add('open');
+        overlay.classList.add('open');
+      }
+
+      function closeDrawer() {
+        drawer.classList.remove('open');
+        overlay.classList.remove('open');
+      }
+
+      openBtn.addEventListener('click', openDrawer);
+
+      closeBtn.addEventListener('click', closeDrawer);
+
+      overlay.addEventListener('click', closeDrawer);
+
+      // Close on navigation item click (simulated)
+      document.querySelectorAll('.drawer-item:not(.notebook-toggle):not(.tag-toggle)').forEach(item => {
+        item.addEventListener('click', function() {
+          closeDrawer();
+        });
+      });
+
+      // === Notebook tree expand/collapse ===
+      document.querySelectorAll('.notebook-toggle').forEach(item => {
+        item.addEventListener('click', function(e) {
+          e.stopPropagation();
+          const target = this.dataset.target;
+          const children = document.querySelectorAll(`.drawer-notebook-child[data-parent="${target}"]`);
+          const icon = this.querySelector('[data-toggle-icon]');
+          children.forEach(child => {
+            if (child.style.display === 'none') {
+              child.style.display = 'flex';
+              if (icon) icon.classList.add('expanded');
+            } else {
+              child.style.display = 'none';
+              if (icon) icon.classList.remove('expanded');
+            }
+          });
+        });
+      });
+
+      // === Tag tree expand/collapse ===
+      document.querySelectorAll('.tag-toggle').forEach(item => {
+        item.addEventListener('click', function(e) {
+          e.stopPropagation();
+          const target = this.dataset.target;
+          const children = document.querySelectorAll(`.drawer-tag-child[data-parent="${target}"]`);
+          const icon = this.querySelector('[data-toggle-icon]');
+          children.forEach(child => {
+            if (child.style.display === 'none') {
+              child.style.display = 'flex';
+              if (icon) icon.classList.add('expanded');
+            } else {
+              child.style.display = 'none';
+              if (icon) icon.classList.remove('expanded');
+            }
+          });
+        });
+      });
+
+      // Open drawer automatically on load for demo
+      setTimeout(() => {
+        openDrawer();
+        // Hide the touch hint
+        document.querySelector('.touch-hint').style.opacity = '0';
+      }, 300);
+    })();
+  </script>
+</body>
+</html>

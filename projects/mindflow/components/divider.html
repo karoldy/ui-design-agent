@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Divider 分割线 | MindFlow 组件</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-bg-primary: #FAFAFA; --color-bg-secondary: #F5F5F5; --color-bg-tertiary: #EEEEEE;
+      --color-text-primary: #1A1A1A; --color-text-secondary: #6B6B6B; --color-text-tertiary: #9E9E9E;
+      --color-text-link: #3B82F6; --color-text-on-accent: #FFFFFF;
+      --color-accent: #3B82F6; --color-accent-hover: #2563EB; --color-accent-soft: #E8F0FE;
+      --color-success: #10B981; --color-warning: #F59E0B; --color-error: #EF4444;
+      --font-family-ui: 'Inter', system-ui, -apple-system, sans-serif;
+      --font-family-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-size-xs: 11px; --font-size-sm: 13px; --font-size-base: 15px;
+      --font-size-lg: 18px; --font-size-xl: 22px; --font-size-2xl: 28px; --font-size-3xl: 36px;
+      --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 20px; --space-6: 24px;
+      --space-8: 32px; --space-10: 40px; --space-12: 48px; --space-16: 64px;
+      --radius-sm: 4px; --radius-md: 8px; --radius-lg: 12px; --radius-xl: 16px; --radius-full: 9999px;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05); --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
+      --shadow-lg: 0 8px 24px rgba(0,0,0,0.12); --shadow-xl: 0 16px 48px rgba(0,0,0,0.16);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: var(--font-family-body); background: var(--color-bg-primary); color: var(--color-text-primary); padding: var(--space-6); -webkit-font-smoothing: antialiased; }
+    .page-header { margin-bottom: var(--space-8); display: flex; align-items: flex-start; gap: var(--space-4); }
+    .page-header a { color: var(--color-accent); text-decoration: none; font-size: var(--font-size-sm); font-family: var(--font-family-ui); display: flex; align-items: center; gap: 4px; padding: 6px 12px; border-radius: var(--radius-sm); transition: background 0.15s; flex-shrink: 0; }
+    .page-header a:hover { background: var(--color-accent-soft); }
+    .page-header h1 { font-family: var(--font-family-ui); font-size: var(--font-size-2xl); font-weight: 700; }
+    .page-header p { color: var(--color-text-secondary); font-size: var(--font-size-sm); margin-top: var(--space-1); }
+    .section { margin-bottom: var(--space-10); }
+    .section-title { font-family: var(--font-family-ui); font-size: var(--font-size-base); font-weight: 600; padding-bottom: var(--space-2); margin-bottom: var(--space-4); border-bottom: 1px solid #E8E8E8; display: flex; align-items: center; gap: var(--space-2); }
+    .section-title code { font-size: var(--font-size-xs); background: var(--color-bg-secondary); padding: 2px 8px; border-radius: var(--radius-sm); color: var(--color-text-secondary); }
+    .demo-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4); padding: var(--space-4); background: #fff; border: 1px solid #E8E8E8; border-radius: var(--radius-md); margin-bottom: var(--space-3); }
+    .demo-row-label { width: 100%; font-size: var(--font-size-xs); color: var(--color-text-secondary); font-family: var(--font-family-ui); font-weight: 500; margin-bottom: -4px; }
+
+    /* ===== DIVIDER BASE ===== */
+    .divider {
+      border: 0; margin: var(--space-4) 0; width: 100%;
+    }
+
+    /* Horizontal */
+    .divider-hr {
+      height: 0; border-top-width: 1px; border-top-style: solid;
+    }
+    .divider-hr.solid { border-top-style: solid; }
+    .divider-hr.dashed { border-top-style: dashed; }
+    .divider-hr.dotted { border-top-style: dotted; }
+    .divider-default { border-top-color: #E8E8E8; }
+    .divider-strong { border-top-color: #D0D0D0; }
+    .divider-accent { border-top-color: var(--color-accent); }
+
+    /* With text */
+    .divider-text {
+      display: flex; align-items: center; width: 100%; gap: var(--space-3);
+      color: var(--color-text-secondary); font-family: var(--font-family-ui);
+      font-size: var(--font-size-xs);
+    }
+    .divider-text::before, .divider-text::after {
+      content: ''; flex: 1; border-top-width: 1px; border-top-style: solid;
+    }
+    .divider-text.solid::before, .divider-text.solid::after { border-top-style: solid; }
+    .divider-text.dashed::before, .divider-text.dashed::after { border-top-style: dashed; }
+    .divider-text.dotted::before, .divider-text.dotted::after { border-top-style: dotted; }
+    .divider-text::before, .divider-text::after { border-top-color: #E8E8E8; }
+    .divider-text.strong::before, .divider-text.strong::after { border-top-color: #D0D0D0; }
+    .divider-text.accent::before, .divider-text.accent::after { border-top-color: var(--color-accent); }
+
+    .divider-text-left::before { flex: 0 0 40px; }
+    .divider-text-right::after { flex: 0 0 40px; }
+
+    /* Vertical */
+    .divider-vr {
+      display: inline-block; width: 1px; height: 20px; vertical-align: middle;
+      margin: 0 var(--space-2); background: #E8E8E8; flex-shrink: 0;
+    }
+    .divider-vr.solid { background: #E8E8E8; }
+    .divider-vr.dashed { background: repeating-linear-gradient(to bottom, #E8E8E8 0, #E8E8E8 4px, transparent 4px, transparent 8px); }
+    .divider-vr.dotted { background: repeating-linear-gradient(to bottom, #E8E8E8 0, #E8E8E8 1px, transparent 1px, transparent 6px); }
+    .divider-vr.divider-strong { background: #D0D0D0; }
+    .divider-vr.divider-accent { background: var(--color-accent); }
+  </style>
+</head>
+<body>
+  <div class="page-header">
+    <a href="index.html"><i class="mdi mdi-arrow-left"></i> 返回</a>
+    <div>
+      <h1>Divider 分割线</h1>
+      <p>水平/垂直方向，Solid / Dashed / Dotted 样式，支持带文字/图标分割线。</p>
+    </div>
+  </div>
+
+  <!-- Horizontal -->
+  <div class="section">
+    <div class="section-title">水平分割线 <code>horizontal</code></div>
+    <div class="demo-row" style="flex-direction:column;align-items:stretch;gap:var(--space-4)">
+      <div class="demo-row-label">Solid（实线）</div>
+      <hr class="divider divider-hr solid divider-default">
+      <div style="background:var(--color-bg-secondary);padding:var(--space-4);border-radius:var(--radius-sm);text-align:center;font-size:var(--font-size-sm);color:var(--color-text-secondary)">上方内容</div>
+      <hr class="divider divider-hr solid divider-default">
+      <div style="padding:var(--space-4);text-align:center;font-size:var(--font-size-sm);color:var(--color-text-secondary)">下方内容</div>
+      <hr class="divider divider-hr solid divider-default">
+
+      <div class="demo-row-label">Dashed（虚线）</div>
+      <hr class="divider divider-hr dashed divider-default">
+
+      <div class="demo-row-label">Dotted（点线）</div>
+      <hr class="divider divider-hr dotted divider-default">
+    </div>
+  </div>
+
+  <!-- Colors -->
+  <div class="section">
+    <div class="section-title">颜色 <code>default / strong / accent</code></div>
+    <div class="demo-row" style="flex-direction:column;gap:var(--space-3)">
+      <div>
+        <div style="font-size:var(--font-size-xs);color:var(--color-text-tertiary);margin-bottom:4px">Default (#E8E8E8)</div>
+        <hr class="divider divider-hr solid divider-default">
+      </div>
+      <div>
+        <div style="font-size:var(--font-size-xs);color:var(--color-text-tertiary);margin-bottom:4px">Strong (#D0D0D0)</div>
+        <hr class="divider divider-hr solid divider-strong">
+      </div>
+      <div>
+        <div style="font-size:var(--font-size-xs);color:var(--color-text-tertiary);margin-bottom:4px">Accent (#3B82F6)</div>
+        <hr class="divider divider-hr solid divider-accent">
+      </div>
+    </div>
+  </div>
+
+  <!-- With text -->
+  <div class="section">
+    <div class="section-title">带文字 <code>divider with text</code></div>
+    <div class="demo-row" style="flex-direction:column;gap:var(--space-5)">
+      <div class="divider-text solid"><span>居中文字</span></div>
+      <div class="divider-text-left solid"><span>左对齐文字</span></div>
+      <div class="divider-text-right solid"><span>右对齐文字</span></div>
+      <div class="divider-text dashed"><span>虚线 + 文字</span></div>
+      <div class="divider-text dotted"><span>点线 + 文字</span></div>
+    </div>
+  </div>
+
+  <!-- With icon -->
+  <div class="section">
+    <div class="section-title">带图标 <code>divider with icon</code></div>
+    <div class="demo-row" style="flex-direction:column;gap:var(--space-5)">
+      <div class="divider-text solid"><i class="mdi mdi-star" style="color:var(--color-warning);font-size:14px"></i></div>
+      <div class="divider-text solid"><i class="mdi mdi-bookmark" style="color:var(--color-accent);font-size:14px"></i><span>重要内容</span></div>
+      <div class="divider-text dashed"><i class="mdi mdi-information" style="font-size:14px"></i><span>信息说明</span></div>
+    </div>
+  </div>
+
+  <!-- Vertical -->
+  <div class="section">
+    <div class="section-title">垂直分割线 <code>vertical</code></div>
+    <div class="demo-row">
+      <div class="demo-row-label">使用场景：内联元素间分隔</div>
+      <span style="font-size:var(--font-size-sm)">首页</span>
+      <span class="divider-vr solid"></span>
+      <span style="font-size:var(--font-size-sm)">笔记</span>
+      <span class="divider-vr solid"></span>
+      <span style="font-size:var(--font-size-sm)">标签</span>
+      <span class="divider-vr dashed"></span>
+      <span style="font-size:var(--font-size-sm);color:var(--color-text-tertiary)">更多</span>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">颜色变体</div>
+      <span style="font-size:var(--font-size-sm)">默认</span>
+      <span class="divider-vr solid"></span>
+      <span style="font-size:var(--font-size-sm)">Strong</span>
+      <span class="divider-vr solid divider-strong"></span>
+      <span style="font-size:var(--font-size-sm)">Accent</span>
+      <span class="divider-vr solid divider-accent"></span>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">样式变体</div>
+      <span style="font-size:var(--font-size-sm)">实线</span>
+      <span class="divider-vr solid"></span>
+      <span style="font-size:var(--font-size-sm)">虚线</span>
+      <span class="divider-vr dashed"></span>
+      <span style="font-size:var(--font-size-sm)">点线</span>
+      <span class="divider-vr dotted"></span>
+    </div>
+  </div>
+
+  <!-- 使用场景 -->
+  <div class="section">
+    <div class="section-title">使用场景</div>
+    <div class="demo-row" style="flex-direction:column;align-items:stretch;gap:var(--space-4)">
+      <div style="padding:var(--space-3);background:var(--color-bg-secondary);border-radius:var(--radius-sm)">
+        <span style="font-family:var(--font-family-ui);font-weight:600;font-size:var(--font-size-sm)">设置页面分区</span>
+        <div style="margin-top:var(--space-3);display:flex;flex-direction:column;gap:var(--space-3)">
+          <div style="display:flex;justify-content:space-between;font-size:var(--font-size-sm)"><span>账户设置</span><span style="color:var(--color-text-tertiary)">修改密码</span></div>
+          <hr class="divider divider-hr dashed divider-default" style="margin:0">
+          <div style="display:flex;justify-content:space-between;font-size:var(--font-size-sm)"><span>通知偏好</span><span style="color:var(--color-text-tertiary)">邮件提醒</span></div>
+          <hr class="divider divider-hr dashed divider-default" style="margin:0">
+          <div style="display:flex;justify-content:space-between;font-size:var(--font-size-sm)"><span>隐私与安全</span><span style="color:var(--color-text-tertiary)">数据导出</span></div>
+        </div>
+      </div>
+      <div class="divider-text solid"><i class="mdi mdi-asterisk" style="font-size:12px;color:var(--color-text-tertiary)"></i></div>
+      <div style="padding:var(--space-3);background:var(--color-bg-secondary);border-radius:var(--radius-sm)">
+        <span style="font-family:var(--font-family-ui);font-weight:600;font-size:var(--font-size-sm)">Breadcrumb 面包屑</span>
+        <div style="margin-top:var(--space-2);display:flex;align-items:center;gap:var(--space-1);font-size:var(--font-size-sm)">
+          <span>我的笔记本</span>
+          <span class="divider-vr solid"></span>
+          <span style="color:var(--color-accent)">设计系统</span>
+          <span class="divider-vr solid"></span>
+          <span style="color:var(--color-text-tertiary)">组件库</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

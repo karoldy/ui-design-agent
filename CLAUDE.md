@@ -9,7 +9,7 @@
 ```
 .
 ├── projects/           # 各项目的设计资产（每个项目一个子目录）
-│   └── example-app/    #   ├── spec/ wireframes/ mockups/ components/ assets/ prototypes/ README.md
+│   └── example-app/    #   ├── spec/ wireframes/ mockups/ components/ assets/ README.md
 ├── templates/           # 项目模板 & 共享组件模板
 │   └── project-template/  # 新项目快速初始化模板
 ├── .claude/
@@ -24,9 +24,12 @@
 project-name/
 ├── spec/          # 设计规格说明、PRD 提炼的设计要点
 ├── wireframes/    # 线框图 / 低保真原型
-├── mockups/       # 高保真视觉稿
+├── mockups/       # 高保真视觉稿（按平台分类）
+│   ├── web/       #   Web 桌面端
+│   ├── mobile/    #   移动端 Web
+│   ├── ios/       #   iOS App 原生
+│   └── android/   #   Android App 原生
 ├── components/    # 组件级设计稿 / 变体
-├── prototypes/    # 交互原型（HTML/CSS 或 React）
 ├── assets/        # 图标、图片等静态资源
 └── README.md      # 项目设计概要
 ```
@@ -40,6 +43,14 @@ project-name/
 - 设计规范文档用 Markdown
 - 图表、流程图可用 Mermaid
 - 组件库可与 Claude Design System (claude.ai/design) 同步
+
+### 字体规范
+
+- **统一使用 Noto Sans 作为默认字体**，未明确指定字体时一律使用 Noto Sans
+- 通过 Google Fonts CDN 引入：`<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">`
+- CSS 字体栈：`font-family: 'Noto Sans', sans-serif;`
+- 代码块使用等宽字体：`'JetBrains Mono', 'SF Mono', 'Cascadia Code', monospace`
+- 仅在项目设计规格中明确声明了其他字体时，才使用该声明字体
 
 ### 图标规范
 
@@ -60,13 +71,12 @@ project-name/
 
 ## Agent 系统
 
-本项目定义了 4 个专用 Agent，覆盖设计工作流的各个阶段。Agent 定义文件位于 `.claude/agents/` 目录下。
+本项目定义了 3 个专用 Agent，覆盖设计工作流的各个阶段。Agent 定义文件位于 `.claude/agents/` 目录下。
 
 | Agent | 定位 | 职责 |
 |-------|------|------|
 | `design-strategist` | 策略层 (Opus) | 需求分析 → 设计方向 → 项目初始化（spec/README/目录结构）。只做方向不做执行 |
 | `ui-designer` | 执行层 (Sonnet) | 线框图、mockup、组件变体、图标资产。可调用 canvas-design / frontend-design / theme-factory |
-| `prototype-builder` | 执行层 (Sonnet) | React + Tailwind 交互原型，用于用户测试和设计验证。可调用 web-artifacts-builder |
 | `design-reviewer` | 审查层 (Opus) | 审查一致性、可用性、无障碍、状态覆盖。输出结构化反馈（问题 + 严重程度 + 建议） |
 
 ### 协作流程
@@ -76,16 +86,15 @@ project-name/
                 ↓
          ui-designer（出视觉稿）
                 ↓
-         prototype-builder（交互原型，可选）
-                ↓
          design-reviewer（审查、反馈）
                 ↓
          迭代细化
 ```
 
-- strategist → designer → prototype-builder 为单向推进，reviewer 可随时介入
+- strategist → designer → reviewer 为主线推进，reviewer 可随时介入
 - 每个 Agent 独立调用，向它清晰描述当前阶段和期望输出
-- Agent 间通过项目目录下的文件传递设计上下文（spec → wireframes → mockups → prototypes）
+- Agent 间通过项目目录下的文件传递设计上下文（spec → wireframes → mockups → components）
+- 交互原型（React + Tailwind）属于开发实现阶段，不在设计工作空间范围内
 
 ## 工作方式
 
@@ -102,7 +111,6 @@ project-name/
 | `canvas-design` | 海报、静态视觉设计 | ui-designer |
 | `frontend-design` | 前端 UI 方向与美学指导 | ui-designer |
 | `theme-factory` | 主题配色与字体搭配 | ui-designer, design-strategist |
-| `web-artifacts-builder` | 复杂交互原型 (React + Tailwind) | prototype-builder |
 | `pdf` / `pptx` / `docx` | 文档类交付物 | 按需 |
 
 ## 工具

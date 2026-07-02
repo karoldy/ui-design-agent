@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SidebarTagTree — 侧边栏标签树 | MindFlow 复合组件</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-bg-primary: #FAFAFA;
+      --color-bg-secondary: #F5F5F5;
+      --color-bg-tertiary: #EEEEEE;
+      --color-text-primary: #1A1A1A;
+      --color-text-secondary: #6B6B6B;
+      --color-text-tertiary: #9E9E9E;
+      --color-text-link: #3B82F6;
+      --color-accent: #3B82F6;
+      --color-accent-hover: #2563EB;
+      --color-accent-soft: #E8F0FE;
+      --color-divider: #E8E8E8;
+
+      --tag-red: #FEE2E2;
+      --tag-orange: #FFEDD5;
+      --tag-yellow: #FEF3C7;
+      --tag-green: #D1FAE5;
+      --tag-teal: #CCFBF1;
+      --tag-blue: #DBEAFE;
+      --tag-purple: #EDE9FE;
+      --tag-pink: #FCE7F3;
+
+      --font-family-ui: 'Inter', system-ui, -apple-system, sans-serif;
+      --font-size-xs: 11px;
+      --font-size-sm: 13px;
+      --font-size-base: 15px;
+
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-full: 9999px;
+
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+      --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-family-ui);
+      background: var(--color-bg-primary);
+      color: var(--color-text-primary);
+      padding: var(--space-6);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .page-title { font-size: 22px; font-weight: 600; margin-bottom: var(--space-2); }
+    .page-desc { font-size: var(--font-size-sm); color: var(--color-text-secondary); margin-bottom: var(--space-6); line-height: 1.5; }
+    .section { margin-bottom: var(--space-8); }
+    .section-title { font-size: var(--font-size-base); font-weight: 600; margin-bottom: var(--space-3); padding-bottom: var(--space-1); border-bottom: 1px solid var(--color-divider); }
+    .section-desc { font-size: var(--font-size-xs); color: var(--color-text-secondary); margin-bottom: var(--space-3); }
+
+    .sidebar-panel {
+      background: var(--color-bg-secondary);
+      border: 1px solid var(--color-divider);
+      border-radius: var(--radius-md);
+      padding: var(--space-3);
+      width: 280px;
+    }
+
+    .preview-label {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-secondary);
+      font-weight: 500;
+      margin-bottom: var(--space-2);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* ===========================
+       Sidebar Tag Tree Component
+       =========================== */
+
+    .tree-section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-1) var(--space-2);
+      margin-bottom: var(--space-1);
+    }
+
+    .tree-section-label {
+      font-size: var(--font-size-xs);
+      font-weight: 600;
+      color: var(--color-text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .tree-section-action {
+      font-size: var(--font-size-xs);
+      color: var(--color-accent);
+      cursor: pointer;
+      padding: 2px 4px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      gap: 2px;
+    }
+    .tree-section-action:hover { background: var(--color-accent-soft); }
+
+    .tree-node { list-style: none; padding: 0; margin: 0; }
+    .tree-node ul { list-style: none; padding: 0; margin: 0; }
+
+    .tree-item {
+      display: flex;
+      align-items: center;
+      padding: var(--space-1) var(--space-2);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: background 120ms ease;
+      gap: var(--space-1);
+      user-select: none;
+    }
+
+    .tree-item:hover {
+      background: var(--color-bg-tertiary);
+    }
+
+    .tree-item.selected,
+    .tree-item.active {
+      background: var(--color-accent-soft);
+      color: var(--color-accent);
+    }
+
+    .tree-item.selected .tree-item-name,
+    .tree-item.active .tree-item-name {
+      font-weight: 600;
+    }
+
+    /* Tag specific: multi-select (Cmd+Click) */
+    .tree-item.multi-selected {
+      background: var(--color-accent-soft);
+      outline: 2px solid var(--color-accent);
+      outline-offset: -2px;
+    }
+
+    .tree-item .tag-dot-big {
+      width: 8px;
+      height: 8px;
+      border-radius: var(--radius-full);
+      flex-shrink: 0;
+    }
+
+    .tree-toggle {
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: var(--color-text-tertiary);
+      transition: transform 200ms ease;
+      font-size: 16px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      border-radius: var(--radius-sm);
+    }
+
+    .tree-toggle:hover {
+      background: var(--color-bg-tertiary);
+      color: var(--color-text-secondary);
+    }
+
+    .tree-toggle.expanded {
+      transform: rotate(90deg);
+    }
+
+    .tree-toggle.hidden {
+      visibility: hidden;
+    }
+
+    .tree-item-name {
+      flex: 1;
+      font-size: var(--font-size-sm);
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-width: 0;
+    }
+
+    .tree-item-count {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-tertiary);
+      margin-left: auto;
+      padding-left: var(--space-2);
+      flex-shrink: 0;
+      font-weight: 500;
+    }
+
+    .tree-children {
+      overflow: hidden;
+      transition: max-height 200ms ease;
+      max-height: 0;
+    }
+
+    .tree-children.expanded {
+      max-height: 1000px;
+    }
+
+    /* Hierarchical indentation: 16px per level */
+    .tree-children .tree-item {
+      padding-left: calc(var(--space-2) + 16px);
+    }
+
+    .tree-children .tree-children .tree-item {
+      padding-left: calc(var(--space-2) + 32px);
+    }
+
+    .tree-children .tree-children .tree-children .tree-item {
+      padding-left: calc(var(--space-2) + 48px);
+    }
+
+    /* Right-click context menu */
+    .tree-ctx-menu {
+      display: none;
+      position: absolute;
+      background: white;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--color-divider);
+      min-width: 170px;
+      padding: var(--space-1) 0;
+      z-index: 200;
+    }
+
+    .tree-ctx-menu.open { display: block; }
+
+    .tree-ctx-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-3);
+      font-size: var(--font-size-sm);
+      color: var(--color-text-primary);
+      cursor: pointer;
+      transition: background 100ms ease;
+    }
+
+    .tree-ctx-item:hover { background: var(--color-bg-secondary); }
+    .tree-ctx-item .mdi { font-size: 16px; color: var(--color-text-secondary); }
+    .tree-ctx-item.danger { color: #EF4444; }
+    .tree-ctx-item.danger .mdi { color: #EF4444; }
+    .tree-ctx-divider { height: 1px; background: var(--color-divider); margin: var(--space-1) 0; }
+
+    /* Tag dot colors */
+    .dot-red { background: #DC2626; }
+    .dot-orange { background: #EA580C; }
+    .dot-yellow { background: #CA8A04; }
+    .dot-green { background: #16A34A; }
+    .dot-teal { background: #0D9488; }
+    .dot-blue { background: #2563EB; }
+    .dot-purple { background: #7C3AED; }
+    .dot-pink { background: #DB2777; }
+
+    /* Empty state */
+    .tag-empty-state {
+      padding: var(--space-6) var(--space-4);
+      text-align: center;
+    }
+
+    .tag-empty-state .mdi {
+      font-size: 32px;
+      color: var(--color-text-tertiary);
+      margin-bottom: var(--space-2);
+      opacity: 0.5;
+    }
+
+    .tag-empty-text {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+      margin-bottom: var(--space-3);
+      line-height: 1.5;
+    }
+
+    .tree-empty-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
+      font-size: var(--font-size-sm);
+      font-weight: 500;
+      padding: var(--space-2) var(--space-3);
+      border: 1px dashed var(--color-accent);
+      border-radius: var(--radius-sm);
+      color: var(--color-accent);
+      background: transparent;
+      cursor: pointer;
+      transition: background 120ms ease;
+    }
+    .tree-empty-btn:hover { background: var(--color-accent-soft); }
+  </style>
+</head>
+<body>
+  <h1 class="page-title">侧边栏标签树 — Sidebar Tag Tree</h1>
+  <p class="page-desc">
+    侧边栏中的层级标签结构。支持层级缩进（每级 16px）、彩色圆点（标签色）、笔记计数。
+    点击标签过滤笔记，Cmd+Click 多选组合筛选，右键菜单操作。
+  </p>
+
+  <!-- ================ SECTION: Full Tag Tree ================ -->
+  <div class="section">
+    <h2 class="section-title">标签层级树</h2>
+    <p class="section-desc">展示多层嵌套标签，每级缩进 16px。点击展开/折叠，点击标签名选中筛选。</p>
+
+    <div class="sidebar-panel">
+      <div class="tree-section-header">
+        <span class="tree-section-label">标签</span>
+        <span class="tree-section-action" onclick="alert('新建标签')"><span class="mdi mdi-plus" style="font-size:14px;"></span> 新建</span>
+      </div>
+
+      <ul class="tree-node">
+        <!-- Tech / AI hierarchy -->
+        <li>
+          <div class="tree-item selected" onclick="toggleTagFolder(this); selectTagItem(this);">
+            <button class="tree-toggle expanded" onclick="event.stopPropagation();toggleTagFolder(this.parentElement);">
+              <span class="mdi mdi-chevron-right"></span>
+            </button>
+            <span class="tag-dot-big dot-blue"></span>
+            <span class="tree-item-name">科技</span>
+            <span class="tree-item-count">18</span>
+          </div>
+          <ul class="tree-children expanded">
+            <li>
+              <div class="tree-item" onclick="toggleTagFolder(this); selectTagItem(this);">
+                <button class="tree-toggle expanded" onclick="event.stopPropagation();toggleTagFolder(this.parentElement);">
+                  <span class="mdi mdi-chevron-right"></span>
+                </button>
+                <span class="tag-dot-big dot-teal"></span>
+                <span class="tree-item-name">AI</span>
+                <span class="tree-item-count">10</span>
+              </div>
+              <ul class="tree-children expanded">
+                <li>
+                  <div class="tree-item" onclick="selectTagItem(this);">
+                    <button class="tree-toggle hidden"><span class="mdi mdi-chevron-right"></span></button>
+                    <span class="tag-dot-big dot-purple"></span>
+                    <span class="tree-item-name">LLM</span>
+                    <span class="tree-item-count">5</span>
+                  </div>
+                </li>
+                <li>
+                  <div class="tree-item" onclick="selectTagItem(this);">
+                    <button class="tree-toggle hidden"><span class="mdi mdi-chevron-right"></span></button>
+                    <span class="tag-dot-big dot-red"></span>
+                    <span class="tree-item-name">Agent</span>
+                    <span class="tree-item-count">3</span>
+                  </div>
+                </li>
+              </ul>
+            </li>
+            <li>
+              <div class="tree-item" onclick="toggleTagFolder(this); selectTagItem(this);">
+                <button class="tree-toggle" onclick="event.stopPropagation();toggleTagFolder(this.parentElement);">
+                  <span class="mdi mdi-chevron-right"></span>
+                </button>
+                <span class="tag-dot-big dot-orange"></span>
+                <span class="tree-item-name">区块链</span>
+                <span class="tree-item-count">8</span>
+              </div>
+              <ul class="tree-children">
+                <li><div class="tree-item" onclick="selectTagItem(this);"><button class="tree-toggle hidden"></button><span class="tag-dot-big dot-orange"></span><span class="tree-item-name">DeFi</span><span class="tree-item-count">3</span></div></li>
+                <li><div class="tree-item" onclick="selectTagItem(this);"><button class="tree-toggle hidden"></button><span class="tag-dot-big dot-orange"></span><span class="tree-item-name">NFT</span><span class="tree-item-count">2</span></div></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <!-- Reading -->
+        <li>
+          <div class="tree-item" onclick="toggleTagFolder(this); selectTagItem(this);">
+            <button class="tree-toggle" onclick="event.stopPropagation();toggleTagFolder(this.parentElement);">
+              <span class="mdi mdi-chevron-right"></span>
+            </button>
+            <span class="tag-dot-big dot-green"></span>
+            <span class="tree-item-name">阅读</span>
+            <span class="tree-item-count">12</span>
+          </div>
+          <ul class="tree-children">
+            <li><div class="tree-item" onclick="selectTagItem(this);"><button class="tree-toggle hidden"></button><span class="tag-dot-big dot-green"></span><span class="tree-item-name">技术书籍</span><span class="tree-item-count">7</span></div></li>
+            <li><div class="tree-item" onclick="selectTagItem(this);"><button class="tree-toggle hidden"></button><span class="tag-dot-big dot-green"></span><span class="tree-item-name">产品思考</span><span class="tree-item-count">3</span></div></li>
+          </ul>
+        </li>
+
+        <!-- Design hierarchy -->
+        <li>
+          <div class="tree-item" onclick="toggleTagFolder(this); selectTagItem(this);">
+            <button class="tree-toggle expanded" onclick="event.stopPropagation();toggleTagFolder(this.parentElement);">
+              <span class="mdi mdi-chevron-right"></span>
+            </button>
+            <span class="tag-dot-big dot-pink"></span>
+            <span class="tree-item-name">设计</span>
+            <span class="tree-item-count">9</span>
+          </div>
+          <ul class="tree-children expanded">
+            <li>
+              <div class="tree-item" onclick="selectTagItem(this);">
+                <button class="tree-toggle hidden"><span class="mdi mdi-chevron-right"></span></button>
+                <span class="tag-dot-big dot-purple"></span>
+                <span class="tree-item-name">UI</span>
+                <span class="tree-item-count">5</span>
+              </div>
+            </li>
+            <li>
+              <div class="tree-item" onclick="selectTagItem(this);">
+                <button class="tree-toggle hidden"><span class="mdi mdi-chevron-right"></span></button>
+                <span class="tag-dot-big dot-blue"></span>
+                <span class="tree-item-name">UX</span>
+                <span class="tree-item-count">4</span>
+              </div>
+            </li>
+          </ul>
+        </li>
+
+        <!-- Flat tags -->
+        <li>
+          <div class="tree-item" onclick="selectTagItem(this);">
+            <button class="tree-toggle hidden"><span class="mdi mdi-chevron-right"></span></button>
+            <span class="tag-dot-big dot-yellow"></span>
+            <span class="tree-item-name">灵感</span>
+            <span class="tree-item-count">7</span>
+          </div>
+        </li>
+        <li>
+          <div class="tree-item" onclick="selectTagItem(this);">
+            <button class="tree-toggle hidden"><span class="mdi mdi-chevron-right"></span></button>
+            <span class="tag-dot-big dot-orange"></span>
+            <span class="tree-item-name">项目</span>
+            <span class="tree-item-count">4</span>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <div style="font-size:var(--font-size-xs);color:var(--color-text-tertiary);margin-top:var(--space-2);display:flex;gap:var(--space-4);flex-wrap:wrap;">
+      <span>✦ 点击箭头展开/折叠</span>
+      <span>✦ 点击标签名筛选</span>
+      <span>✦ Cmd+Click 多选</span>
+      <span>✦ 右键打开菜单</span>
+    </div>
+  </div>
+
+  <!-- ================ SECTION: States & Interactions ================ -->
+  <div class="section">
+    <h2 class="section-title">交互状态 States</h2>
+    <p class="section-desc">标签树节点的 Default / Hover / Selected / Multi-select 状态展示。</p>
+
+    <div class="sidebar-panel">
+      <div class="preview-label">节点状态</div>
+      <ul class="tree-node">
+        <li>
+          <div class="tree-item">
+            <span class="tag-dot-big dot-blue"></span>
+            <span class="tree-item-name">默认状态</span>
+            <span class="tree-item-count">5</span>
+          </div>
+        </li>
+        <li>
+          <div class="tree-item" style="background:var(--color-bg-tertiary);">
+            <span class="tag-dot-big dot-green"></span>
+            <span class="tree-item-name">Hover 状态</span>
+            <span class="tree-item-count">3</span>
+          </div>
+        </li>
+        <li>
+          <div class="tree-item selected">
+            <span class="tag-dot-big dot-purple"></span>
+            <span class="tree-item-name">Selected 状态 (高亮选中)</span>
+            <span class="tree-item-count">8</span>
+          </div>
+        </li>
+        <li>
+          <div class="tree-item multi-selected" onclick="this.classList.toggle('multi-selected');">
+            <span class="tag-dot-big dot-pink"></span>
+            <span class="tree-item-name">Multi-select 多选</span>
+            <span class="tree-item-count">2</span>
+          </div>
+        </li>
+      </ul>
+
+      <div style="margin-top:var(--space-3);padding-top:var(--space-2);border-top:1px solid var(--color-divider);font-size:var(--font-size-xs);color:var(--color-text-secondary);">
+        <span class="mdi mdi-information-outline" style="font-size:14px;vertical-align:middle;margin-right:4px;"></span>
+        Cmd+Click 可切换多选状态，选中标签取交集筛选笔记
+      </div>
+    </div>
+  </div>
+
+  <!-- ================ SECTION: Empty State ================ -->
+  <div class="section">
+    <h2 class="section-title">空状态 Empty State</h2>
+    <p class="section-desc">无标签时显示引导信息和创建入口。</p>
+    <div class="sidebar-panel">
+      <div class="tag-empty-state">
+        <span class="mdi mdi-tag-outline"></span>
+        <div class="tag-empty-text">
+          暂无标签。使用 <code>#</code> 为笔记添加标签，标签会在此自动显示
+        </div>
+        <button class="tree-empty-btn" onclick="alert('创建标签')">
+          <span class="mdi mdi-plus" style="font-size:16px;"></span>
+          创建标签
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================ SECTION: Color Legend ================ -->
+  <div class="section">
+    <h2 class="section-title">标签色板 Color Palette</h2>
+    <p class="section-desc">8 色预设标签，对应 8 种 pastel 色系。彩色圆点使用 vivid 色，标签背景使用 pastel 色。</p>
+    <div class="sidebar-panel">
+      <div class="preview-label">8 色标签</div>
+      <div style="display:flex;flex-direction:column;gap:var(--space-1);padding:var(--space-2) 0;">
+        <div style="display:flex;align-items:center;gap:var(--space-2);padding:var(--space-1) var(--space-2);border-radius:var(--radius-sm);">
+          <span class="tag-dot-big dot-red"></span>
+          <span style="font-size:var(--font-size-sm);">红色 — 重要/紧急</span>
+          <span style="font-size:var(--font-size-xs);color:var(--color-text-tertiary);margin-left:auto;">tag-red</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:var(--space-2);padding:var(--space-1) var(--space-2);border-radius:var(--radius-sm);">
+          <span class="tag-dot-big dot-orange"></span>
+          <span style="font-size:var(--font-size-sm);">橙色 — 项目/待办</span>
+          <span style="font-size:var(--font-size-xs);color:var(--color-text-tertiary);margin-left:auto;">tag-orange</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:var(--space-2);padding:var(--space-1) var(--space-2);border-radius:var(--radius-sm);">
+          <span class="tag-dot-big dot-yellow"></span>
+          <span style="font-size:var(--font-size-sm);">黄色 — 灵感/想法</span>
+          <span style="font-size:var(--font-size-xs);color:var(--color-text-tertiary);margin-left:auto;">tag-yellow</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:var(--space-2);padding:var(--space-1) var(--space-2);border-radius:var(--radius-sm);">
+          <span class="tag-dot-big dot-green"></span>
+          <span style="font-size:var(--font-size-sm);">绿色 — 学习/成长</span>
+          <span style="font-size:var(--font-size-xs);color:var(--color-text-tertiary);margin-left:auto;">tag-green</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:var(--space-2);padding:var(--space-1) var(--space-2);border-radius:var(--radius-sm);">
+          <span class="tag-dot-big dot-teal"></span>
+          <span style="font-size:var(--font-size-sm);">青色 — 技术/开发</span>
+          <span style="font-size:var(--font-size-xs);color:var(--color-text-tertiary);margin-left:auto;">tag-teal</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:var(--space-2);padding:var(--space-1) var(--space-2);border-radius:var(--radius-sm);">
+          <span class="tag-dot-big dot-blue"></span>
+          <span style="font-size:var(--font-size-sm);">蓝色 — 产品/工作</span>
+          <span style="font-size:var(--font-size-xs);color:var(--color-text-tertiary);margin-left:auto;">tag-blue</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:var(--space-2);padding:var(--space-1) var(--space-2);border-radius:var(--radius-sm);">
+          <span class="tag-dot-big dot-purple"></span>
+          <span style="font-size:var(--font-size-sm);">紫色 — 设计/创意</span>
+          <span style="font-size:var(--font-size-xs);color:var(--color-text-tertiary);margin-left:auto;">tag-purple</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:var(--space-2);padding:var(--space-1) var(--space-2);border-radius:var(--radius-sm);">
+          <span class="tag-dot-big dot-pink"></span>
+          <span style="font-size:var(--font-size-sm);">粉色 — 生活/兴趣</span>
+          <span style="font-size:var(--font-size-xs);color:var(--color-text-tertiary);margin-left:auto;">tag-pink</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function toggleTagFolder(item) {
+      const toggle = item.querySelector('.tree-toggle');
+      const children = item.nextElementSibling;
+      if (!children || !children.classList.contains('tree-children')) return;
+      toggle.classList.toggle('expanded');
+      children.classList.toggle('expanded');
+    }
+
+    let activeTag = null;
+    function selectTagItem(item) {
+      // If Cmd is held (simulated via Ctrl key), toggle multi-select
+      if (window.event && (window.event.metaKey || window.event.ctrlKey)) {
+        item.classList.toggle('multi-selected');
+        return;
+      }
+
+      // Single selection
+      if (activeTag) {
+        activeTag.classList.remove('selected');
+      }
+      item.classList.add('selected');
+      activeTag = item;
+    }
+
+    // Handle Cmd+Click for multi-select
+    document.querySelectorAll('.tree-item').forEach(item => {
+      item.addEventListener('click', function(e) {
+        if (e.metaKey || e.ctrlKey) {
+          e.preventDefault();
+          this.classList.toggle('multi-selected');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

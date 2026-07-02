@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MarkdownToolbar — Markdown 编辑器工具栏 | MindFlow 复合组件</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-bg-primary: #FAFAFA;
+      --color-bg-secondary: #F5F5F5;
+      --color-bg-tertiary: #EEEEEE;
+      --color-text-primary: #1A1A1A;
+      --color-text-secondary: #6B6B6B;
+      --color-text-tertiary: #9E9E9E;
+      --color-accent: #3B82F6;
+      --color-accent-hover: #2563EB;
+      --color-accent-soft: #E8F0FE;
+      --color-divider: #E8E8E8;
+
+      --font-family-ui: 'Inter', system-ui, -apple-system, sans-serif;
+      --font-size-xs: 11px;
+      --font-size-sm: 13px;
+      --font-size-base: 15px;
+
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-full: 9999px;
+
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+      --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-family-ui);
+      background: var(--color-bg-primary);
+      color: var(--color-text-primary);
+      padding: var(--space-6);
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    .page-title { font-size: 22px; font-weight: 600; margin-bottom: var(--space-2); }
+    .page-desc { font-size: var(--font-size-sm); color: var(--color-text-secondary); margin-bottom: var(--space-6); line-height: 1.5; }
+    .section { margin-bottom: var(--space-8); }
+    .section-title { font-size: var(--font-size-base); font-weight: 600; margin-bottom: var(--space-3); padding-bottom: var(--space-1); border-bottom: 1px solid var(--color-divider); }
+    .section-desc { font-size: var(--font-size-xs); color: var(--color-text-secondary); margin-bottom: var(--space-3); }
+
+    .toolbar-wrapper {
+      background: white;
+      border-radius: var(--radius-md);
+      padding: var(--space-2) var(--space-3);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--color-divider);
+      margin-bottom: var(--space-4);
+    }
+
+    .toolbar-wrapper.focused {
+      border-color: var(--color-accent);
+      box-shadow: 0 0 0 1px var(--color-accent), var(--shadow-sm);
+    }
+
+    .demo-editor-area {
+      background: white;
+      border: 1px solid var(--color-divider);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+
+    /* =============================
+       Markdown Toolbar Component
+       ============================= */
+
+    .md-toolbar {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+      padding: var(--space-2) var(--space-3);
+      background: white;
+      border-bottom: 1px solid var(--color-divider);
+      flex-wrap: wrap;
+    }
+
+    .md-toolbar.compact {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      padding: var(--space-1) var(--space-2);
+    }
+
+    .md-toolbar.compact::-webkit-scrollbar {
+      height: 2px;
+    }
+
+    .md-toolbar.compact::-webkit-scrollbar-thumb {
+      background: var(--color-divider);
+      border-radius: var(--radius-full);
+    }
+
+    /* Tool groups */
+    .tool-group {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .tool-separator {
+      width: 1px;
+      height: 20px;
+      background: var(--color-divider);
+      margin: 0 var(--space-1);
+      flex-shrink: 0;
+    }
+
+    /* Tool buttons */
+    .tool-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+      border: none;
+      background: transparent;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      color: var(--color-text-secondary);
+      transition: background 120ms ease, color 120ms ease;
+      position: relative;
+    }
+
+    .tool-btn .mdi {
+      font-size: 18px;
+    }
+
+    .tool-btn:hover {
+      background: var(--color-bg-tertiary);
+      color: var(--color-text-primary);
+    }
+
+    .tool-btn:active {
+      background: var(--color-bg-secondary);
+    }
+
+    .tool-btn.active {
+      background: var(--color-accent-soft);
+      color: var(--color-accent);
+    }
+
+    .tool-btn.active:hover {
+      background: #D0E4FF;
+    }
+
+    .tool-btn:disabled,
+    .tool-btn.disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    .tool-btn.text-btn {
+      width: auto;
+      padding: 0 8px;
+      font-size: var(--font-size-xs);
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      color: var(--color-text-secondary);
+    }
+
+    .tool-btn.text-btn:hover {
+      color: var(--color-text-primary);
+    }
+
+    .tool-btn.text-btn.active {
+      color: var(--color-accent);
+    }
+
+    .tool-btn .tooltip {
+      display: none;
+      position: absolute;
+      bottom: calc(100% + 6px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1A1A1A;
+      color: white;
+      font-size: 10px;
+      padding: 3px 7px;
+      border-radius: var(--radius-sm);
+      white-space: nowrap;
+      font-weight: 500;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .tool-btn:hover .tooltip {
+      display: block;
+    }
+
+    /* More dropdown */
+    .more-dropdown {
+      display: none;
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: white;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--color-divider);
+      min-width: 180px;
+      padding: var(--space-1) 0;
+      z-index: 100;
+    }
+
+    .more-dropdown.open { display: block; }
+
+    .more-dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-3);
+      font-size: var(--font-size-sm);
+      color: var(--color-text-primary);
+      cursor: pointer;
+      transition: background 100ms ease;
+    }
+    .more-dropdown-item:hover { background: var(--color-bg-secondary); }
+    .more-dropdown-item .mdi { font-size: 16px; color: var(--color-text-secondary); }
+    .more-dropdown-divider { height: 1px; background: var(--color-divider); margin: var(--space-1) 0; }
+
+    .preview-label {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-secondary);
+      font-weight: 500;
+      margin-bottom: var(--space-2);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .demo-editor-content {
+      padding: var(--space-4);
+      min-height: 120px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-size: var(--font-size-base);
+      line-height: 1.7;
+      color: var(--color-text-primary);
+    }
+
+    .demo-editor-content p { margin-bottom: var(--space-2); }
+    .demo-editor-content .placeholder-text {
+      color: var(--color-text-tertiary);
+    }
+
+    .state-row {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      flex-wrap: wrap;
+      padding: var(--space-3);
+      background: var(--color-bg-secondary);
+      border-radius: var(--radius-md);
+      margin-top: var(--space-3);
+    }
+
+    .state-label {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-secondary);
+      font-weight: 500;
+      margin-right: var(--space-2);
+    }
+
+    .state-chip {
+      font-size: var(--font-size-xs);
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      background: white;
+      border: 1px solid var(--color-divider);
+      font-weight: 500;
+    }
+
+    .state-chip.active { background: var(--color-accent-soft); border-color: var(--color-accent); color: var(--color-accent); }
+    .state-chip.disabled { opacity: 0.4; }
+  </style>
+</head>
+<body>
+  <h1 class="page-title">Markdown 工具栏 — Markdown Toolbar</h1>
+  <p class="page-desc">
+    编辑器顶部的格式化工具栏。包含格式化按钮组（H1-H3、Bold、Italic 等）、插入按钮组（Checklist、列表等）、
+    媒体按钮组（图片、链接）、以及视图控制。支持桌面完整版和移动端精简版。
+  </p>
+
+  <!-- ================ SECTION: Full Toolbar (Desktop) ================ -->
+  <div class="section">
+    <h2 class="section-title">完整工具栏 — Desktop</h2>
+    <p class="section-desc">桌面端完整工具栏，所有按钮分组可见。悬停查看 tooltip 提示。</p>
+
+    <div class="demo-editor-area">
+      <div class="md-toolbar" id="toolbar-full">
+        <!-- Formatting group -->
+        <div class="tool-group">
+          <button class="tool-btn" data-active="false">
+            <span class="mdi mdi-format-header-1"></span>
+            <span class="tooltip">标题1 (Cmd+1)</span>
+          </button>
+          <button class="tool-btn" data-active="false">
+            <span class="mdi mdi-format-header-2"></span>
+            <span class="tooltip">标题2 (Cmd+2)</span>
+          </button>
+          <button class="tool-btn" data-active="false">
+            <span class="mdi mdi-format-header-3"></span>
+            <span class="tooltip">标题3 (Cmd+3)</span>
+          </button>
+        </div>
+
+        <div class="tool-separator"></div>
+
+        <div class="tool-group">
+          <button class="tool-btn" id="btn-bold" onclick="this.classList.toggle('active');">
+            <span class="mdi mdi-format-bold"></span>
+            <span class="tooltip">加粗 (Cmd+B)</span>
+          </button>
+          <button class="tool-btn" id="btn-italic" onclick="this.classList.toggle('active');">
+            <span class="mdi mdi-format-italic"></span>
+            <span class="tooltip">斜体 (Cmd+I)</span>
+          </button>
+          <button class="tool-btn" id="btn-strikethrough" onclick="this.classList.toggle('active');">
+            <span class="mdi mdi-format-strikethrough-variant"></span>
+            <span class="tooltip">删除线 (Cmd+Shift+S)</span>
+          </button>
+          <button class="tool-btn" id="btn-code" onclick="this.classList.toggle('active');">
+            <span class="mdi mdi-code-tags"></span>
+            <span class="tooltip">行内代码 (Cmd+E)</span>
+          </button>
+        </div>
+
+        <div class="tool-separator"></div>
+
+        <!-- Insert group -->
+        <div class="tool-group">
+          <button class="tool-btn" onclick="this.classList.toggle('active');">
+            <span class="mdi mdi-format-list-checks"></span>
+            <span class="tooltip">清单 (Cmd+Shift+C)</span>
+          </button>
+          <button class="tool-btn" onclick="this.classList.toggle('active');">
+            <span class="mdi mdi-format-list-bulleted"></span>
+            <span class="tooltip">无序列表 (Cmd+Shift+L)</span>
+          </button>
+          <button class="tool-btn" onclick="this.classList.toggle('active');">
+            <span class="mdi mdi-format-list-numbered"></span>
+            <span class="tooltip">有序列表 (Cmd+Shift+O)</span>
+          </button>
+          <button class="tool-btn">
+            <span class="mdi mdi-format-quote-open"></span>
+            <span class="tooltip">引用 (Cmd+Shift+Q)</span>
+          </button>
+          <button class="tool-btn">
+            <span class="mdi mdi-minus"></span>
+            <span class="tooltip">分割线 (Cmd+Shift+-)</span>
+          </button>
+        </div>
+
+        <div class="tool-separator"></div>
+
+        <!-- Media group -->
+        <div class="tool-group">
+          <button class="tool-btn">
+            <span class="mdi mdi-image-outline"></span>
+            <span class="tooltip">插入图片</span>
+          </button>
+          <button class="tool-btn">
+            <span class="mdi mdi-link-variant"></span>
+            <span class="tooltip">插入链接 (Cmd+K)</span>
+          </button>
+        </div>
+
+        <div class="tool-separator"></div>
+
+        <!-- View controls -->
+        <div class="tool-group" style="margin-left:auto;">
+          <button class="tool-btn" id="btn-focus" onclick="this.classList.toggle('active');">
+            <span class="mdi mdi-google-glass"></span>
+            <span class="tooltip">专注模式 (Cmd+Shift+F)</span>
+          </button>
+          <button class="tool-btn" id="btn-preview" onclick="this.classList.toggle('active');">
+            <span class="mdi mdi-eye-outline"></span>
+            <span class="tooltip">预览切换 (Cmd+Shift+P)</span>
+          </button>
+          <div class="tool-separator"></div>
+          <div style="position:relative;">
+            <button class="tool-btn" onclick="event.stopPropagation();this.nextElementSibling.classList.toggle('open');">
+              <span class="mdi mdi-dots-vertical"></span>
+              <span class="tooltip">更多</span>
+            </button>
+            <div class="more-dropdown" onclick="event.stopPropagation();">
+              <div class="more-dropdown-item"><span class="mdi mdi-undo-variant"></span>撤销 (Cmd+Z)</div>
+              <div class="more-dropdown-item"><span class="mdi mdi-redo-variant"></span>重做 (Cmd+Shift+Z)</div>
+              <div class="more-dropdown-divider"></div>
+              <div class="more-dropdown-item"><span class="mdi mdi-code-json"></span>切换源码</div>
+              <div class="more-dropdown-item"><span class="mdi mdi-format-align-left"></span>文字方向</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="demo-editor-content">
+        <p><strong># 观察者模式在前端状态管理中的应用</strong></p>
+        <p>观察者模式是一种行为设计模式，它定义了对象之间的一对多依赖关系。</p>
+        <p>当一个对象的状态发生变化时，所有依赖于它的对象都会得到通知并自动更新。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================ SECTION: Button States ================ -->
+  <div class="section">
+    <h2 class="section-title">按钮状态 States</h2>
+    <p class="section-desc">工具栏按钮的 Default / Hover / Active / Disabled 四种状态。</p>
+
+    <div class="state-row">
+      <span class="state-label">按钮状态：</span>
+      <div style="display:flex;gap:2px;">
+        <button class="tool-btn"><span class="mdi mdi-format-bold"></span></button>
+        <span style="font-size:var(--font-size-xs);color:var(--color-text-tertiary);align-self:center;">Default</span>
+      </div>
+      <div style="display:flex;gap:2px;">
+        <button class="tool-btn" style="background:var(--color-bg-tertiary);color:var(--color-text-primary);"><span class="mdi mdi-format-italic"></span></button>
+        <span style="font-size:var(--font-size-xs);color:var(--color-text-tertiary);align-self:center;">Hover</span>
+      </div>
+      <div style="display:flex;gap:2px;">
+        <button class="tool-btn active"><span class="mdi mdi-format-strikethrough-variant"></span></button>
+        <span style="font-size:var(--font-size-xs);color:var(--color-text-tertiary);align-self:center;">Active</span>
+      </div>
+      <div style="display:flex;gap:2px;">
+        <button class="tool-btn disabled"><span class="mdi mdi-code-tags"></span></button>
+        <span style="font-size:var(--font-size-xs);color:var(--color-text-tertiary);align-self:center;">Disabled</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================ SECTION: Compact Toolbar (Mobile) ================ -->
+  <div class="section">
+    <h2 class="section-title">精简工具栏 — Mobile</h2>
+    <p class="section-desc">移动端精简版，仅显示 B / I / 列表等常用按钮，更多操作折叠到 ⋯ 菜单中。</p>
+
+    <div class="demo-editor-area">
+      <div class="md-toolbar compact">
+        <div class="tool-group">
+          <button class="tool-btn" onclick="this.classList.toggle('active');"><span class="mdi mdi-format-bold"></span></button>
+          <button class="tool-btn" onclick="this.classList.toggle('active');"><span class="mdi mdi-format-italic"></span></button>
+          <button class="tool-btn"><span class="mdi mdi-format-list-bulleted"></span></button>
+          <button class="tool-btn"><span class="mdi mdi-format-list-numbered"></span></button>
+        </div>
+        <div class="tool-separator"></div>
+        <div class="tool-group">
+          <button class="tool-btn"><span class="mdi mdi-image-outline"></span></button>
+          <button class="tool-btn"><span class="mdi mdi-link-variant"></span></button>
+        </div>
+        <div style="flex:1;"></div>
+        <div style="position:relative;">
+          <button class="tool-btn" onclick="event.stopPropagation();this.nextElementSibling.classList.toggle('open');">
+            <span class="mdi mdi-dots-horizontal"></span>
+          </button>
+          <div class="more-dropdown" onclick="event.stopPropagation();">
+            <div class="more-dropdown-item"><span class="mdi mdi-format-header-1"></span>H1</div>
+            <div class="more-dropdown-item"><span class="mdi mdi-format-header-2"></span>H2</div>
+            <div class="more-dropdown-item"><span class="mdi mdi-format-header-3"></span>H3</div>
+            <div class="more-dropdown-divider"></div>
+            <div class="more-dropdown-item"><span class="mdi mdi-format-strikethrough-variant"></span>删除线</div>
+            <div class="more-dropdown-item"><span class="mdi mdi-code-tags"></span>代码</div>
+            <div class="more-dropdown-item"><span class="mdi mdi-format-quote-open"></span>引用</div>
+            <div class="more-dropdown-divider"></div>
+            <div class="more-dropdown-item"><span class="mdi mdi-google-glass"></span>专注模式</div>
+            <div class="more-dropdown-item"><span class="mdi mdi-eye-outline"></span>预览</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="demo-editor-content" style="min-height:80px;">
+        <p class="placeholder-text">开始写作…</p>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:var(--space-2);margin-top:var(--space-2);align-items:center;font-size:var(--font-size-xs);color:var(--color-text-secondary);">
+      <span class="mdi mdi-cellphone" style="font-size:16px;"></span>
+      移动端工具栏：< 768px 宽度，水平滚动
+    </div>
+  </div>
+
+  <!-- ================ SECTION: Interactive Demo ================ -->
+  <div class="section">
+    <h2 class="section-title">交互演示 Interactive Demo</h2>
+    <p class="section-desc">在下方工具栏中点击按钮体验 Active 状态切换。H1/H2/H3 互斥，Bold/Italic 可同时激活。</p>
+
+    <div class="demo-editor-area">
+      <div class="md-toolbar">
+        <div class="tool-group">
+          <button class="tool-btn header-btn" onclick="exclusiveHeader(this);"><span class="mdi mdi-format-header-1"></span><span class="tooltip">H1</span></button>
+          <button class="tool-btn header-btn" onclick="exclusiveHeader(this);"><span class="mdi mdi-format-header-2"></span><span class="tooltip">H2</span></button>
+          <button class="tool-btn header-btn" onclick="exclusiveHeader(this);"><span class="mdi mdi-format-header-3"></span><span class="tooltip">H3</span></button>
+        </div>
+        <div class="tool-separator"></div>
+        <div class="tool-group">
+          <button class="tool-btn" onclick="this.classList.toggle('active');"><span class="mdi mdi-format-bold"></span><span class="tooltip">Bold</span></button>
+          <button class="tool-btn" onclick="this.classList.toggle('active');"><span class="mdi mdi-format-italic"></span><span class="tooltip">Italic</span></button>
+          <button class="tool-btn" onclick="this.classList.toggle('active');"><span class="mdi mdi-format-strikethrough-variant"></span><span class="tooltip">Strikethrough</span></button>
+          <button class="tool-btn" onclick="this.classList.toggle('active');"><span class="mdi mdi-code-tags"></span><span class="tooltip">Code</span></button>
+        </div>
+        <div class="tool-separator"></div>
+        <div class="tool-group">
+          <button class="tool-btn" onclick="this.classList.toggle('active');"><span class="mdi mdi-format-list-checks"></span><span class="tooltip">Checklist</span></button>
+          <button class="tool-btn" onclick="this.classList.toggle('active');"><span class="mdi mdi-format-list-bulleted"></span><span class="tooltip">Bullet List</span></button>
+          <button class="tool-btn" onclick="this.classList.toggle('active');"><span class="mdi mdi-format-list-numbered"></span><span class="tooltip">Ordered List</span></button>
+        </div>
+        <div class="tool-separator"></div>
+        <div class="tool-group" style="margin-left:auto;">
+          <button class="tool-btn" onclick="this.classList.toggle('active');"><span class="mdi mdi-google-glass"></span><span class="tooltip">Focus Mode</span></button>
+          <button class="tool-btn" onclick="this.classList.toggle('active');"><span class="mdi mdi-eye-outline"></span><span class="tooltip">Preview</span></button>
+        </div>
+      </div>
+      <div class="demo-editor-content" style="min-height:80px;font-size:var(--font-size-sm);color:var(--color-text-secondary);">
+        <p>← 尝试点击上方工具栏按钮，观察 Active 状态切换效果。</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Close more dropdowns on document click
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.more-dropdown') && !e.target.closest('.tool-btn')) {
+        document.querySelectorAll('.more-dropdown.open').forEach(m => m.classList.remove('open'));
+      }
+    });
+
+    // Exclusive header selection
+    function exclusiveHeader(clicked) {
+      document.querySelectorAll('.header-btn').forEach(btn => btn.classList.remove('active'));
+      clicked.classList.add('active');
+    }
+
+    // Active state demonstration: toggle classes on click
+    document.querySelectorAll('.md-toolbar .tool-btn[data-active]').forEach(btn => {
+      btn.addEventListener('click', function() {
+        this.classList.toggle('active');
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MindFlow — &#32534;&#36753;&#22120; | &#32447;&#27147;&#22270;</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+  <style>
+    :root {
+      --color-bg-primary: #FAFAFA;
+      --color-bg-secondary: #F5F5F5;
+      --color-bg-tertiary: #EEEEEE;
+      --color-text-primary: #1A1A1A;
+      --color-text-secondary: #6B6B6B;
+      --color-text-tertiary: #9E9E9E;
+      --color-text-link: #3B82F6;
+      --color-text-on-accent: #FFFFFF;
+      --color-accent: #3B82F6;
+      --color-accent-hover: #2563EB;
+      --color-accent-soft: #E8F0FE;
+      --color-success: #10B981;
+      --color-warning: #F59E0B;
+      --color-error: #EF4444;
+      --tag-red: #FEE2E2;
+      --tag-orange: #FFEDD5;
+      --tag-yellow: #FEF3C7;
+      --tag-green: #D1FAE5;
+      --tag-teal: #CCFBF1;
+      --tag-blue: #DBEAFE;
+      --tag-purple: #EDE9FE;
+      --tag-pink: #FCE7F3;
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-full: 9999px;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+      --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
+      --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+      --space-10: 40px;
+      --space-12: 48px;
+      --space-16: 64px;
+      --font-size-xs: 11px;
+      --font-size-sm: 13px;
+      --font-size-base: 15px;
+      --font-size-lg: 18px;
+      --font-size-xl: 22px;
+      --font-size-2xl: 28px;
+      --font-size-3xl: 36px;
+      --sidebar-width: 240px;
+      --topnav-height: 48px;
+      --statusbar-height: 28px;
+      --editor-max-width: 680px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--color-bg-primary); color: var(--color-text-primary); font-size: var(--font-size-base); line-height: 1.5; -webkit-font-smoothing: antialiased; }
+    .ui-font { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+
+    .app-layout { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+    .main-area { display: flex; flex: 1; overflow: hidden; }
+
+    /* Top Nav */
+    .top-nav { height: var(--topnav-height); min-height: var(--topnav-height); background: var(--color-bg-primary); border-bottom: 1px solid #E8E8E8; display: flex; align-items: center; padding: 0 var(--space-4); gap: var(--space-4); z-index: 200; }
+    .top-nav .logo { display: flex; align-items: center; gap: var(--space-2); font-family: 'Inter', system-ui, sans-serif; font-weight: 600; font-size: var(--font-size-lg); color: var(--color-text-primary); width: var(--sidebar-width); padding-left: var(--space-1); flex-shrink: 0; }
+    .top-nav .logo i { color: var(--color-accent); font-size: 22px; }
+    .top-nav .back-btn { display: flex; align-items: center; gap: var(--space-1); padding: var(--space-1) var(--space-2); border: none; background: transparent; border-radius: var(--radius-sm); color: var(--color-text-secondary); cursor: pointer; font-family: 'Inter', system-ui, sans-serif; font-size: var(--font-size-sm); transition: background 150ms ease; }
+    .top-nav .back-btn:hover { background: var(--color-bg-tertiary); color: var(--color-text-primary); }
+    .top-nav .back-btn i { font-size: 18px; }
+    .top-nav .search-bar { flex: 1; max-width: 440px; position: relative; margin: 0 auto; }
+    .top-nav .search-bar input { width: 100%; height: 32px; border: 1px solid #E0E0E0; border-radius: var(--radius-sm); background: var(--color-bg-secondary); padding: 0 var(--space-8) 0 32px; font-size: var(--font-size-sm); font-family: inherit; color: var(--color-text-primary); outline: none; }
+    .top-nav .search-bar input::placeholder { color: var(--color-text-tertiary); }
+    .top-nav .search-bar .search-icon { position: absolute; left: 8px; top: 50%; transform: translateY(-50%); color: var(--color-text-tertiary); font-size: 16px; pointer-events: none; }
+    .top-nav .search-bar .kbd-hint { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); font-size: var(--font-size-xs); color: var(--color-text-tertiary); background: var(--color-bg-tertiary); padding: 1px 5px; border-radius: 3px; font-family: 'Inter', system-ui, sans-serif; pointer-events: none; }
+    .top-nav .actions { display: flex; align-items: center; gap: var(--space-2); margin-left: auto; }
+    .top-nav .actions .icon-btn { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border: none; background: transparent; border-radius: var(--radius-sm); color: var(--color-text-secondary); cursor: pointer; font-size: 20px; transition: background 150ms ease, color 150ms ease; }
+    .top-nav .actions .icon-btn:hover { background: var(--color-bg-tertiary); color: var(--color-text-primary); }
+    .top-nav .actions .avatar { width: 28px; height: 28px; border-radius: var(--radius-full); background: var(--color-accent-soft); display: flex; align-items: center; justify-content: center; font-size: var(--font-size-xs); font-weight: 600; color: var(--color-accent); cursor: pointer; }
+
+    /* Sidebar */
+    .sidebar { width: var(--sidebar-width); min-width: var(--sidebar-width); background: var(--color-bg-secondary); border-right: 1px solid #E8E8E8; display: flex; flex-direction: column; overflow-y: auto; padding: var(--space-3) 0; flex-shrink: 0; }
+    .sidebar::-webkit-scrollbar { width: 4px; }
+    .sidebar::-webkit-scrollbar-thumb { background: #D0D0D0; border-radius: 2px; }
+    .sidebar-section { padding: 0 var(--space-3); margin-bottom: var(--space-2); }
+    .sidebar-section-title { display: flex; align-items: center; justify-content: space-between; font-family: 'Inter', system-ui, sans-serif; font-size: var(--font-size-xs); font-weight: 600; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.5px; padding: var(--space-2) var(--space-1); margin-top: var(--space-1); }
+    .sidebar-item { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-1) var(--space-2); border-radius: var(--radius-sm); cursor: pointer; font-size: var(--font-size-sm); color: var(--color-text-primary); transition: background 150ms ease; height: 30px; position: relative; }
+    .sidebar-item:hover { background: var(--color-bg-tertiary); }
+    .sidebar-item.active { background: var(--color-accent-soft); color: var(--color-accent); }
+    .sidebar-item i { font-size: 16px; color: var(--color-text-secondary); flex-shrink: 0; }
+    .sidebar-item.active i { color: var(--color-accent); }
+    .sidebar-item .item-label { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .sidebar-item .item-count { font-size: var(--font-size-xs); color: var(--color-text-tertiary); background: var(--color-bg-tertiary); padding: 0 6px; border-radius: 8px; min-width: 18px; text-align: center; line-height: 16px; }
+    .sidebar-item .expand-icon { font-size: 14px; color: var(--color-text-tertiary); transition: transform 150ms ease; }
+    .sidebar-item .expand-icon.expanded { transform: rotate(90deg); }
+    .sidebar-item.nested-1 { padding-left: 28px; }
+    .sidebar-divider { height: 1px; background: #E8E8E8; margin: var(--space-2) var(--space-3); }
+    .sidebar-spacer { flex: 1; }
+    .space-usage { padding: var(--space-3); border-top: 1px solid #E8E8E8; }
+    .space-usage .usage-bar { height: 4px; background: var(--color-bg-tertiary); border-radius: 2px; overflow: hidden; margin-bottom: var(--space-1); }
+    .space-usage .usage-bar .fill { height: 100%; width: 35%; background: var(--color-accent); border-radius: 2px; }
+    .space-usage .usage-text { font-size: var(--font-size-xs); color: var(--color-text-tertiary); font-family: 'Inter', system-ui, sans-serif; }
+
+    /* ===== Editor Content ===== */
+    .content { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: var(--color-bg-primary); }
+
+    /* Editor Toolbar */
+    .editor-toolbar { display: flex; align-items: center; justify-content: center; padding: var(--space-2) var(--space-5); border-bottom: 1px solid #E8E8E8; flex-shrink: 0; gap: var(--space-1); transition: opacity 200ms ease; }
+    .toolbar-group { display: flex; align-items: center; gap: 2px; padding: 0 var(--space-1); }
+    .toolbar-divider { width: 1px; height: 20px; background: #E0E0E0; margin: 0 var(--space-1); }
+    .toolbar-btn { width: 30px; height: 28px; display: flex; align-items: center; justify-content: center; border: none; background: transparent; border-radius: var(--radius-sm); color: var(--color-text-secondary); cursor: pointer; font-size: 15px; font-family: 'Inter', system-ui, sans-serif; transition: background 100ms ease, color 100ms ease; }
+    .toolbar-btn:hover { background: var(--color-bg-tertiary); color: var(--color-text-primary); }
+    .toolbar-btn.active { background: var(--color-accent-soft); color: var(--color-accent); }
+    .toolbar-btn .label { font-size: var(--font-size-xs); font-weight: 500; }
+    .toolbar-btn .label-bold { font-weight: 700; }
+    .toolbar-btn .label-italic { font-style: italic; }
+    .toolbar-separator { width: 1px; height: 20px; background: #E0E0E0; margin: 0 var(--space-1); }
+    .toolbar-right { margin-left: auto; display: flex; align-items: center; gap: 2px; }
+
+    /* Editor Body */
+    .editor-body { flex: 1; overflow-y: auto; display: flex; justify-content: center; padding: var(--space-10) var(--space-5) var(--space-16); }
+    .editor-body::-webkit-scrollbar { width: 6px; }
+    .editor-body::-webkit-scrollbar-thumb { background: #D0D0D0; border-radius: 3px; }
+    .editor-container { width: 100%; max-width: var(--editor-max-width); }
+
+    /* Title */
+    .editor-title { font-family: 'Inter', system-ui, sans-serif; font-size: var(--font-size-2xl); font-weight: 600; line-height: 1.3; color: var(--color-text-primary); border: none; outline: none; width: 100%; padding: var(--space-2) 0; margin-bottom: var(--space-6); background: transparent; resize: none; }
+    .editor-title::placeholder { color: var(--color-text-tertiary); }
+
+    /* Rendered Markdown */
+    .editor-content { font-size: var(--font-size-base); line-height: 1.7; color: var(--color-text-primary); }
+    .editor-content h1 { font-family: 'Inter', system-ui, sans-serif; font-size: var(--font-size-3xl); font-weight: 600; margin: var(--space-8) 0 var(--space-4); line-height: 1.3; }
+    .editor-content h2 { font-family: 'Inter', system-ui, sans-serif; font-size: var(--font-size-2xl); font-weight: 600; margin: var(--space-6) 0 var(--space-3); line-height: 1.3; }
+    .editor-content h3 { font-family: 'Inter', system-ui, sans-serif; font-size: var(--font-size-xl); font-weight: 600; margin: var(--space-5) 0 var(--space-2); line-height: 1.3; }
+    .editor-content h4 { font-family: 'Inter', system-ui, sans-serif; font-size: var(--font-size-lg); font-weight: 600; margin: var(--space-4) 0 var(--space-2); line-height: 1.3; }
+    .editor-content p { margin-bottom: var(--space-4); }
+    .editor-content strong { font-weight: 600; }
+    .editor-content em { font-style: italic; }
+    .editor-content ul, .editor-content ol { margin: var(--space-2) 0 var(--space-4); padding-left: var(--space-6); }
+    .editor-content li { margin-bottom: var(--space-1); }
+    .editor-content blockquote { border-left: 3px solid var(--color-accent); padding-left: var(--space-4); margin: var(--space-4) 0; color: var(--color-text-secondary); font-style: italic; }
+    .editor-content code { font-family: 'SF Mono', 'Cascadia Code', 'Fira Code', monospace; background: var(--color-bg-secondary); padding: 2px 6px; border-radius: 3px; font-size: 0.9em; }
+    .editor-content pre { background: var(--color-bg-secondary); border-radius: var(--radius-md); padding: var(--space-4); margin: var(--space-4) 0; overflow-x: auto; }
+    .editor-content pre code { background: transparent; padding: 0; }
+    .editor-content .wikilink { color: var(--color-text-link); cursor: pointer; background: var(--color-accent-soft); padding: 1px 6px; border-radius: 3px; text-decoration: none; transition: background 150ms ease; }
+    .editor-content .wikilink:hover { background: #D0E2FF; text-decoration: underline; }
+    .editor-content .hashtag { display: inline-flex; align-items: center; padding: 0 8px; height: 22px; border-radius: var(--radius-sm); font-size: var(--font-size-xs); font-weight: 400; margin: 0 2px; }
+    .editor-content .hashtag.hash-blue { background: var(--tag-blue); color: #1e40af; }
+    .editor-content .hashtag.hash-green { background: var(--tag-green); color: #065f46; }
+    .editor-content .hashtag.hash-purple { background: var(--tag-purple); color: #5b21b6; }
+    .editor-content .hashtag.hash-orange { background: var(--tag-orange); color: #92400e; }
+    .editor-content .task-list { list-style: none; padding-left: 0; }
+    .editor-content .task-list li { display: flex; align-items: flex-start; gap: var(--space-2); }
+    .editor-content .task-list input[type="checkbox"] { margin-top: 4px; width: 16px; height: 16px; accent-color: var(--color-accent); }
+    .editor-content hr { border: none; border-top: 1px solid #E0E0E0; margin: var(--space-6) 0; }
+    .editor-content .cursor-line { position: relative; }
+    .editor-content .cm-editor { /* placeholder for code mirror */ }
+
+    /* Block handle (drag handle shown on hover) */
+    .editor-content .block-handle { display: none; position: absolute; left: -24px; top: 4px; width: 20px; height: 20px; align-items: center; justify-content: center; color: var(--color-text-tertiary); cursor: grab; font-size: 14px; user-select: none; }
+    .editor-content .block-wrapper { position: relative; }
+    .editor-content .block-wrapper:hover > .block-handle { display: flex; }
+
+    /* Auto-save indicator */
+    .auto-save-indicator { position: fixed; bottom: var(--statusbar-height); left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: var(--space-2); background: var(--color-bg-primary); border: 1px solid #E0E0E0; border-bottom: none; border-radius: var(--radius-md) var(--radius-md) 0 0; padding: var(--space-1) var(--space-3); font-size: var(--font-size-xs); color: var(--color-text-tertiary); box-shadow: var(--shadow-sm); z-index: 100; }
+    .auto-save-indicator .save-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+    .auto-save-indicator .save-dot.saved { background: var(--color-success); }
+    .auto-save-indicator .save-dot.saving { background: var(--color-warning); animation: pulse 1s ease-in-out infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+    /* Bottom Status Bar */
+    .bottom-status { height: var(--statusbar-height); min-height: var(--statusbar-height); background: var(--color-bg-secondary); border-top: 1px solid #E8E8E8; display: flex; align-items: center; justify-content: space-between; padding: 0 var(--space-4); font-size: var(--font-size-xs); color: var(--color-text-tertiary); }
+    .bottom-status .status-left { display: flex; align-items: center; gap: var(--space-3); }
+    .bottom-status .status-left .sync-indicator { display: flex; align-items: center; gap: var(--space-1); }
+    .bottom-status .status-left .sync-indicator .sync-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--color-success); display: inline-block; }
+
+    /* Wiki-link suggestion dropdown */
+    .link-suggest { position: absolute; background: var(--color-bg-primary); border: 1px solid #E0E0E0; border-radius: var(--radius-md); box-shadow: var(--shadow-md); padding: var(--space-1) 0; min-width: 280px; z-index: 300; font-size: var(--font-size-sm); }
+    .link-suggest-header { padding: var(--space-1) var(--space-3); font-size: var(--font-size-xs); color: var(--color-text-tertiary); font-family: 'Inter', system-ui, sans-serif; text-transform: uppercase; letter-spacing: 0.5px; }
+    .link-suggest-item { padding: var(--space-1) var(--space-3); display: flex; align-items: center; gap: var(--space-2); cursor: pointer; transition: background 100ms ease; }
+    .link-suggest-item:hover, .link-suggest-item.active { background: var(--color-bg-tertiary); }
+    .link-suggest-item i { font-size: 16px; color: var(--color-text-tertiary); }
+    .link-suggest-item .suggest-label { flex: 1; }
+    .link-suggest-item .suggest-type { font-size: var(--font-size-xs); color: var(--color-text-tertiary); }
+  </style>
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Top Navigation -->
+    <header class="top-nav">
+      <div class="logo">
+        <i class="mdi mdi-brain"></i>
+        <span>MindFlow</span>
+      </div>
+      <div class="search-bar">
+        <i class="mdi mdi-magnify search-icon"></i>
+        <input type="text" placeholder="&#25628;&#32034;&#31508;&#35760;… (&#8984;K)" />
+        <span class="kbd-hint">&#8984;K</span>
+      </div>
+      <div class="actions">
+        <button class="icon-btn" title="&#35774;&#32622;"><i class="mdi mdi-cog-outline"></i></button>
+        <div class="avatar">T</div>
+      </div>
+    </header>
+
+    <!-- Main Area -->
+    <div class="main-area">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="sidebar-section">
+          <div class="sidebar-item">
+            <i class="mdi mdi-note-text-outline"></i>
+            <span class="item-label">&#25152;&#26377;&#31508;&#35760;</span>
+            <span class="item-count">23</span>
+          </div>
+          <div class="sidebar-item">
+            <i class="mdi mdi-calendar-text-outline"></i>
+            <span class="item-label">&#27599;&#26085;&#31508;&#35760;</span>
+          </div>
+          <div class="sidebar-item">
+            <i class="mdi mdi-delete-outline"></i>
+            <span class="item-label">&#22238;&#25910;&#31449;</span>
+          </div>
+        </div>
+        <div class="sidebar-divider"></div>
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">
+            <span>&#31508;&#35760;&#26412;</span>
+            <i class="mdi mdi-plus add-icon" style="font-size:14px;cursor:pointer;color:var(--color-text-tertiary);"></i>
+          </div>
+          <div class="sidebar-item">
+            <i class="mdi mdi-chevron-right expand-icon expanded"></i>
+            <i class="mdi mdi-folder-open-outline"></i>
+            <span class="item-label">&#24037;&#20316;</span>
+            <span class="item-count">8</span>
+          </div>
+          <div class="sidebar-item nested-1 active">
+            <i class="mdi mdi-file-document-outline"></i>
+            <span class="item-label">&#20135;&#21697;&#35774;&#35745;</span>
+            <span class="item-count">5</span>
+          </div>
+        </div>
+        <div class="sidebar-divider"></div>
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">
+            <span>&#26631;&#31614;</span>
+            <i class="mdi mdi-plus add-icon" style="font-size:14px;cursor:pointer;color:var(--color-text-tertiary);"></i>
+          </div>
+          <div class="sidebar-item">
+            <i class="mdi mdi-tag-outline" style="color: var(--color-accent);"></i>
+            <span class="item-label">&#31185;&#25216;/AI</span>
+            <span class="item-count">6</span>
+          </div>
+          <div class="sidebar-item">
+            <i class="mdi mdi-tag-outline" style="color: var(--tag-purple);"></i>
+            <span class="item-label">&#38405;&#35835;</span>
+            <span class="item-count">5</span>
+          </div>
+        </div>
+        <div class="sidebar-spacer"></div>
+        <div class="space-usage">
+          <div class="usage-bar"><div class="fill"></div></div>
+          <div class="usage-text">&#20351;&#29992; 35% &#183; 1.2 GB / 5 GB</div>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="content">
+        <!-- Editor Toolbar -->
+        <div class="editor-toolbar">
+          <div class="toolbar-group">
+            <button class="toolbar-btn" title="Heading 1"><span class="label">H1</span></button>
+            <button class="toolbar-btn" title="Heading 2"><span class="label">H2</span></button>
+            <button class="toolbar-btn" title="Heading 3"><span class="label">H3</span></button>
+          </div>
+          <div class="toolbar-separator"></div>
+          <div class="toolbar-group">
+            <button class="toolbar-btn" title="Bold"><span class="label-bold">B</span></button>
+            <button class="toolbar-btn" title="Italic"><span class="label-italic">I</span></button>
+            <button class="toolbar-btn" title="Strikethrough"><span class="label" style="text-decoration:line-through;">S</span></button>
+          </div>
+          <div class="toolbar-separator"></div>
+          <div class="toolbar-group">
+            <button class="toolbar-btn" title="Code"><i class="mdi mdi-code-tags" style="font-size:16px;"></i></button>
+            <button class="toolbar-btn" title="Blockquote"><i class="mdi mdi-format-quote-open" style="font-size:16px;"></i></button>
+            <button class="toolbar-btn" title="Divider"><span class="label">&mdash;</span></button>
+          </div>
+          <div class="toolbar-separator"></div>
+          <div class="toolbar-group">
+            <button class="toolbar-btn" title="Checklist"><i class="mdi mdi-checkbox-marked-outline" style="font-size:16px;"></i></button>
+            <button class="toolbar-btn" title="Bullet List"><i class="mdi mdi-format-list-bulleted" style="font-size:16px;"></i></button>
+            <button class="toolbar-btn" title="Ordered List"><i class="mdi mdi-format-list-numbered" style="font-size:16px;"></i></button>
+          </div>
+          <div class="toolbar-separator"></div>
+          <div class="toolbar-group">
+            <button class="toolbar-btn" title="Image"><i class="mdi mdi-image-outline" style="font-size:16px;"></i></button>
+            <button class="toolbar-btn" title="Link"><i class="mdi mdi-link-variant" style="font-size:16px;"></i></button>
+          </div>
+          <div class="toolbar-right">
+            <button class="toolbar-btn active" title="Focus Mode"><i class="mdi mdi-fullscreen" style="font-size:16px;"></i></button>
+            <button class="toolbar-btn" title="Preview"><i class="mdi mdi-eye-outline" style="font-size:16px;"></i></button>
+            <button class="toolbar-btn" title="More"><i class="mdi mdi-dots-horizontal" style="font-size:16px;"></i></button>
+          </div>
+        </div>
+
+        <!-- Editor Body -->
+        <div class="editor-body">
+          <div class="editor-container">
+            <!-- Title -->
+            <div class="editor-title" contenteditable="true">AI Agent &#22312;&#20114;&#32852;&#32593;&#34892;&#19994;&#30340;&#24212;&#29992;&#21033;&#29992;&#27969;&#31243;&#30340;&#27719;&#24635;&#27010;&#36848;</div>
+
+            <!-- Rendered Markdown Content -->
+            <div class="editor-content">
+              <div class="block-wrapper">
+                <div class="block-handle"><i class="mdi mdi-drag-vertical"></i></div>
+                <p>&#38543;&#30528; AI Agent &#25216;&#26415;&#30340;&#26085;&#36235;&#25104;&#29087;&#65292;&#36234;&#26469;&#36234;&#22810;&#30340;&#20114;&#32852;&#32593;&#20844;&#21496;&#24320;&#22987;&#23558; Agent &#25972;&#21512;&#21040;&#20135;&#21697;&#27969;&#31243;&#20013;&#12290;&#26412;&#25991;&#23545;&#36825;&#19968;&#36235;&#21183;&#36827;&#34892;&#31995;&#32479;&#24615;&#22238;&#39038;&#12290;</p>
+              </div>
+
+              <div class="block-wrapper">
+                <div class="block-handle"><i class="mdi mdi-drag-vertical"></i></div>
+                <h2>1. &#25512;&#33616;&#31995;&#32479;&#20013;&#30340; Agent &#24212;&#29992;</h2>
+              </div>
+
+              <div class="block-wrapper">
+                <div class="block-handle"><i class="mdi mdi-drag-vertical"></i></div>
+                <p>&#20256;&#32479;&#25512;&#33616;&#31995;&#32479;&#22810;&#37319;&#29992;&#21327;&#21516;&#28388;&#27874;&#25110;&#22522;&#20110;&#20869;&#23481;&#30340;&#26041;&#27861;&#12290; <strong>Agent &#21017;&#33021;&#22815;&#26356;&#21152;&#28789;&#27963;&#22320;&#29702;&#35299;&#29992;&#25143;&#30340;&#23454;&#26102;&#24847;&#22270;</strong>&#65292;&#36827;&#34892;&#22810;&#27493;&#39588;&#25512;&#29702;&#12290;</p>
+              </div>
+
+              <div class="block-wrapper">
+                <div class="block-handle"><i class="mdi mdi-drag-vertical"></i></div>
+                <blockquote>
+                  <p>&#8220;Agent &#19981;&#26159;&#31616;&#21333;&#30340;&#20989;&#25968;&#35843;&#29992;&#65292;&#32780;&#26159;&#19968;&#20010;&#21487;&#20197;&#36827;&#34892;&#35745;&#21010;&#12289;&#25191;&#34892;&#21644;&#21453;&#39304;&#30340;&#33258;&#25105;&#36941;&#20195;&#24490;&#29615;&#12290;&#8221; &#8212; LangChain &#25991;&#26723;</p>
+                </blockquote>
+              </div>
+
+              <div class="block-wrapper">
+                <div class="block-handle"><i class="mdi mdi-drag-vertical"></i></div>
+                <h2>2. &#23458;&#26381;&#26234;&#33021;&#20307;</h2>
+              </div>
+
+              <div class="block-wrapper">
+                <div class="block-handle"><i class="mdi mdi-drag-vertical"></i></div>
+                <p>&#22810;&#23478;&#20844;&#21496;&#24050;&#32463;&#19978;&#32447;&#20102; Agent &#24418;&#24577;&#30340;&#23458;&#26381;&#26234;&#33021;&#20307;&#65292;&#20854;&#26680;&#24515;&#27969;&#31243;&#22914;&#19979;&#65306;</p>
+              </div>
+
+              <div class="block-wrapper">
+                <div class="block-handle"><i class="mdi mdi-drag-vertical"></i></div>
+                <ol>
+                  <li><strong>&#24847;&#22270;&#35782;&#21035;</strong> &#8212; &#20998;&#26512;&#29992;&#25143;&#35821;&#26009;&#65292;&#21028;&#26029;&#38382;&#39064;&#31867;&#22411;</li>
+                  <li><strong>&#20449;&#24687;&#26816;&#32034;</strong> &#8212; &#35775;&#38382;&#30693;&#35782;&#24211;&#25110;&#25991;&#26723;&#65292;&#26597;&#25214;&#30456;&#20851;&#31572;&#26696;</li>
+                  <li><strong>&#31572;&#22797;&#29983;&#25104;</strong> &#8212; &#32467;&#21512;&#29992;&#25143;&#24773;&#26223;&#29983;&#25104;&#20154;&#24615;&#21270;&#22238;&#22797;</li>
+                  <li><strong>&#36229;&#20986;&#33539;&#22260;&#36716;&#20154;&#24037;</strong> &#8212; &#22788;&#29702;&#19981;&#20102;&#30340;&#38382;&#39064;&#33258;&#21160;&#36716;&#20154;&#24037;</li>
+                </ol>
+              </div>
+
+              <div class="block-wrapper">
+                <div class="block-handle"><i class="mdi mdi-drag-vertical"></i></div>
+                <p>&#36825;&#19982; <a class="wikilink" href="#">[[RAG &#25216;&#26415;&#26041;&#26696;&#30740;&#31350;&#8212;Embedding &#27169;&#22411;&#36873;&#22411;]]</a> &#20013;&#25552;&#21040;&#30340;&#26816;&#32034;&#22686;&#24378;&#29983;&#25104;&#25216;&#26415;&#19968;&#33268;&#12290;</p>
+              </div>
+
+              <div class="block-wrapper">
+                <div class="block-handle"><i class="mdi mdi-drag-vertical"></i></div>
+                <h2>3. &#20869;&#23481;&#29983;&#25104;&#19982;&#32534;&#36753; Agent</h2>
+              </div>
+
+              <div class="block-wrapper">
+                <div class="block-handle"><i class="mdi mdi-drag-vertical"></i></div>
+                <p>&#20869;&#23481;&#29983;&#25104;&#26159; Agent &#26368;&#24191;&#27867;&#30340;&#24212;&#29992;&#22330;&#26223;&#20043;&#19968;&#65292;&#28041;&#21450;&#30340;&#31867;&#22411;&#21253;&#25324;&#65306;</p>
+              </div>
+
+              <div class="block-wrapper">
+                <div class="block-handle"><i class="mdi mdi-drag-vertical"></i></div>
+                <ul>
+                  <li><strong>&#25991;&#26696;&#29983;&#25104;</strong> &#8212; &#22522;&#20110;&#35746;&#21333;&#33258;&#21160;&#29983;&#25104;&#21830;&#21697;&#25551;&#36848;&#12289;&#24191;&#21578;&#35821;</li>
+                  <li><strong>&#35270;&#39057;&#21019;&#20316;</strong> &#8212; &#33258;&#21160;&#20999;&#29255;&#12289;&#21152;&#23383;&#24149;&#12289;&#29983;&#25104;&#23553;&#38754;</li>
+                  <li><strong>&#20195;&#30721;&#29983;&#25104;</strong> &#8212; &#29983;&#25104;&#20195;&#30721;&#12289;&#20803;&#32452;&#20214;&#27979;&#35797;&#12289;Code Review</li>
+                </ul>
+              </div>
+
+              <div class="block-wrapper">
+                <div class="block-handle"><i class="mdi mdi-drag-vertical"></i></div>
+                <p>&#22260;&#32469;&#36825;&#20123;&#20869;&#23481;&#29983;&#25104;&#30340;&#27969;&#31243;&#65292;&#25105;&#20204;&#26377;&#24456;&#22810;&#21487;&#20197;&#21442;&#32771;&#30340;&#26368;&#20339;&#23454;&#36341;&#65292;&#27604;&#22914; <span class="hashtag hash-blue">#AI Agent</span> <span class="hashtag hash-purple">#LLM</span> <span class="hashtag hash-orange">#RAG</span> &#31561;&#26631;&#31614;&#19979;&#30340;&#35752;&#35770;&#12290;</p>
+              </div>
+
+              <div class="block-wrapper">
+                <div class="block-handle"><i class="mdi mdi-drag-vertical"></i></div>
+                <pre><code>// Agent &#30340;&#26680;&#24515;&#25191;&#34892;&#36923;&#36753;&#31034;&#20363;
+class Agent {
+  async execute(task) {
+    const plan = await this.plan(task);
+    const result = await this.executeSteps(plan);
+    return this.reflect(result);
+  }
+}</code></pre>
+              </div>
+
+              <div class="block-wrapper">
+                <div class="block-handle"><i class="mdi mdi-drag-vertical"></i></div>
+                <h2>4. &#24635;&#32467;</h2>
+              </div>
+
+              <div class="block-wrapper">
+                <div class="block-handle"><i class="mdi mdi-drag-vertical"></i></div>
+                <p>AI Agent &#22312;&#20114;&#32852;&#32593;&#34892;&#19994;&#30340;&#24212;&#29992;&#24050;&#32463;&#36229;&#36234;&#20102;&#35797;&#39564;&#38454;&#27573;&#65292;&#27491;&#22312;&#25104;&#20026;&#26680;&#24515;&#27969;&#31243;&#30340;&#19968;&#37096;&#20998;&#12290;&#24314;&#35758;&#21508;&#22242;&#38431;&#26681;&#25454;&#33258;&#36523;&#19994;&#21153;&#22330;&#26223;&#65292;&#20174;&#23567;&#33539;&#22260;&#33853;&#22320;&#24320;&#22987;&#36880;&#27493;&#25193;&#23637;&#12290;</p>
+              </div>
+
+              <div class="block-wrapper">
+                <div class="block-handle"><i class="mdi mdi-drag-vertical"></i></div>
+                <p>&#21442;&#32771;&#38142;&#25509;&#65306; <a class="wikilink" href="#">[[MindFlow &#20135;&#21697;&#35774;&#35745;&#26041;&#26696; v0.1]]</a> &#12289; <a class="wikilink" href="#">[[LangChain Agent &#26550;&#26500;]]</a></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Auto-save Indicator -->
+    <div class="auto-save-indicator">
+      <span class="save-dot saved"></span>
+      <span>&#24050;&#33258;&#21160;&#20445;&#23384;</span>
+      <span>&#183;</span>
+      <span>2 &#31186;&#21069;</span>
+    </div>
+
+    <!-- Bottom Status Bar -->
+    <footer class="bottom-status">
+      <div class="status-left">
+        <div class="sync-indicator">
+          <span class="sync-dot"></span>
+          <span>&#24050;&#21516;&#27493;</span>
+        </div>
+        <span>&#183;</span>
+        <span>2 &#31186;&#21069;</span>
+      </div>
+      <div class="status-right">
+        <span>23 &#31508;&#35760;</span>
+        <span>&#183;</span>
+        <span>0 &#22833;&#36133;</span>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Toolbar button interaction
+    document.querySelectorAll('.toolbar-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        if (this.classList.contains('active')) {
+          this.classList.remove('active');
+        } else {
+          this.classList.add('active');
+        }
+      });
+    });
+
+    // Sidebar interaction
+    document.querySelectorAll('.sidebar-item').forEach(item => {
+      item.addEventListener('click', function() {
+        document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

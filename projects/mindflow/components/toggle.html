@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Toggle 开关 | MindFlow 组件</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-bg-primary: #FAFAFA; --color-bg-secondary: #F5F5F5; --color-bg-tertiary: #EEEEEE;
+      --color-text-primary: #1A1A1A; --color-text-secondary: #6B6B6B; --color-text-tertiary: #9E9E9E;
+      --color-text-link: #3B82F6; --color-text-on-accent: #FFFFFF;
+      --color-accent: #3B82F6; --color-accent-hover: #2563EB; --color-accent-soft: #E8F0FE;
+      --color-success: #10B981; --color-warning: #F59E0B; --color-error: #EF4444;
+      --font-family-ui: 'Inter', system-ui, -apple-system, sans-serif;
+      --font-family-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-size-xs: 11px; --font-size-sm: 13px; --font-size-base: 15px;
+      --font-size-lg: 18px; --font-size-xl: 22px; --font-size-2xl: 28px; --font-size-3xl: 36px;
+      --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 20px; --space-6: 24px;
+      --space-8: 32px; --space-10: 40px; --space-12: 48px; --space-16: 64px;
+      --radius-sm: 4px; --radius-md: 8px; --radius-lg: 12px; --radius-xl: 16px; --radius-full: 9999px;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05); --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
+      --shadow-lg: 0 8px 24px rgba(0,0,0,0.12); --shadow-xl: 0 16px 48px rgba(0,0,0,0.16);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: var(--font-family-body); background: var(--color-bg-primary); color: var(--color-text-primary); padding: var(--space-6); -webkit-font-smoothing: antialiased; }
+    .page-header { margin-bottom: var(--space-8); display: flex; align-items: flex-start; gap: var(--space-4); }
+    .page-header a { color: var(--color-accent); text-decoration: none; font-size: var(--font-size-sm); font-family: var(--font-family-ui); display: flex; align-items: center; gap: 4px; padding: 6px 12px; border-radius: var(--radius-sm); transition: background 0.15s; flex-shrink: 0; }
+    .page-header a:hover { background: var(--color-accent-soft); }
+    .page-header h1 { font-family: var(--font-family-ui); font-size: var(--font-size-2xl); font-weight: 700; }
+    .page-header p { color: var(--color-text-secondary); font-size: var(--font-size-sm); margin-top: var(--space-1); }
+    .section { margin-bottom: var(--space-10); }
+    .section-title { font-family: var(--font-family-ui); font-size: var(--font-size-base); font-weight: 600; padding-bottom: var(--space-2); margin-bottom: var(--space-4); border-bottom: 1px solid #E8E8E8; display: flex; align-items: center; gap: var(--space-2); }
+    .section-title code { font-size: var(--font-size-xs); background: var(--color-bg-secondary); padding: 2px 8px; border-radius: var(--radius-sm); color: var(--color-text-secondary); }
+    .demo-row { display: flex; flex-wrap: wrap; align-items: flex-start; gap: var(--space-4); padding: var(--space-4); background: #fff; border: 1px solid #E8E8E8; border-radius: var(--radius-md); margin-bottom: var(--space-3); }
+    .demo-row-label { width: 100%; font-size: var(--font-size-xs); color: var(--color-text-secondary); font-family: var(--font-family-ui); font-weight: 500; margin-bottom: -4px; }
+
+    /* ===== TOGGLE BASE ===== */
+    .toggle-wrapper {
+      display: inline-flex; align-items: center; gap: var(--space-2); cursor: pointer; user-select: none;
+    }
+    .toggle-track {
+      position: relative; border-radius: var(--radius-full);
+      background: #C0C0C0; transition: background 0.2s ease; flex-shrink: 0;
+    }
+    .toggle-thumb {
+      position: absolute; top: 2px; left: 2px; border-radius: 50%;
+      background: #fff; transition: transform 0.2s ease; box-shadow: var(--shadow-sm);
+    }
+
+    /* OFF */
+    .toggle-track.off { background: #C0C0C0; }
+
+    /* ON */
+    .toggle-track.on { background: var(--color-accent); }
+    .toggle-track.on .toggle-thumb { transform: translateX(calc(100% + 2px)); }
+
+    /* Disabled */
+    .toggle-wrapper.disabled { cursor: not-allowed; }
+    .toggle-wrapper.disabled .toggle-track { opacity: 0.4; }
+
+    /* Focus */
+    .toggle-wrapper.focused .toggle-track { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+
+    /* Hover */
+    .toggle-wrapper:hover:not(.disabled) .toggle-track { filter: brightness(0.95); }
+    .toggle-wrapper:hover:not(.disabled) .toggle-track.on { filter: brightness(1.1); }
+
+    /* Sizes */
+    .toggle-sm .toggle-track { width: 28px; height: 16px; }
+    .toggle-sm .toggle-thumb { width: 12px; height: 12px; }
+    .toggle-sm.on .toggle-thumb { transform: translateX(12px); }
+
+    .toggle-md .toggle-track { width: 36px; height: 20px; }
+    .toggle-md .toggle-thumb { width: 16px; height: 16px; }
+    .toggle-md.on .toggle-thumb { transform: translateX(16px); }
+
+    .toggle-lg .toggle-track { width: 44px; height: 24px; }
+    .toggle-lg .toggle-thumb { width: 20px; height: 20px; }
+    .toggle-lg.on .toggle-thumb { transform: translateX(20px); }
+
+    .toggle-label-text {
+      font-family: var(--font-family-body); font-size: var(--font-size-sm); color: var(--color-text-primary); line-height: 1.4;
+    }
+    .toggle-label-desc {
+      font-size: var(--font-size-xs); color: var(--color-text-secondary); line-height: 1.3;
+    }
+  </style>
+</head>
+<body>
+  <div class="page-header">
+    <a href="index.html"><i class="mdi mdi-arrow-left"></i> 返回</a>
+    <div>
+      <h1>Toggle 开关</h1>
+      <p>On/Off/Disabled 状态，3 种尺寸，支持标签文字（左/右）与描述文字。</p>
+    </div>
+  </div>
+
+  <!-- 状态 -->
+  <div class="section">
+    <div class="section-title">状态 <code>states</code></div>
+    <div class="demo-row">
+      <div class="demo-row-label">Off</div>
+      <div class="toggle-wrapper toggle-md">
+        <span class="toggle-track off"><span class="toggle-thumb"></span></span>
+      </div>
+      <div class="toggle-wrapper toggle-md" style="gap:var(--space-3)">
+        <span class="toggle-label-text">开启通知</span>
+        <span class="toggle-track off"><span class="toggle-thumb"></span></span>
+      </div>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">On</div>
+      <div class="toggle-wrapper toggle-md">
+        <span class="toggle-track on"><span class="toggle-thumb"></span></span>
+      </div>
+      <div class="toggle-wrapper toggle-md" style="gap:var(--space-3)">
+        <span class="toggle-label-text">自动保存</span>
+        <span class="toggle-track on"><span class="toggle-thumb"></span></span>
+      </div>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">Disabled (Off)</div>
+      <div class="toggle-wrapper toggle-md disabled">
+        <span class="toggle-track off"><span class="toggle-thumb"></span></span>
+      </div>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">Disabled (On)</div>
+      <div class="toggle-wrapper toggle-md disabled">
+        <span class="toggle-track on"><span class="toggle-thumb"></span></span>
+      </div>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">Focused (focus-visible)</div>
+      <div class="toggle-wrapper toggle-md focused">
+        <span class="toggle-track off"><span class="toggle-thumb"></span></span>
+      </div>
+      <div class="toggle-wrapper toggle-md focused">
+        <span class="toggle-track on"><span class="toggle-thumb"></span></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 尺寸 -->
+  <div class="section">
+    <div class="section-title">尺寸 <code>size</code></div>
+    <div class="demo-row">
+      <div class="demo-row-label">Small (16x28)</div>
+      <div class="toggle-wrapper toggle-sm"><span class="toggle-track off"><span class="toggle-thumb"></span></span></div>
+      <div class="toggle-wrapper toggle-sm"><span class="toggle-track on"><span class="toggle-thumb"></span></span></div>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">Default (20x36)</div>
+      <div class="toggle-wrapper toggle-md"><span class="toggle-track off"><span class="toggle-thumb"></span></span></div>
+      <div class="toggle-wrapper toggle-md"><span class="toggle-track on"><span class="toggle-thumb"></span></span></div>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">Large (24x44)</div>
+      <div class="toggle-wrapper toggle-lg"><span class="toggle-track off"><span class="toggle-thumb"></span></span></div>
+      <div class="toggle-wrapper toggle-lg"><span class="toggle-track on"><span class="toggle-thumb"></span></span></div>
+    </div>
+  </div>
+
+  <!-- 带标签 -->
+  <div class="section">
+    <div class="section-title">带标签文字 <code>label positioning</code></div>
+    <div class="demo-row">
+      <div class="demo-row-label">标签在左侧</div>
+      <div class="toggle-wrapper toggle-md" style="gap:var(--space-3)">
+        <span class="toggle-label-text">暗色模式</span>
+        <span class="toggle-track off"><span class="toggle-thumb"></span></span>
+      </div>
+      <div class="toggle-wrapper toggle-md" style="gap:var(--space-3)">
+        <span class="toggle-label-text">专注模式</span>
+        <span class="toggle-track on"><span class="toggle-thumb"></span></span>
+      </div>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">标签在右侧</div>
+      <div class="toggle-wrapper toggle-md" style="gap:var(--space-3)">
+        <span class="toggle-track off"><span class="toggle-thumb"></span></span>
+        <span class="toggle-label-text">开启同步</span>
+      </div>
+      <div class="toggle-wrapper toggle-md" style="gap:var(--space-3)">
+        <span class="toggle-track on"><span class="toggle-thumb"></span></span>
+        <span class="toggle-label-text">Markdown 预览</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 带描述 -->
+  <div class="section">
+    <div class="section-title">带描述文字 <code>with description</code></div>
+    <div class="demo-row">
+      <div class="toggle-wrapper toggle-md" style="gap:var(--space-3);align-items:flex-start">
+        <span class="toggle-track on"><span class="toggle-thumb"></span></span>
+        <span>
+          <div class="toggle-label-text">自动保存</div>
+          <div class="toggle-label-desc">输入停止 2 秒后自动保存笔记</div>
+        </span>
+      </div>
+      <div class="toggle-wrapper toggle-md" style="gap:var(--space-3);align-items:flex-start">
+        <span class="toggle-track off"><span class="toggle-thumb"></span></span>
+        <span>
+          <div class="toggle-label-text">离线模式</div>
+          <div class="toggle-label-desc">允许在没有网络时使用本地缓存</div>
+        </span>
+      </div>
+    </div>
+    <div class="demo-row">
+      <div class="toggle-wrapper toggle-md" style="gap:var(--space-3);align-items:flex-start;max-width:360px">
+        <span>
+          <div class="toggle-label-text">编辑器专注模式</div>
+          <div class="toggle-label-desc">隐藏工具栏和侧边栏，仅保留编辑器区域</div>
+        </span>
+        <span class="toggle-track on"><span class="toggle-thumb"></span></span>
+      </div>
+      <div class="toggle-wrapper toggle-md" style="gap:var(--space-3);align-items:flex-start;max-width:360px">
+        <span>
+          <div class="toggle-label-text">通知提醒</div>
+          <div class="toggle-label-desc">接收协作邀请和更新提醒</div>
+        </span>
+        <span class="toggle-track off"><span class="toggle-thumb"></span></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 交互演示 -->
+  <div class="section">
+    <div class="section-title">交互演示 <code>click to toggle</code></div>
+    <div class="demo-row">
+      <div class="toggle-wrapper toggle-md" style="gap:var(--space-3)" onclick="toggleInteractive(this)">
+        <span class="toggle-label-text">点击切换</span>
+        <span class="toggle-track off" id="interactive-track"><span class="toggle-thumb" id="interactive-thumb"></span></span>
+      </div>
+      <div class="toggle-wrapper toggle-md" style="gap:var(--space-3);align-items:flex-start" onclick="toggleInteractive(this)">
+        <span class="toggle-track off"><span class="toggle-thumb"></span></span>
+        <span>
+          <div class="toggle-label-text">点击切换（带描述）</div>
+          <div class="toggle-label-desc">点击开关查看切换效果</div>
+        </span>
+      </div>
+    </div>
+    <script>
+      function toggleInteractive(el) {
+        const track = el.querySelector('.toggle-track');
+        track.classList.toggle('on');
+        track.classList.toggle('off');
+      }
+    </script>
+  </div>
+</body>
+</html>

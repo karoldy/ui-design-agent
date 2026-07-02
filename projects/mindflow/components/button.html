@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Button 按钮 | MindFlow 组件</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-bg-primary: #FAFAFA;
+      --color-bg-secondary: #F5F5F5;
+      --color-bg-tertiary: #EEEEEE;
+      --color-text-primary: #1A1A1A;
+      --color-text-secondary: #6B6B6B;
+      --color-text-tertiary: #9E9E9E;
+      --color-text-link: #3B82F6;
+      --color-text-on-accent: #FFFFFF;
+      --color-accent: #3B82F6;
+      --color-accent-hover: #2563EB;
+      --color-accent-soft: #E8F0FE;
+      --color-success: #10B981;
+      --color-warning: #F59E0B;
+      --color-error: #EF4444;
+      --font-family-ui: 'Inter', system-ui, -apple-system, sans-serif;
+      --font-family-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-size-xs: 11px;
+      --font-size-sm: 13px;
+      --font-size-base: 15px;
+      --font-size-lg: 18px;
+      --font-size-xl: 22px;
+      --font-size-2xl: 28px;
+      --font-size-3xl: 36px;
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+      --space-10: 40px;
+      --space-12: 48px;
+      --space-16: 64px;
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-xl: 16px;
+      --radius-full: 9999px;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+      --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
+      --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+      --shadow-xl: 0 16px 48px rgba(0,0,0,0.16);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: var(--font-family-body);
+      background: var(--color-bg-primary);
+      color: var(--color-text-primary);
+      padding: var(--space-6);
+      -webkit-font-smoothing: antialiased;
+    }
+    .page-header {
+      margin-bottom: var(--space-8);
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-4);
+    }
+    .page-header a {
+      color: var(--color-accent);
+      text-decoration: none;
+      font-size: var(--font-size-sm);
+      font-family: var(--font-family-ui);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      transition: background 0.15s;
+      flex-shrink: 0;
+    }
+    .page-header a:hover { background: var(--color-accent-soft); }
+    .page-header h1 {
+      font-family: var(--font-family-ui);
+      font-size: var(--font-size-2xl);
+      font-weight: 700;
+    }
+    .page-header p {
+      color: var(--color-text-secondary);
+      font-size: var(--font-size-sm);
+      margin-top: var(--space-1);
+    }
+    .section {
+      margin-bottom: var(--space-10);
+    }
+    .section-title {
+      font-family: var(--font-family-ui);
+      font-size: var(--font-size-base);
+      font-weight: 600;
+      padding-bottom: var(--space-2);
+      margin-bottom: var(--space-4);
+      border-bottom: 1px solid #E8E8E8;
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+    .section-title code {
+      font-size: var(--font-size-xs);
+      background: var(--color-bg-secondary);
+      padding: 2px 8px;
+      border-radius: var(--radius-sm);
+      color: var(--color-text-secondary);
+    }
+    .demo-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-4);
+      background: #fff;
+      border: 1px solid #E8E8E8;
+      border-radius: var(--radius-md);
+      margin-bottom: var(--space-3);
+    }
+    .demo-row-label {
+      width: 100%;
+      font-size: var(--font-size-xs);
+      color: var(--color-text-secondary);
+      font-family: var(--font-family-ui);
+      font-weight: 500;
+      margin-bottom: -4px;
+    }
+
+    /* ===== BUTTON BASE ===== */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-family: var(--font-family-ui);
+      font-weight: 500;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.15s ease;
+      text-decoration: none;
+      white-space: nowrap;
+      position: relative;
+      outline: none;
+    }
+    .btn .mdi { font-size: 16px; }
+    .btn:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 2px;
+    }
+    .btn:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+
+    /* Sizes */
+    .btn-sm { height: 32px; padding: 0 12px; font-size: var(--font-size-sm); }
+    .btn-sm .mdi { font-size: 14px; }
+    .btn-md { height: 36px; padding: 0 16px; font-size: var(--font-size-sm); }
+    .btn-lg { height: 44px; padding: 0 24px; font-size: var(--font-size-base); }
+    .btn-lg .mdi { font-size: 18px; }
+
+    /* Primary */
+    .btn-primary {
+      background: var(--color-accent);
+      color: #fff;
+      border-color: var(--color-accent);
+    }
+    .btn-primary:hover:not(:disabled) { background: var(--color-accent-hover); border-color: var(--color-accent-hover); }
+    .btn-primary:active:not(:disabled) { background: #1D4ED8; }
+    .btn-primary.loading .btn-text { opacity: 0; }
+    .btn-primary.loading .btn-spinner { display: inline-block; }
+
+    /* Secondary */
+    .btn-secondary {
+      background: #fff;
+      color: var(--color-text-primary);
+      border-color: #D0D0D0;
+    }
+    .btn-secondary:hover:not(:disabled) { background: var(--color-bg-secondary); border-color: #C0C0C0; }
+    .btn-secondary:active:not(:disabled) { background: var(--color-bg-tertiary); }
+
+    /* Ghost */
+    .btn-ghost {
+      background: transparent;
+      color: var(--color-text-primary);
+      border-color: transparent;
+    }
+    .btn-ghost:hover:not(:disabled) { background: var(--color-bg-secondary); }
+    .btn-ghost:active:not(:disabled) { background: var(--color-bg-tertiary); }
+
+    /* Danger */
+    .btn-danger {
+      background: var(--color-error);
+      color: #fff;
+      border-color: var(--color-error);
+    }
+    .btn-danger:hover:not(:disabled) { background: #DC2626; border-color: #DC2626; }
+    .btn-danger:active:not(:disabled) { background: #B91C1C; }
+
+    /* Icon button */
+    .btn-icon {
+      background: transparent;
+      color: var(--color-text-secondary);
+      border-color: transparent;
+      padding: 0;
+    }
+    .btn-icon:hover:not(:disabled) { background: var(--color-bg-secondary); color: var(--color-text-primary); }
+    .btn-icon:active:not(:disabled) { background: var(--color-bg-tertiary); }
+    .btn-icon-circle { border-radius: var(--radius-full); }
+    .btn-icon-square { border-radius: var(--radius-sm); }
+    .btn-icon.btn-sm { width: 32px; }
+    .btn-icon.btn-md { width: 36px; }
+    .btn-icon.btn-lg { width: 44px; }
+
+    /* Loading */
+    .btn-spinner {
+      display: none;
+      width: 14px;
+      height: 14px;
+      border: 2px solid transparent;
+      border-top-color: currentColor;
+      border-radius: 50%;
+      animation: btn-spin 0.6s linear infinite;
+      position: absolute;
+    }
+    @keyframes btn-spin { to { transform: rotate(360deg); } }
+
+    /* Button Group */
+    .btn-group {
+      display: inline-flex;
+      border: 1px solid #D0D0D0;
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+    }
+    .btn-group .btn {
+      border-radius: 0;
+      border: none;
+      border-right: 1px solid #D0D0D0;
+    }
+    .btn-group .btn:last-child { border-right: none; }
+  </style>
+</head>
+<body>
+  <div class="page-header">
+    <a href="index.html"><i class="mdi mdi-arrow-left"></i> 返回</a>
+    <div>
+      <h1>Button 按钮</h1>
+      <p>5 种变体 &middot; 3 种尺寸 &middot; 完整状态覆盖。所有按钮圆角 4px，默认高度 36px。</p>
+    </div>
+  </div>
+
+  <!-- 变体 -->
+  <div class="section">
+    <div class="section-title">按钮变体 <code>variant</code></div>
+    <div class="demo-row">
+      <div class="demo-row-label">Default</div>
+      <button class="btn btn-primary btn-md">主要按钮</button>
+      <button class="btn btn-secondary btn-md">次要按钮</button>
+      <button class="btn btn-ghost btn-md">幽灵按钮</button>
+      <button class="btn btn-danger btn-md">危险按钮</button>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">Hover</div>
+      <button class="btn btn-primary btn-md hover">主要按钮</button>
+      <button class="btn btn-secondary btn-md hover">次要按钮</button>
+      <button class="btn btn-ghost btn-md hover">幽灵按钮</button>
+      <button class="btn btn-danger btn-md hover">危险按钮</button>
+      <style>.hover:hover { background: inherit !important; } .btn-primary.hover { background: var(--color-accent-hover) !important; border-color: var(--color-accent-hover) !important; }
+      .btn-secondary.hover { background: var(--color-bg-secondary) !important; border-color: #C0C0C0 !important; }
+      .btn-ghost.hover { background: var(--color-bg-secondary) !important; }
+      .btn-danger.hover { background: #DC2626 !important; border-color: #DC2626 !important; }</style>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">Active / Pressed</div>
+      <button class="btn btn-primary btn-md active">主要按钮</button>
+      <button class="btn btn-secondary btn-md active">次要按钮</button>
+      <button class="btn btn-ghost btn-md active">幽灵按钮</button>
+      <button class="btn btn-danger btn-md active">危险按钮</button>
+      <style>.btn-primary.active { background: #1D4ED8 !important; border-color: #1D4ED8 !important; }
+      .btn-secondary.active { background: var(--color-bg-tertiary) !important; }
+      .btn-ghost.active { background: var(--color-bg-tertiary) !important; }
+      .btn-danger.active { background: #B91C1C !important; }</style>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">Focused (focus-visible)</div>
+      <button class="btn btn-primary btn-md focused">主要按钮</button>
+      <button class="btn btn-secondary btn-md focused">次要按钮</button>
+      <button class="btn btn-ghost btn-md focused">幽灵按钮</button>
+      <button class="btn btn-danger btn-md focused">危险按钮</button>
+      <style>.btn.focused { outline: 2px solid var(--color-accent); outline-offset: 2px; }</style>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">Disabled</div>
+      <button class="btn btn-primary btn-md" disabled>主要按钮</button>
+      <button class="btn btn-secondary btn-md" disabled>次要按钮</button>
+      <button class="btn btn-ghost btn-md" disabled>幽灵按钮</button>
+      <button class="btn btn-danger btn-md" disabled>危险按钮</button>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">Loading</div>
+      <button class="btn btn-primary btn-md loading"><span class="btn-spinner"></span><span class="btn-text">保存中</span></button>
+      <button class="btn btn-secondary btn-md loading"><span class="btn-spinner"></span><span class="btn-text">加载中</span></button>
+      <button class="btn btn-ghost btn-md loading"><span class="btn-spinner"></span><span class="btn-text">处理中</span></button>
+      <button class="btn btn-danger btn-md loading"><span class="btn-spinner"></span><span class="btn-text">删除中</span></button>
+    </div>
+  </div>
+
+  <!-- 尺寸 -->
+  <div class="section">
+    <div class="section-title">尺寸 <code>size</code></div>
+    <div class="demo-row">
+      <div class="demo-row-label">Small (32px)</div>
+      <button class="btn btn-primary btn-sm">小按钮</button>
+      <button class="btn btn-secondary btn-sm">小按钮</button>
+      <button class="btn btn-ghost btn-sm">小按钮</button>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">Medium (36px) — 默认</div>
+      <button class="btn btn-primary btn-md">中按钮</button>
+      <button class="btn btn-secondary btn-md">中按钮</button>
+      <button class="btn btn-ghost btn-md">中按钮</button>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">Large (44px)</div>
+      <button class="btn btn-primary btn-lg">大按钮</button>
+      <button class="btn btn-secondary btn-lg">大按钮</button>
+      <button class="btn btn-ghost btn-lg">大按钮</button>
+    </div>
+  </div>
+
+  <!-- 图标按钮 -->
+  <div class="section">
+    <div class="section-title">图标按钮 <code>icon + text / icon only</code></div>
+    <div class="demo-row">
+      <div class="demo-row-label">左侧图标 + 文字</div>
+      <button class="btn btn-primary btn-md"><i class="mdi mdi-plus"></i> 新建笔记</button>
+      <button class="btn btn-secondary btn-md"><i class="mdi mdi-download"></i> 导出</button>
+      <button class="btn btn-ghost btn-md"><i class="mdi mdi-cog"></i> 设置</button>
+      <button class="btn btn-danger btn-md"><i class="mdi mdi-delete"></i> 删除</button>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">右侧图标 + 文字</div>
+      <button class="btn btn-primary btn-md">下一步 <i class="mdi mdi-arrow-right"></i></button>
+      <button class="btn btn-secondary btn-md">展开 <i class="mdi mdi-chevron-down"></i></button>
+      <button class="btn btn-ghost btn-md">更多 <i class="mdi mdi-dots-horizontal"></i></button>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">纯图标 — 圆形</div>
+      <button class="btn btn-icon btn-icon-circle btn-sm"><i class="mdi mdi-plus"></i></button>
+      <button class="btn btn-icon btn-icon-circle btn-md"><i class="mdi mdi-pencil"></i></button>
+      <button class="btn btn-icon btn-icon-circle btn-lg"><i class="mdi mdi-cog"></i></button>
+      <button class="btn btn-icon btn-icon-circle btn-md"><i class="mdi mdi-delete" style="color:var(--color-error)"></i></button>
+      <button class="btn btn-icon btn-icon-circle btn-md" disabled><i class="mdi mdi-sync"></i></button>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">纯图标 — 方形</div>
+      <button class="btn btn-icon btn-icon-square btn-sm"><i class="mdi mdi-magnify"></i></button>
+      <button class="btn btn-icon btn-icon-square btn-md"><i class="mdi mdi-bell"></i></button>
+      <button class="btn btn-icon btn-icon-square btn-lg"><i class="mdi mdi-settings"></i></button>
+      <button class="btn btn-icon btn-icon-square btn-md" style="color:var(--color-accent)"><i class="mdi mdi-check-bold"></i></button>
+    </div>
+  </div>
+
+  <!-- 按钮组 -->
+  <div class="section">
+    <div class="section-title">按钮组 <code>Button Group</code></div>
+    <div class="demo-row">
+      <div class="btn-group">
+        <button class="btn btn-secondary btn-md"><i class="mdi mdi-format-bold"></i></button>
+        <button class="btn btn-secondary btn-md"><i class="mdi mdi-format-italic"></i></button>
+        <button class="btn btn-secondary btn-md"><i class="mdi mdi-format-underline"></i></button>
+        <button class="btn btn-secondary btn-md"><i class="mdi mdi-format-strikethrough-variant"></i></button>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-secondary btn-md">日</button>
+        <button class="btn btn-secondary btn-md">周</button>
+        <button class="btn btn-secondary btn-md active" style="background:var(--color-accent)!important;color:#fff!important;">月</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 全部变体一览 -->
+  <div class="section">
+    <div class="section-title">全部变体一览</div>
+    <div class="demo-row">
+      <div class="demo-row-label">使用场景示例</div>
+      <button class="btn btn-primary btn-md"><i class="mdi mdi-plus"></i> 新建笔记</button>
+      <button class="btn btn-secondary btn-md"><i class="mdi mdi-content-save"></i> 保存草稿</button>
+      <button class="btn btn-ghost btn-md"><i class="mdi mdi-cog"></i> 设置</button>
+      <button class="btn btn-secondary btn-md"><i class="mdi mdi-share-variant"></i> 分享</button>
+      <button class="btn btn-danger btn-md"><i class="mdi mdi-delete"></i> 删除</button>
+      <button class="btn btn-icon btn-icon-circle btn-md"><i class="mdi mdi-dots-vertical"></i></button>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MindFlow — 移动端笔记列表</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+  <style>
+    :root {
+      --color-bg-primary: #FAFAFA;
+      --color-bg-secondary: #F5F5F5;
+      --color-bg-tertiary: #EEEEEE;
+      --color-text-primary: #1A1A1A;
+      --color-text-secondary: #6B6B6B;
+      --color-text-tertiary: #9E9E9E;
+      --color-text-link: #3B82F6;
+      --color-text-on-accent: #FFFFFF;
+      --color-accent: #3B82F6;
+      --color-accent-hover: #2563EB;
+      --color-accent-soft: #E8F0FE;
+      --color-success: #10B981;
+      --color-warning: #F59E0B;
+      --color-error: #EF4444;
+      --color-border: #E8E8E8;
+      --tag-red: #FEE2E2;
+      --tag-orange: #FFEDD5;
+      --tag-yellow: #FEF3C7;
+      --tag-green: #D1FAE5;
+      --tag-teal: #CCFBF1;
+      --tag-blue: #DBEAFE;
+      --tag-purple: #EDE9FE;
+      --tag-pink: #FCE7F3;
+      --dot-red: #EF4444;
+      --dot-orange: #F97316;
+      --dot-yellow: #EAB308;
+      --dot-green: #22C55E;
+      --dot-teal: #14B8A6;
+      --dot-blue: #3B82F6;
+      --dot-purple: #8B5CF6;
+      --dot-pink: #EC4899;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-full: 9999px;
+      --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --font-size-sm: 13px;
+      --font-size-base: 15px;
+      --font-size-lg: 18px;
+      --topnav-height: 44px;
+      --tabbar-height: 56px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      height: 100%;
+      font-family: 'Noto Sans SC', 'Inter', system-ui, -apple-system, sans-serif;
+      background: #E0E0E0;
+      color: var(--color-text-primary);
+      font-size: var(--font-size-base);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ===== Phone Frame ===== */
+    .phone-frame {
+      width: 375px;
+      height: 812px;
+      background: var(--color-bg-primary);
+      border-radius: 40px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2), 0 0 0 1px rgba(0,0,0,0.06);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* ===== Status Bar (iOS style) ===== */
+    .status-bar {
+      height: 44px;
+      min-height: 44px;
+      background: var(--color-bg-primary);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      flex-shrink: 0;
+    }
+    .status-bar .time { font-weight: 700; }
+    .status-bar .icons { display: flex; align-items: center; gap: 5px; font-size: 13px; }
+
+    /* ===== Top Navigation ===== */
+    .top-nav {
+      height: var(--topnav-height);
+      min-height: var(--topnav-height);
+      display: flex;
+      align-items: center;
+      padding: 0 var(--space-4);
+      background: var(--color-bg-primary);
+      border-bottom: 1px solid var(--color-border);
+      flex-shrink: 0;
+    }
+    .top-nav .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 700;
+      font-size: 17px;
+      color: var(--color-text-primary);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .top-nav .logo-area .logo-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--color-accent);
+      flex-shrink: 0;
+    }
+    .top-nav .spacer { flex: 1; }
+    .top-nav .nav-btn {
+      width: 36px; height: 36px;
+      display: flex; align-items: center; justify-content: center;
+      border: none; background: transparent;
+      color: var(--color-text-primary);
+      font-size: 22px;
+      cursor: pointer;
+      border-radius: var(--radius-md);
+      transition: background 150ms ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .top-nav .nav-btn:active { background: var(--color-bg-tertiary); }
+    .top-nav .nav-btn .mdi { font-size: 22px; }
+
+    /* ===== Content Area ===== */
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      position: relative;
+    }
+    .content::-webkit-scrollbar { width: 0; }
+
+    /* ===== Pull to Refresh ===== */
+    .ptr-indicator {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 0;
+      overflow: hidden;
+      transition: height 200ms ease;
+      color: var(--color-text-tertiary);
+      font-size: var(--font-size-sm);
+    }
+    .ptr-indicator .ptr-spinner {
+      width: 18px; height: 18px;
+      border: 2px solid var(--color-border);
+      border-top-color: var(--color-accent);
+      border-radius: 50%;
+      animation: spin 600ms linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ===== State Switcher (Design Demo) ===== */
+    .state-switcher {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: 6px var(--space-4);
+      border-bottom: 1px solid var(--color-border);
+      background: var(--color-bg-primary);
+      flex-shrink: 0;
+    }
+    .state-switcher .state-label { font-size: 11px; color: var(--color-text-tertiary); font-weight: 500; margin-right: 4px; white-space: nowrap; }
+    .state-btn {
+      font-size: 11px; font-family: inherit;
+      padding: 3px 10px;
+      border: 1px solid var(--color-border);
+      background: var(--color-bg-primary);
+      color: var(--color-text-secondary);
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      transition: all 150ms ease;
+      height: 26px;
+      display: flex; align-items: center;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    .state-btn:hover { border-color: var(--color-accent); color: var(--color-accent); }
+    .state-btn.active { background: var(--color-accent); color: var(--color-text-on-accent); border-color: var(--color-accent); }
+
+    /* ===== Note List ===== */
+    .note-list {
+      padding: var(--space-3) var(--space-4);
+    }
+
+    .date-group-header {
+      text-align: center;
+      font-size: var(--font-size-sm);
+      font-weight: 500;
+      color: var(--color-text-secondary);
+      padding: 6px 0;
+      margin-bottom: var(--space-3);
+      position: sticky;
+      top: 0;
+      background: rgba(250,250,250,0.95);
+      z-index: 10;
+      letter-spacing: 0.3px;
+    }
+
+    /* ===== Note Card ===== */
+    .note-card {
+      background: #FFFFFF;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      padding: var(--space-4);
+      margin-bottom: var(--space-3);
+      cursor: pointer;
+      transition: box-shadow 200ms ease, transform 150ms ease;
+      position: relative;
+      border: 1px solid var(--color-border);
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    .note-card:active {
+      transform: scale(0.98);
+      box-shadow: none;
+    }
+    .note-card.pinned::before {
+      content: '';
+      position: absolute;
+      left: 0; top: var(--space-3); bottom: var(--space-3);
+      width: 3px;
+      background: var(--color-accent);
+      border-radius: 0 2px 2px 0;
+    }
+    .note-card .pin-indicator {
+      position: absolute;
+      top: var(--space-3); right: var(--space-3);
+      font-size: 14px;
+      color: var(--color-warning);
+    }
+    .note-card .note-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      line-height: 1.4;
+      margin-bottom: 6px;
+      padding-right: 20px;
+    }
+    .note-card .note-summary {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+      line-height: 1.5;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      margin-bottom: var(--space-3);
+    }
+    .note-card .note-meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .note-card .note-meta .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-family: inherit;
+      color: var(--color-text-secondary);
+      font-weight: 400;
+      line-height: 18px;
+    }
+    .note-card .note-meta .tag.tag-red { background: var(--tag-red); }
+    .note-card .note-meta .tag.tag-blue { background: var(--tag-blue); }
+    .note-card .note-meta .tag.tag-green { background: var(--tag-green); }
+    .note-card .note-meta .tag.tag-purple { background: var(--tag-purple); }
+    .note-card .note-meta .tag.tag-orange { background: var(--tag-orange); }
+    .note-card .note-meta .tag.tag-yellow { background: var(--tag-yellow); }
+    .note-card .note-meta .tag.tag-teal { background: var(--tag-teal); }
+    .note-card .note-meta .tag.tag-pink { background: var(--tag-pink); }
+    .note-card .note-meta .tag.tag-overflow { background: var(--color-bg-tertiary); color: var(--color-text-tertiary); }
+    .note-card .note-meta .tag-bullet { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+    .note-card .note-meta .tag-bullet.bullet-red { background: var(--dot-red); }
+    .note-card .note-meta .tag-bullet.bullet-blue { background: var(--dot-blue); }
+    .note-card .note-meta .tag-bullet.bullet-green { background: var(--dot-green); }
+    .note-card .note-meta .tag-bullet.bullet-purple { background: var(--dot-purple); }
+    .note-card .note-meta .tag-bullet.bullet-orange { background: var(--dot-orange); }
+    .note-card .note-meta .tag-bullet.bullet-yellow { background: var(--dot-yellow); }
+    .note-card .note-meta .backlink-count {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      font-size: 11px;
+      color: var(--color-text-link);
+    }
+    .note-card .note-meta .backlink-count i { font-size: 12px; }
+    .note-card .note-meta .time {
+      font-size: 11px;
+      color: var(--color-text-tertiary);
+      margin-left: auto;
+    }
+    .note-card .unsaved-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 11px;
+      color: var(--color-warning);
+      font-weight: 400;
+      margin-left: 4px;
+    }
+    .note-card .unsaved-badge i { font-size: 12px; }
+
+    /* ===== Skeleton Loading ===== */
+    @keyframes shimmer { 0% { background-position: -300px 0; } 100% { background-position: calc(300px + 100%) 0; } }
+    .skeleton-list { padding: var(--space-3) var(--space-4); }
+    .skeleton-card {
+      background: #FFFFFF;
+      border-radius: var(--radius-lg);
+      padding: var(--space-4);
+      margin-bottom: var(--space-3);
+      border: 1px solid var(--color-border);
+    }
+    .skeleton-line {
+      height: 14px;
+      border-radius: 4px;
+      background: linear-gradient(90deg, #ECECEC 25%, #E0E0E0 50%, #ECECEC 75%);
+      background-size: 300px 100%;
+      animation: shimmer 1.6s ease-in-out infinite;
+    }
+    .skeleton-line.skel-title { width: 55%; height: 17px; margin-bottom: 10px; }
+    .skeleton-line.skel-summary-1 { width: 95%; height: 12px; margin-bottom: 6px; }
+    .skeleton-line.skel-summary-2 { width: 72%; height: 12px; margin-bottom: 14px; }
+    .skeleton-tag-row { display: flex; gap: var(--space-2); }
+    .skeleton-tag { width: 52px; height: 20px; border-radius: 4px; background: linear-gradient(90deg, #ECECEC 25%, #E0E0E0 50%, #ECECEC 75%); background-size: 300px 100%; animation: shimmer 1.6s ease-in-out infinite; }
+
+    /* ===== Empty State ===== */
+    .empty-state {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px var(--space-5);
+      gap: var(--space-4);
+    }
+    .empty-state i { font-size: 56px; color: var(--color-text-tertiary); opacity: 0.3; }
+    .empty-state p { font-size: var(--font-size-base); color: var(--color-text-secondary); text-align: center; line-height: 1.6; }
+    .empty-state .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      height: 44px;
+      padding: 0 24px;
+      background: var(--color-accent);
+      color: var(--color-text-on-accent);
+      border: none;
+      border-radius: var(--radius-lg);
+      font-size: var(--font-size-base);
+      font-family: inherit;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 150ms ease, box-shadow 150ms ease;
+      box-shadow: 0 4px 12px rgba(59,130,246,0.3);
+    }
+    .empty-state .btn-primary:active { background: var(--color-accent-hover); transform: scale(0.97); }
+    .empty-state .btn-primary i { font-size: 18px; color: inherit; opacity: 1; }
+
+    /* ===== Bottom Tab Bar ===== */
+    .tab-bar {
+      height: var(--tabbar-height);
+      min-height: var(--tabbar-height);
+      background: #FFFFFF;
+      border-top: 1px solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding: 0;
+      flex-shrink: 0;
+      padding-bottom: 8px;
+    }
+    .tab-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      width: 56px;
+      height: 48px;
+      border: none;
+      background: transparent;
+      color: var(--color-text-tertiary);
+      cursor: pointer;
+      transition: color 150ms ease;
+      -webkit-tap-highlight-color: transparent;
+      font-family: inherit;
+      min-height: 44px;
+    }
+    .tab-item i { font-size: 22px; line-height: 1; }
+    .tab-item span { font-size: 10px; font-weight: 500; letter-spacing: 0.2px; line-height: 1; }
+    .tab-item.active { color: var(--color-accent); }
+    .tab-item:active { opacity: 0.7; }
+
+    /* ===== Bottom Sheet (Context Menu) ===== */
+    .bottom-sheet-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.3);
+      z-index: 50;
+      display: none;
+      opacity: 0;
+      transition: opacity 250ms ease;
+    }
+    .bottom-sheet-overlay.visible {
+      display: block;
+      opacity: 1;
+    }
+    .bottom-sheet {
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      background: #FFFFFF;
+      border-radius: 16px 16px 0 0;
+      padding: var(--space-4) 0;
+      padding-bottom: 24px;
+      box-shadow: 0 -8px 24px rgba(0,0,0,0.12);
+      z-index: 51;
+      display: none;
+      transform: translateY(100%);
+      transition: transform 300ms cubic-bezier(0.32, 0.72, 0, 1);
+    }
+    .bottom-sheet.visible {
+      display: block;
+      transform: translateY(0);
+    }
+    .bottom-sheet .sheet-handle {
+      width: 36px; height: 4px;
+      background: #D0D0D0;
+      border-radius: 2px;
+      margin: 0 auto var(--space-3);
+    }
+    .bottom-sheet .sheet-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-3) var(--space-4);
+      font-size: var(--font-size-base);
+      color: var(--color-text-primary);
+      cursor: pointer;
+      transition: background 100ms ease;
+      min-height: 44px;
+    }
+    .bottom-sheet .sheet-item:active { background: var(--color-bg-tertiary); }
+    .bottom-sheet .sheet-item i { font-size: 20px; color: var(--color-text-secondary); width: 24px; text-align: center; }
+    .bottom-sheet .sheet-item.danger { color: var(--color-error); }
+    .bottom-sheet .sheet-item.danger i { color: var(--color-error); }
+    .bottom-sheet .sheet-divider { height: 1px; background: var(--color-border); margin: var(--space-1) 0; }
+  </style>
+</head>
+<body>
+
+  <div class="phone-frame" id="phone-frame">
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span class="time">9:41</span>
+      <span class="icons">
+        <i class="mdi mdi-signal-cellular-outline" style="font-size:14px;"></i>
+        <i class="mdi mdi-wifi" style="font-size:14px;"></i>
+        <i class="mdi mdi-battery" style="font-size:16px;"></i>
+      </span>
+    </div>
+
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+      <div class="logo-area" id="logo-area">
+        <span class="logo-dot"></span>
+        <span>MindFlow</span>
+      </div>
+      <div class="spacer"></div>
+      <button class="nav-btn" id="search-btn" title="搜索"><i class="mdi mdi-magnify"></i></button>
+      <button class="nav-btn" id="new-note-btn" title="新建笔记"><i class="mdi mdi-plus"></i></button>
+    </nav>
+
+    <!-- State Switcher (Design Demo) -->
+    <div class="state-switcher">
+      <span class="state-label">状态：</span>
+      <button class="state-btn active" data-state="normal">正常列表</button>
+      <button class="state-btn" data-state="loading">加载中</button>
+      <button class="state-btn" data-state="empty">空结果</button>
+    </div>
+
+    <!-- Content Area -->
+    <div class="content" id="content-area">
+
+      <!-- Pull to Refresh Indicator -->
+      <div class="ptr-indicator" id="ptr-indicator">
+        <div class="ptr-spinner"></div>
+      </div>
+
+      <!-- ===== Normal State ===== -->
+      <div class="note-list" id="note-list-normal">
+        <!-- Today -->
+        <div class="date-group-header">&#8212; 今天 &#8212;</div>
+
+        <!-- Card 1: Pinned -->
+        <div class="note-card pinned" data-note-id="1">
+          <i class="mdi mdi-pin pin-indicator"></i>
+          <div class="note-title">AI Agent 技术架构设计</div>
+          <div class="note-summary">本文对 AI Agent 在互联网行业的应用进行了系统性汇总，涉及推荐系统、客服智能体、内容生成等多个方向。</div>
+          <div class="note-meta">
+            <span class="tag tag-blue"><span class="tag-bullet bullet-blue"></span>科技/AI</span>
+            <span class="tag tag-purple"><span class="tag-bullet bullet-purple"></span>Agent</span>
+            <span class="backlink-count"><i class="mdi mdi-link-variant"></i>3</span>
+            <span class="time">2分钟前</span>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="note-card" data-note-id="2">
+          <div class="note-title">MindFlow 产品设计方案 v0.1</div>
+          <div class="note-summary">定义了 MindFlow 的产品定位和核心商业价值，并初步设计了核心功能模块，包括笔记编辑器、知识图谱、全局搜索等。</div>
+          <div class="note-meta">
+            <span class="tag tag-orange"><span class="tag-bullet bullet-orange"></span>设计</span>
+            <span class="backlink-count"><i class="mdi mdi-link-variant"></i>5</span>
+            <span class="time">15分钟前</span>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="note-card" data-note-id="3">
+          <div class="note-title">《深度学习》笔记 — Chapter 5: 卷积神经网络</div>
+          <div class="note-summary">卷积神经网络的核心概念包括卷积操作、池化层、全连接层和深度可分离卷积。本章记录了对 CNN 网络结构的理解和实际应用中的注意事项。</div>
+          <div class="note-meta">
+            <span class="tag tag-blue"><span class="tag-bullet bullet-blue"></span>科技/AI</span>
+            <span class="tag tag-green"><span class="tag-bullet bullet-green"></span>阅读</span>
+            <span class="time">1小时前</span>
+          </div>
+        </div>
+
+        <!-- Card 4: Unsaved -->
+        <div class="note-card" data-note-id="4">
+          <div class="note-title">多 Agent 协作框架设计思路 <span class="unsaved-badge"><i class="mdi mdi-alert-circle-outline"></i>未保存</span></div>
+          <div class="note-summary">探讨了多种多 Agent 协作模式，包括主从式、对等式和混合式架构。分析了各模式在任务分解、信息共享和冲突解决方面的优劣。</div>
+          <div class="note-meta">
+            <span class="tag tag-blue"><span class="tag-bullet bullet-blue"></span>科技/AI</span>
+            <span class="tag tag-purple"><span class="tag-bullet bullet-purple"></span>Agent</span>
+            <span class="backlink-count"><i class="mdi mdi-link-variant"></i>2</span>
+            <span class="time">3小时前</span>
+          </div>
+        </div>
+
+        <!-- Yesterday -->
+        <div class="date-group-header">&#8212; 昨天 &#8212;</div>
+
+        <!-- Card 5 -->
+        <div class="note-card" data-note-id="5">
+          <div class="note-title">产品设计周会 2026-07-01 会议纪要</div>
+          <div class="note-summary">会议重点讨论了 Q3 的产品路线图，确定了 MindFlow 的开发优先级和时间表。决定将基础笔记功能作为 P0 先发布。</div>
+          <div class="note-meta">
+            <span class="tag tag-yellow"><span class="tag-bullet bullet-yellow"></span>工作</span>
+            <span class="tag tag-orange"><span class="tag-bullet bullet-orange"></span>设计</span>
+            <span class="time">昨天</span>
+          </div>
+        </div>
+
+        <!-- Card 6 -->
+        <div class="note-card" data-note-id="6">
+          <div class="note-title">介绍 LangChain Agent 架构</div>
+          <div class="note-summary">LangChain Agent 的架构设计分为两大部分：Planning 和 Execution。Planning 阶段，Agent 会根据用户输入生成行动计划。</div>
+          <div class="note-meta">
+            <span class="tag tag-blue"><span class="tag-bullet bullet-blue"></span>科技/AI</span>
+            <span class="tag tag-purple"><span class="tag-bullet bullet-purple"></span>Agent</span>
+            <span class="tag tag-purple"><span class="tag-bullet bullet-purple"></span>LLM</span>
+            <span class="tag tag-overflow">+1</span>
+            <span class="time">昨天</span>
+          </div>
+        </div>
+
+        <!-- Card 7 -->
+        <div class="note-card" data-note-id="7">
+          <div class="note-title">用户增长策略分析报告</div>
+          <div class="note-summary">分析了当前产品的用户增长数据，包括获客渠道转化率、留存曲线和 LTV 预测。提出以内容营销和 SEO 为核心的新增长策略。</div>
+          <div class="note-meta">
+            <span class="tag tag-yellow"><span class="tag-bullet bullet-yellow"></span>工作</span>
+            <span class="backlink-count"><i class="mdi mdi-link-variant"></i>1</span>
+            <span class="time">昨天</span>
+          </div>
+        </div>
+
+        <!-- This Week -->
+        <div class="date-group-header">&#8212; 本周 &#8212;</div>
+
+        <!-- Card 8 -->
+        <div class="note-card" data-note-id="8">
+          <div class="note-title">《设计之道》读后感 — 设计哲学与实践</div>
+          <div class="note-summary">深入探讨了设计不仅是视觉呈现，更是对用户需求的深度理解。好的设计应当是有目的的、克制的、以人为本的。</div>
+          <div class="note-meta">
+            <span class="tag tag-green"><span class="tag-bullet bullet-green"></span>阅读</span>
+            <span class="tag tag-orange"><span class="tag-bullet bullet-orange"></span>设计</span>
+            <span class="time">周二</span>
+          </div>
+        </div>
+
+        <!-- Card 9 -->
+        <div class="note-card" data-note-id="9">
+          <div class="note-title">RAG 技术方案研究 — Embedding 模型选型</div>
+          <div class="note-summary">对比了 OpenAI text-embedding-3-small/large、Cohere embed-v3、bge-large-zh 等模型在中文场景下的映射表现。</div>
+          <div class="note-meta">
+            <span class="tag tag-blue"><span class="tag-bullet bullet-blue"></span>科技/AI</span>
+            <span class="tag tag-purple"><span class="tag-bullet bullet-purple"></span>LLM</span>
+            <span class="time">周一</span>
+          </div>
+        </div>
+
+        <!-- Card 10 -->
+        <div class="note-card" data-note-id="10">
+          <div class="note-title">2026 年度目标进度回顾 — Q2 总结</div>
+          <div class="note-summary">Q2 目标完成情况总结，包括职业发展、技术学习、阅读计划等。总体完成率约 78%，下季度需要调整 OKR 标准。</div>
+          <div class="note-meta">
+            <span class="tag tag-green"><span class="tag-bullet bullet-green"></span>阅读</span>
+            <span class="tag tag-pink"><span class="tag-bullet bullet-pink"></span>日记</span>
+            <span class="time">周一</span>
+          </div>
+        </div>
+
+        <!-- Card 11 -->
+        <div class="note-card" data-note-id="11">
+          <div class="note-title">Figma 实用技巧整理 — Auto Layout 进阶用法</div>
+          <div class="note-summary">整理了 Figma Auto Layout 的进阶用法，包括子元素对齐、复杂嵌套和响应式设计中的具体应用。</div>
+          <div class="note-meta">
+            <span class="tag tag-orange"><span class="tag-bullet bullet-orange"></span>设计</span>
+            <span class="tag tag-yellow"><span class="tag-bullet bullet-yellow"></span>工作</span>
+            <span class="time">周日</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== Loading State ===== -->
+      <div class="skeleton-list" id="note-list-loading" style="display:none;">
+        <div class="skeleton-card">
+          <div class="skeleton-line skel-title"></div>
+          <div class="skeleton-line skel-summary-1"></div>
+          <div class="skeleton-line skel-summary-2"></div>
+          <div class="skeleton-tag-row" style="margin-top:12px;">
+            <span class="skeleton-tag"></span>
+            <span class="skeleton-tag" style="width:60px;"></span>
+          </div>
+        </div>
+        <div class="skeleton-card">
+          <div class="skeleton-line skel-title" style="width:48%;"></div>
+          <div class="skeleton-line skel-summary-1"></div>
+          <div class="skeleton-line skel-summary-2" style="width:80%;"></div>
+          <div class="skeleton-tag-row" style="margin-top:12px;">
+            <span class="skeleton-tag"></span>
+            <span class="skeleton-tag" style="width:44px;"></span>
+            <span class="skeleton-tag" style="width:52px;"></span>
+          </div>
+        </div>
+        <div class="skeleton-card">
+          <div class="skeleton-line skel-title" style="width:62%;"></div>
+          <div class="skeleton-line skel-summary-1" style="width:90%;"></div>
+          <div class="skeleton-line skel-summary-2" style="width:68%;"></div>
+          <div class="skeleton-tag-row" style="margin-top:12px;">
+            <span class="skeleton-tag"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== Empty State ===== -->
+      <div class="empty-state" id="note-list-empty" style="display:none;">
+        <i class="mdi mdi-note-text-outline"></i>
+        <p>这个笔记本还没有笔记<br>点击下方按钮创建你的第一篇笔记</p>
+        <button class="btn-primary"><i class="mdi mdi-plus"></i> 新建笔记</button>
+      </div>
+    </div>
+
+    <!-- Bottom Tab Bar -->
+    <nav class="tab-bar">
+      <button class="tab-item active" data-tab="notes">
+        <i class="mdi mdi-note-text-outline"></i>
+        <span>笔记</span>
+      </button>
+      <button class="tab-item" data-tab="search">
+        <i class="mdi mdi-magnify"></i>
+        <span>搜索</span>
+      </button>
+      <button class="tab-item" data-tab="graph">
+        <i class="mdi mdi-graph-outline"></i>
+        <span>图谱</span>
+      </button>
+      <button class="tab-item" data-tab="settings">
+        <i class="mdi mdi-cog-outline"></i>
+        <span>设置</span>
+      </button>
+    </nav>
+
+    <!-- Bottom Sheet Overlay -->
+    <div class="bottom-sheet-overlay" id="sheet-overlay"></div>
+
+    <!-- Bottom Sheet Context Menu -->
+    <div class="bottom-sheet" id="context-sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-item"><i class="mdi mdi-pencil-outline"></i> 编辑</div>
+      <div class="sheet-item"><i class="mdi mdi-pin-outline"></i> 置顶</div>
+      <div class="sheet-item"><i class="mdi mdi-folder-move-outline"></i> 移动</div>
+      <div class="sheet-item"><i class="mdi mdi-content-copy"></i> 复制链接</div>
+      <div class="sheet-divider"></div>
+      <div class="sheet-item danger"><i class="mdi mdi-delete-outline"></i> 删除</div>
+    </div>
+  </div>
+
+  <script>
+    // === Note Card Long Press -> Bottom Sheet ===
+    (function() {
+      const cards = document.querySelectorAll('.note-card');
+      const sheetOverlay = document.getElementById('sheet-overlay');
+      const contextSheet = document.getElementById('context-sheet');
+      let longPressTimer = null;
+      let isLongPress = false;
+
+      cards.forEach(card => {
+        card.addEventListener('pointerdown', function(e) {
+          isLongPress = false;
+          longPressTimer = setTimeout(() => {
+            isLongPress = true;
+            showSheet();
+          }, 500);
+        });
+
+        card.addEventListener('pointermove', function() {
+          if (longPressTimer) {
+            clearTimeout(longPressTimer);
+            longPressTimer = null;
+          }
+        });
+
+        card.addEventListener('pointerup', function(e) {
+          if (longPressTimer) {
+            clearTimeout(longPressTimer);
+            longPressTimer = null;
+          }
+          if (!isLongPress) {
+            // Navigate to editor on tap
+            window.location.href = 'mobile-editor.html';
+          }
+        });
+
+        card.addEventListener('pointerleave', function() {
+          if (longPressTimer) {
+            clearTimeout(longPressTimer);
+            longPressTimer = null;
+          }
+        });
+      });
+
+      function showSheet() {
+        sheetOverlay.classList.add('visible');
+        // Force reflow then add visible class for animation
+        void contextSheet.offsetWidth;
+        contextSheet.classList.add('visible');
+      }
+
+      function hideSheet() {
+        contextSheet.classList.remove('visible');
+        sheetOverlay.classList.remove('visible');
+      }
+
+      sheetOverlay.addEventListener('click', hideSheet);
+
+      // Sheet item click closes sheet
+      contextSheet.querySelectorAll('.sheet-item').forEach(item => {
+        item.addEventListener('click', hideSheet);
+      });
+    })();
+
+    // === Tab Switching ===
+    (function() {
+      const tabs = document.querySelectorAll('.tab-item');
+      tabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+          tabs.forEach(t => t.classList.remove('active'));
+          this.classList.add('active');
+        });
+      });
+    })();
+
+    // === State Switching (normal / loading / empty) ===
+    (function() {
+      const stateBtns = document.querySelectorAll('.state-btn');
+      const normalList = document.getElementById('note-list-normal');
+      const loadingList = document.getElementById('note-list-loading');
+      const emptyState = document.getElementById('note-list-empty');
+
+      function setListState(state) {
+        stateBtns.forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.state === state);
+        });
+        normalList.style.display = state === 'normal' ? '' : 'none';
+        loadingList.style.display = state === 'loading' ? '' : 'none';
+        emptyState.style.display = state === 'empty' ? '' : 'none';
+      }
+
+      stateBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+          setListState(this.dataset.state);
+        });
+      });
+    })();
+
+    // === Search Button ===
+    document.getElementById('search-btn').addEventListener('click', function() {
+      alert('全屏搜索页 (请查看移动端搜索设计)');
+    });
+
+    // === New Note Button ===
+    document.getElementById('new-note-btn').addEventListener('click', function() {
+      window.location.href = 'mobile-editor.html';
+    });
+
+    // === Logo area -> sidebar ===
+    document.getElementById('logo-area').addEventListener('click', function() {
+      window.location.href = 'mobile-sidebar.html';
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MindFlow — &#30693;&#35782;&#22270;&#35889; | &#32447;&#27147;&#22270;</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+  <style>
+    :root {
+      --color-bg-primary: #FAFAFA;
+      --color-bg-secondary: #F5F5F5;
+      --color-bg-tertiary: #EEEEEE;
+      --color-text-primary: #1A1A1A;
+      --color-text-secondary: #6B6B6B;
+      --color-text-tertiary: #9E9E9E;
+      --color-text-link: #3B82F6;
+      --color-text-on-accent: #FFFFFF;
+      --color-accent: #3B82F6;
+      --color-accent-hover: #2563EB;
+      --color-accent-soft: #E8F0FE;
+      --color-success: #10B981;
+      --color-warning: #F59E0B;
+      --color-error: #EF4444;
+      --tag-blue: #DBEAFE;
+      --tag-purple: #EDE9FE;
+      --tag-green: #D1FAE5;
+      --tag-orange: #FFEDD5;
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-full: 9999px;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+      --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
+      --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+      --space-10: 40px;
+      --font-size-xs: 11px;
+      --font-size-sm: 13px;
+      --font-size-base: 15px;
+      --font-size-lg: 18px;
+      --font-size-xl: 22px;
+      --sidebar-width: 240px;
+      --topnav-height: 48px;
+      --statusbar-height: 28px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--color-bg-primary); color: var(--color-text-primary); font-size: var(--font-size-base); line-height: 1.5; -webkit-font-smoothing: antialiased; }
+
+    .app-layout { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+    .main-area { display: flex; flex: 1; overflow: hidden; }
+
+    /* Top Nav */
+    .top-nav { height: var(--topnav-height); min-height: var(--topnav-height); background: var(--color-bg-primary); border-bottom: 1px solid #E8E8E8; display: flex; align-items: center; padding: 0 var(--space-4); gap: var(--space-4); z-index: 200; }
+    .top-nav .logo { display: flex; align-items: center; gap: var(--space-2); font-family: 'Inter', system-ui, sans-serif; font-weight: 600; font-size: var(--font-size-lg); color: var(--color-text-primary); width: var(--sidebar-width); padding-left: var(--space-1); flex-shrink: 0; }
+    .top-nav .logo i { color: var(--color-accent); font-size: 22px; }
+    .top-nav .search-bar { flex: 1; max-width: 440px; position: relative; margin: 0 auto; }
+    .top-nav .search-bar input { width: 100%; height: 32px; border: 1px solid #E0E0E0; border-radius: var(--radius-sm); background: var(--color-bg-secondary); padding: 0 var(--space-8) 0 32px; font-size: var(--font-size-sm); font-family: inherit; color: var(--color-text-primary); outline: none; }
+    .top-nav .search-bar input::placeholder { color: var(--color-text-tertiary); }
+    .top-nav .search-bar .search-icon { position: absolute; left: 8px; top: 50%; transform: translateY(-50%); color: var(--color-text-tertiary); font-size: 16px; pointer-events: none; }
+    .top-nav .search-bar .kbd-hint { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); font-size: var(--font-size-xs); color: var(--color-text-tertiary); background: var(--color-bg-tertiary); padding: 1px 5px; border-radius: 3px; font-family: 'Inter', system-ui, sans-serif; pointer-events: none; }
+    .top-nav .actions { display: flex; align-items: center; gap: var(--space-2); margin-left: auto; }
+    .top-nav .actions .icon-btn { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border: none; background: transparent; border-radius: var(--radius-sm); color: var(--color-text-secondary); cursor: pointer; font-size: 20px; transition: background 150ms ease; }
+    .top-nav .actions .icon-btn:hover { background: var(--color-bg-tertiary); }
+    .top-nav .actions .avatar { width: 28px; height: 28px; border-radius: var(--radius-full); background: var(--color-accent-soft); display: flex; align-items: center; justify-content: center; font-size: var(--font-size-xs); font-weight: 600; color: var(--color-accent); cursor: pointer; }
+
+    /* Sidebar */
+    .sidebar { width: var(--sidebar-width); min-width: var(--sidebar-width); background: var(--color-bg-secondary); border-right: 1px solid #E8E8E8; display: flex; flex-direction: column; overflow-y: auto; padding: var(--space-3) 0; flex-shrink: 0; }
+    .sidebar::-webkit-scrollbar { width: 4px; }
+    .sidebar::-webkit-scrollbar-thumb { background: #D0D0D0; border-radius: 2px; }
+    .sidebar-section { padding: 0 var(--space-3); margin-bottom: var(--space-2); }
+    .sidebar-section-title { display: flex; align-items: center; justify-content: space-between; font-family: 'Inter', system-ui, sans-serif; font-size: var(--font-size-xs); font-weight: 600; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.5px; padding: var(--space-2) var(--space-1); }
+    .sidebar-item { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-1) var(--space-2); border-radius: var(--radius-sm); cursor: pointer; font-size: var(--font-size-sm); color: var(--color-text-primary); transition: background 150ms ease; height: 30px; }
+    .sidebar-item:hover { background: var(--color-bg-tertiary); }
+    .sidebar-item i { font-size: 16px; color: var(--color-text-secondary); flex-shrink: 0; }
+    .sidebar-item .item-label { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .sidebar-item .item-count { font-size: var(--font-size-xs); color: var(--color-text-tertiary); background: var(--color-bg-tertiary); padding: 0 6px; border-radius: 8px; }
+    .sidebar-item .expand-icon { font-size: 14px; color: var(--color-text-tertiary); }
+    .sidebar-item.nested-1 { padding-left: 28px; }
+    .sidebar-divider { height: 1px; background: #E8E8E8; margin: var(--space-2) var(--space-3); }
+    .sidebar-spacer { flex: 1; }
+    .space-usage { padding: var(--space-3); border-top: 1px solid #E8E8E8; }
+    .space-usage .usage-bar { height: 4px; background: var(--color-bg-tertiary); border-radius: 2px; overflow: hidden; margin-bottom: var(--space-1); }
+    .space-usage .usage-bar .fill { height: 100%; width: 35%; background: var(--color-accent); border-radius: 2px; }
+    .space-usage .usage-text { font-size: var(--font-size-xs); color: var(--color-text-tertiary); font-family: 'Inter', system-ui, sans-serif; }
+
+    /* Main Content */
+    .content { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: var(--color-bg-primary); position: relative; }
+
+    /* Graph Canvas */
+    .graph-canvas { flex: 1; position: relative; overflow: hidden; background: radial-gradient(ellipse at center, #F0F5FF 0%, var(--color-bg-primary) 70%); }
+
+    /* SVG-based graph simulation */
+    .graph-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+    .graph-svg .edge { stroke: #C5D9FF; stroke-width: 1.5; fill: none; marker-end: url(#arrowhead); transition: stroke 200ms ease; }
+    .graph-svg .edge:hover { stroke: var(--color-accent); stroke-width: 2; }
+    .graph-svg .edge.strong { stroke: var(--color-accent); stroke-width: 2.5; stroke-dasharray: none; }
+    .graph-svg .edge.weak { stroke: #D5E3FF; stroke-width: 1; stroke-dasharray: 4 3; }
+
+    .graph-node { cursor: pointer; transition: transform 200ms ease; }
+    .graph-node:hover { filter: drop-shadow(0 0 8px rgba(59,130,246,0.3)); }
+    .graph-node .node-circle { transition: fill 200ms ease, stroke 200ms ease; }
+    .graph-node:hover .node-circle { fill: var(--color-accent-soft); stroke: var(--color-accent); stroke-width: 2; }
+    .graph-node.active .node-circle { fill: var(--color-accent-soft); stroke: var(--color-accent); stroke-width: 2.5; }
+    .graph-node .node-label { font-family: 'Inter', system-ui, sans-serif; font-size: 10px; fill: var(--color-text-secondary); text-anchor: middle; pointer-events: none; transition: fill 200ms ease; }
+    .graph-node:hover .node-label { fill: var(--color-text-primary); font-weight: 500; }
+    .graph-node.active .node-label { fill: var(--color-accent); font-weight: 600; }
+
+    /* Graph Controls */
+    .graph-controls { position: absolute; left: var(--space-4); top: var(--space-4); display: flex; flex-direction: column; gap: var(--space-1); }
+    .graph-controls .ctrl-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: var(--color-bg-primary); border: 1px solid #E0E0E0; border-radius: var(--radius-sm); color: var(--color-text-secondary); cursor: pointer; font-size: 18px; transition: background 150ms ease, color 150ms ease; box-shadow: var(--shadow-sm); }
+    .graph-controls .ctrl-btn:hover { background: var(--color-bg-tertiary); color: var(--color-text-primary); }
+    .graph-controls .ctrl-divider { height: 1px; background: #E0E0E0; margin: 2px 8px; }
+
+    /* Legend */
+    .graph-legend { position: absolute; right: var(--space-4); top: var(--space-4); background: var(--color-bg-primary); border: 1px solid #E0E0E0; border-radius: var(--radius-md); box-shadow: var(--shadow-sm); padding: var(--space-3); min-width: 140px; }
+    .graph-legend h4 { font-family: 'Inter', system-ui, sans-serif; font-size: var(--font-size-xs); font-weight: 600; color: var(--color-text-primary); margin-bottom: var(--space-2); text-transform: uppercase; letter-spacing: 0.5px; }
+    .graph-legend .legend-row { display: flex; align-items: center; gap: var(--space-2); font-size: var(--font-size-xs); color: var(--color-text-secondary); margin-bottom: var(--space-1); }
+    .graph-legend .legend-row:last-child { margin-bottom: 0; }
+    .graph-legend .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .graph-legend .legend-line { width: 16px; height: 2px; flex-shrink: 0; }
+    .graph-legend .legend-line.solid { background: var(--color-accent); }
+    .graph-legend .legend-line.dashed { height: 0; border-top: 2px dashed #C5D9FF; }
+
+    /* Search in graph */
+    .graph-search { position: absolute; left: 50%; top: var(--space-4); transform: translateX(-50%); width: 320px; }
+    .graph-search input { width: 100%; height: 36px; border: 1px solid #E0E0E0; border-radius: var(--radius-sm); background: var(--color-bg-primary); padding: 0 var(--space-4) 0 36px; font-size: var(--font-size-sm); font-family: inherit; color: var(--color-text-primary); outline: none; box-shadow: var(--shadow-sm); }
+    .graph-search input:focus { border-color: var(--color-accent); }
+    .graph-search i { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--color-text-tertiary); font-size: 18px; pointer-events: none; }
+
+    /* Node tooltip (on hover) */
+    .node-tooltip { position: absolute; background: var(--color-bg-primary); border: 1px solid #E0E0E0; border-radius: var(--radius-md); box-shadow: var(--shadow-md); padding: var(--space-3); min-width: 180px; max-width: 240px; pointer-events: none; z-index: 100; }
+    .node-tooltip .tt-title { font-size: var(--font-size-sm); font-weight: 500; color: var(--color-text-primary); margin-bottom: var(--space-1); }
+    .node-tooltip .tt-meta { font-size: var(--font-size-xs); color: var(--color-text-secondary); }
+
+    /* Bottom Status Bar */
+    .bottom-status { height: var(--statusbar-height); min-height: var(--statusbar-height); background: var(--color-bg-secondary); border-top: 1px solid #E8E8E8; display: flex; align-items: center; justify-content: space-between; padding: 0 var(--space-4); font-size: var(--font-size-xs); color: var(--color-text-tertiary); }
+    .bottom-status .status-left { display: flex; align-items: center; gap: var(--space-3); }
+    .bottom-status .status-left .sync-indicator { display: flex; align-items: center; gap: var(--space-1); }
+    .bottom-status .status-left .sync-indicator .sync-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--color-success); display: inline-block; }
+
+    /* Node highlight glow */
+    .highlight-glow { animation: glowPulse 1.5s ease-in-out infinite; }
+    @keyframes glowPulse { 0%, 100% { filter: drop-shadow(0 0 3px rgba(59,130,246,0.2)); } 50% { filter: drop-shadow(0 0 10px rgba(59,130,246,0.5)); } }
+  </style>
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Top Navigation -->
+    <header class="top-nav">
+      <div class="logo">
+        <i class="mdi mdi-brain"></i>
+        <span>MindFlow</span>
+      </div>
+      <div class="search-bar">
+        <i class="mdi mdi-magnify search-icon"></i>
+        <input type="text" placeholder="&#25628;&#32034;&#31508;&#35760;… (&#8984;K)" />
+        <span class="kbd-hint">&#8984;K</span>
+      </div>
+      <div class="actions">
+        <button class="icon-btn" title="&#35774;&#32622;"><i class="mdi mdi-cog-outline"></i></button>
+        <div class="avatar">T</div>
+      </div>
+    </header>
+
+    <!-- Main Area -->
+    <div class="main-area">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="sidebar-section">
+          <div class="sidebar-item">
+            <i class="mdi mdi-note-text-outline"></i>
+            <span class="item-label">&#25152;&#26377;&#31508;&#35760;</span>
+            <span class="item-count">23</span>
+          </div>
+          <div class="sidebar-item">
+            <i class="mdi mdi-calendar-text-outline"></i>
+            <span class="item-label">&#27599;&#26085;&#31508;&#35760;</span>
+          </div>
+          <div class="sidebar-item">
+            <i class="mdi mdi-delete-outline"></i>
+            <span class="item-label">&#22238;&#25910;&#31449;</span>
+          </div>
+        </div>
+        <div class="sidebar-divider"></div>
+        <div class="sidebar-section">
+          <div class="sidebar-section-title"><span>&#31508;&#35760;&#26412;</span></div>
+          <div class="sidebar-item"><i class="mdi mdi-folder-open-outline"></i><span class="item-label">&#24037;&#20316;</span><span class="item-count">8</span></div>
+          <div class="sidebar-item"><i class="mdi mdi-folder-outline"></i><span class="item-label">&#20010;&#20154;</span><span class="item-count">12</span></div>
+        </div>
+        <div class="sidebar-divider"></div>
+        <div class="sidebar-section">
+          <div class="sidebar-section-title"><span>&#26631;&#31614;</span></div>
+          <div class="sidebar-item"><i class="mdi mdi-tag-outline"></i><span class="item-label">&#31185;&#25216;/AI</span><span class="item-count">6</span></div>
+          <div class="sidebar-item"><i class="mdi mdi-tag-outline"></i><span class="item-label">&#38405;&#35835;</span><span class="item-count">5</span></div>
+        </div>
+        <div class="sidebar-divider"></div>
+        <div class="sidebar-section">
+          <div class="sidebar-item active">
+            <i class="mdi mdi-graph-outline"></i>
+            <span class="item-label">&#30693;&#35782;&#22270;&#35889;</span>
+          </div>
+        </div>
+        <div class="sidebar-spacer"></div>
+        <div class="space-usage"><div class="usage-bar"><div class="fill"></div></div><div class="usage-text">&#20351;&#29992; 35%</div></div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="content">
+        <div class="graph-canvas">
+          <!-- SVG Graph -->
+          <svg class="graph-svg" viewBox="0 0 900 600" preserveAspectRatio="xMidYMid meet">
+            <defs>
+              <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                <polygon points="0 0, 8 3, 0 6" fill="#C5D9FF" />
+              </marker>
+              <marker id="arrowhead-strong" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                <polygon points="0 0, 8 3, 0 6" fill="#3B82F6" />
+              </marker>
+              <filter id="glow">
+                <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+            </defs>
+
+            <!-- Edges (connections) -->
+            <!-- Central cluster: 产品设计方案 -->
+            <line class="edge strong" x1="450" y1="260" x2="300" y2="180" marker-end="url(#arrowhead-strong)" />
+            <line class="edge strong" x1="450" y1="260" x2="600" y2="180" marker-end="url(#arrowhead-strong)" />
+            <line class="edge strong" x1="450" y1="260" x2="350" y2="380" marker-end="url(#arrowhead-strong)" />
+            <line class="edge" x1="450" y1="260" x2="550" y2="400" marker-end="url(#arrowhead)" />
+            <line class="edge" x1="450" y1="260" x2="150" y2="300" marker-end="url(#arrowhead)" />
+            <line class="edge weak" x1="450" y1="260" x2="750" y2="350" marker-end="url(#arrowhead)" />
+            <!-- Secondary connections -->
+            <line class="edge" x1="300" y1="180" x2="150" y2="300" marker-end="url(#arrowhead)" />
+            <line class="edge" x1="600" y1="180" x2="750" y2="350" marker-end="url(#arrowhead)" />
+            <line class="edge weak" x1="350" y1="380" x2="550" y2="400" marker-end="url(#arrowhead)" />
+            <line class="edge" x1="150" y1="300" x2="80" y2="440" marker-end="url(#arrowhead)" />
+            <line class="edge weak" x1="750" y1="350" x2="820" y2="480" marker-end="url(#arrowhead)" />
+            <line class="edge" x1="550" y1="400" x2="700" y2="500" marker-end="url(#arrowhead)" />
+            <line class="edge" x1="300" y1="180" x2="200" y2="80" marker-end="url(#arrowhead)" />
+            <line class="edge weak" x1="600" y1="180" x2="700" y2="100" marker-end="url(#arrowhead)" />
+
+            <!-- Nodes -->
+            <!-- Central node (largest — most connected) -->
+            <g class="graph-node active" transform="translate(450, 260)">
+              <circle class="node-circle" r="28" fill="var(--color-accent-soft)" stroke="var(--color-accent)" stroke-width="2.5" filter="url(#glow)"/>
+              <text class="node-label" dy="3" font-weight="600" fill="var(--color-accent)">&#20135;&#21697;&#35774;&#35745;&#26041;&#26696;</text>
+            </g>
+
+            <!-- First-degree connections (medium nodes) -->
+            <g class="graph-node" transform="translate(300, 180)">
+              <circle class="node-circle" r="22" fill="var(--tag-blue)" stroke="#93C5FD" stroke-width="1.5"/>
+              <text class="node-label" dy="3">AI Agent &#24212;&#29992;</text>
+            </g>
+            <g class="graph-node" transform="translate(600, 180)">
+              <circle class="node-circle" r="20" fill="var(--tag-green)" stroke="#6EE7B7" stroke-width="1.5"/>
+              <text class="node-label" dy="3">RAG &#25216;&#26415;&#26041;&#26696;</text>
+            </g>
+            <g class="graph-node" transform="translate(350, 380)">
+              <circle class="node-circle" r="20" fill="var(--tag-purple)" stroke="#C4B5FD" stroke-width="1.5"/>
+              <text class="node-label" dy="3">LangChain Agent</text>
+            </g>
+
+            <!-- Second-degree connections (small nodes) -->
+            <g class="graph-node" transform="translate(550, 400)">
+              <circle class="node-circle" r="16" fill="var(--tag-orange)" stroke="#FDBA74" stroke-width="1.5"/>
+              <text class="node-label" dy="3">&#20250;&#35758;&#32426;&#35201;</text>
+            </g>
+            <g class="graph-node" transform="translate(150, 300)">
+              <circle class="node-circle" r="16" fill="var(--tag-yellow)" stroke="#FDE68A" stroke-width="1.5"/>
+              <text class="node-label" dy="3">&#28145;&#24230;&#23398;&#20064;&#31508;&#35760;</text>
+            </g>
+            <g class="graph-node" transform="translate(750, 350)">
+              <circle class="node-circle" r="14" fill="var(--tag-blue)" stroke="#93C5FD" stroke-width="1.5"/>
+              <text class="node-label" dy="3">Figma Auto Layout</text>
+            </g>
+            <g class="graph-node" transform="translate(80, 440)">
+              <circle class="node-circle" r="12" fill="var(--tag-pink)" stroke="#F9A8D4" stroke-width="1.5"/>
+              <text class="node-label" dy="3">&#35774;&#35745;&#20043;&#36947;</text>
+            </g>
+            <g class="graph-node" transform="translate(820, 480)">
+              <circle class="node-circle" r="12" fill="var(--tag-teal)" stroke="#5EEAD4" stroke-width="1.5"/>
+              <text class="node-label" dy="3">&#24180;&#24230;&#30446;&#26631;</text>
+            </g>
+            <g class="graph-node" transform="translate(700, 500)">
+              <circle class="node-circle" r="12" fill="var(--tag-purple)" stroke="#C4B5FD" stroke-width="1.5"/>
+              <text class="node-label" dy="3">&#32844;&#19994;&#21457;&#23637;</text>
+            </g>
+            <g class="graph-node" transform="translate(200, 80)">
+              <circle class="node-circle" r="10" fill="#E0E7FF" stroke="#A5B4FC" stroke-width="1" opacity="0.7"/>
+              <text class="node-label" dy="3">&#25512;&#33616;&#31995;&#32479;</text>
+            </g>
+            <g class="graph-node" transform="translate(700, 100)">
+              <circle class="node-circle" r="10" fill="#E0E7FF" stroke="#A5B4FC" stroke-width="1" opacity="0.7"/>
+              <text class="node-label" dy="3">Embedding</text>
+            </g>
+
+            <!-- Orphan nodes (no connections) -->
+            <g class="graph-node" transform="translate(120, 100)" opacity="0.4">
+              <circle class="node-circle" r="8" fill="var(--color-bg-tertiary)" stroke="#D0D0D0" stroke-width="1"/>
+              <text class="node-label" dy="3" fill="var(--color-text-tertiary)">&#31449;&#28857;&#22791;&#24536;</text>
+            </g>
+            <g class="graph-node" transform="translate(780, 140)" opacity="0.4">
+              <circle class="node-circle" r="8" fill="var(--color-bg-tertiary)" stroke="#D0D0D0" stroke-width="1"/>
+              <text class="node-label" dy="3" fill="var(--color-text-tertiary)">&#38543;&#31508;</text>
+            </g>
+          </svg>
+
+          <!-- Controls -->
+          <div class="graph-controls">
+            <button class="ctrl-btn" title="&#25918;&#22823;"><i class="mdi mdi-plus"></i></button>
+            <button class="ctrl-btn" title="&#32553;&#23567;"><i class="mdi mdi-minus"></i></button>
+            <div class="ctrl-divider"></div>
+            <button class="ctrl-btn" title="&#36866;&#24212;&#23631;&#24149;"><i class="mdi mdi-fit-to-screen"></i></button>
+          </div>
+
+          <!-- Legend -->
+          <div class="graph-legend">
+            <h4>&#22270;&#20363;</h4>
+            <div class="legend-row">
+              <span class="legend-dot" style="background: var(--color-accent);width:10px;height:10px;"></span>
+              <span>&#36830;&#25509;&#25968; 5+ (&#22823;&#33410;&#28857;)</span>
+            </div>
+            <div class="legend-row">
+              <span class="legend-dot" style="background: var(--tag-blue);width:8px;height:8px;"></span>
+              <span>&#36830;&#25509;&#25968; 2-4 (&#20013;&#33410;&#28857;)</span>
+            </div>
+            <div class="legend-row">
+              <span class="legend-dot" style="background: var(--tag-orange);width:6px;height:6px;"></span>
+              <span>&#36830;&#25509;&#25968; 1 (&#23567;&#33410;&#28857;)</span>
+            </div>
+            <div class="legend-row">
+              <span class="legend-line solid"></span>
+              <span>[[ &#21452;&#21521;&#38142;&#25509;</span>
+            </div>
+            <div class="legend-row">
+              <span class="legend-line dashed"></span>
+              <span>&#21333;&#21521;&#38142;&#25509;</span>
+            </div>
+            <div class="legend-row" style="margin-top:var(--space-2);padding-top:var(--space-2);border-top:1px solid #E8E8E8;">
+              <span class="legend-dot" style="background:#D0D0D0;width:6px;height:6px;"></span>
+              <span>&#23521;&#27915;&#33410;&#28857; (&#26080;&#38142;&#25509;)</span>
+            </div>
+          </div>
+
+          <!-- Search -->
+          <div class="graph-search">
+            <i class="mdi mdi-magnify"></i>
+            <input type="text" placeholder="&#25628;&#32034;&#33410;&#28857;…" />
+          </div>
+
+          <!-- Stats badge -->
+          <div style="position:absolute;right:var(--space-4);bottom:var(--space-4);background:var(--color-bg-primary);border:1px solid #E0E0E0;border-radius:var(--radius-md);padding:var(--space-2) var(--space-3);box-shadow:var(--shadow-sm);font-size:var(--font-size-xs);color:var(--color-text-secondary);">
+            <span><strong>23</strong> &#20010;&#31508;&#35760;</span>
+            <span style="margin:0 var(--space-2);">&#183;</span>
+            <span><strong>14</strong> &#26465;&#38142;&#25509;</span>
+            <span style="margin:0 var(--space-2);">&#183;</span>
+            <span><strong>11</strong> &#20010;&#26377;&#36830;&#25509;</span>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Bottom Status Bar -->
+    <footer class="bottom-status">
+      <div class="status-left">
+        <div class="sync-indicator"><span class="sync-dot"></span><span>&#24050;&#21516;&#27493;</span></div>
+        <span>&#183;</span><span>2 &#31186;&#21069;</span>
+      </div>
+      <div class="status-right">
+        <span>23 &#31508;&#35760;</span><span>&#183;</span><span>0 &#22833;&#36133;</span>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Highlight nodes on hover
+    document.querySelectorAll('.graph-node').forEach(node => {
+      node.addEventListener('mouseenter', function() {
+        const label = this.querySelector('.node-label');
+        if (label) label.style.fontWeight = '600';
+      });
+      node.addEventListener('mouseleave', function() {
+        const label = this.querySelector('.node-label');
+        if (label) label.style.fontWeight = '';
+      });
+      node.addEventListener('click', function() {
+        document.querySelectorAll('.graph-node').forEach(n => n.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

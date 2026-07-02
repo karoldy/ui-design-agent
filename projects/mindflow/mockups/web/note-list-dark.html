@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MindFlow — 笔记列表 (暗色模式)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+  <style>
+    :root {
+      --color-bg-primary: #FAFAFA;
+      --color-bg-secondary: #F5F5F5;
+      --color-bg-tertiary: #EEEEEE;
+      --color-text-primary: #1A1A1A;
+      --color-text-secondary: #6B6B6B;
+      --color-text-tertiary: #9E9E9E;
+      --color-text-link: #3B82F6;
+      --color-text-on-accent: #FFFFFF;
+      --color-accent: #3B82F6;
+      --color-accent-hover: #2563EB;
+      --color-accent-soft: #E8F0FE;
+      --color-success: #10B981;
+      --color-warning: #F59E0B;
+      --color-error: #EF4444;
+      --tag-red: #FEE2E2;
+      --tag-orange: #FFEDD5;
+      --tag-yellow: #FEF3C7;
+      --tag-green: #D1FAE5;
+      --tag-teal: #CCFBF1;
+      --tag-blue: #DBEAFE;
+      --tag-purple: #EDE9FE;
+      --tag-pink: #FCE7F3;
+      --dot-red: #EF4444;
+      --dot-orange: #F97316;
+      --dot-yellow: #EAB308;
+      --dot-green: #22C55E;
+      --dot-teal: #14B8A6;
+      --dot-blue: #3B82F6;
+      --dot-purple: #8B5CF6;
+      --dot-pink: #EC4899;
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-full: 9999px;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+      --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
+      --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+      --shadow-xl: 0 16px 48px rgba(0,0,0,0.16);
+      --color-border: #E8E8E8;
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+      --space-10: 40px;
+      --space-12: 48px;
+      --space-16: 64px;
+      --font-size-xs: 11px;
+      --font-size-sm: 13px;
+      --font-size-base: 15px;
+      --font-size-lg: 18px;
+      --font-size-xl: 22px;
+      --font-size-2xl: 28px;
+      --font-size-3xl: 36px;
+      --sidebar-width: 240px;
+      --topnav-height: 48px;
+      --statusbar-height: 28px;
+    }
+
+    /* ===== Dark Mode Tokens ===== */
+    [data-theme="dark"] {
+      --color-bg-primary: #1A1A1A;
+      --color-bg-secondary: #242424;
+      --color-bg-tertiary: #2E2E2E;
+      --color-text-primary: #E8E8E8;
+      --color-text-secondary: #A0A0A0;
+      --color-text-tertiary: #6B6B6B;
+      --color-text-link: #60A5FA;
+      --color-text-on-accent: #FFFFFF;
+      --color-accent: #60A5FA;
+      --color-accent-hover: #93C5FD;
+      --color-accent-soft: #1E3A5F;
+      --color-success: #34D399;
+      --color-warning: #FBBF24;
+      --color-error: #F87171;
+      --tag-red: #3B1818;
+      --tag-orange: #3D2000;
+      --tag-yellow: #3D3000;
+      --tag-green: #0D2818;
+      --tag-teal: #0D2820;
+      --tag-blue: #182A3B;
+      --tag-purple: #201838;
+      --tag-pink: #381825;
+      --dot-red: #F87171;
+      --dot-orange: #FB923C;
+      --dot-yellow: #FACC15;
+      --dot-green: #4ADE80;
+      --dot-teal: #2DD4BF;
+      --dot-blue: #60A5FA;
+      --dot-purple: #A78BFA;
+      --dot-pink: #F472B6;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+      --shadow-md: 0 2px 8px rgba(0,0,0,0.4);
+      --shadow-lg: 0 8px 24px rgba(0,0,0,0.5);
+      --shadow-xl: 0 16px 48px rgba(0,0,0,0.6);
+      --color-border: #3A3A3A;
+    }
+
+    /* Hardcoded color overrides for dark mode */
+    [data-theme="dark"] .top-nav .search-bar { background: var(--color-bg-tertiary); }
+    [data-theme="dark"] .note-item:hover { background: var(--color-bg-tertiary); }
+    [data-theme="dark"] .sidebar::-webkit-scrollbar-thumb,
+    [data-theme="dark"] .sidebar-scroll::-webkit-scrollbar-thumb,
+    [data-theme="dark"] .note-list::-webkit-scrollbar-thumb,
+    [data-theme="dark"] .skeleton-list::-webkit-scrollbar-thumb { background: #555; }
+    [data-theme="dark"] .note-list-header .filters .sort-select,
+    [data-theme="dark"] .note-list-header .filters .view-toggle button { border-color: var(--color-border); }
+    [data-theme="dark"] .context-menu { border-color: var(--color-border); }
+    [data-theme="dark"] .note-meta .tag.tag-overflow { background: var(--color-bg-tertiary); color: var(--color-text-tertiary); }
+    [data-theme="dark"] .skeleton-line { background: linear-gradient(90deg, #2E2E2E 25%, #3A3A3A 50%, #2E2E2E 75%); background-size: 300px 100%; }
+    [data-theme="dark"] .skeleton-tag { background: linear-gradient(90deg, #2E2E2E 25%, #3A3A3A 50%, #2E2E2E 75%); background-size: 300px 100%; }
+    [data-theme="dark"] .empty-state i { color: var(--color-text-tertiary); }
+    [data-theme="dark"] .search-bar .kbd-hint { background: var(--color-bg-secondary); color: var(--color-text-tertiary); }
+
+    /* Theme transition */
+    [data-theme-transitioning] .app-layout,
+    [data-theme-transitioning] .top-nav,
+    [data-theme-transitioning] .sidebar,
+    [data-theme-transitioning] .content,
+    [data-theme-transitioning] .bottom-status,
+    [data-theme-transitioning] .note-list-header,
+    [data-theme-transitioning] .context-menu,
+    [data-theme-transitioning] .space-usage {
+      transition: background-color 300ms ease, border-color 300ms ease, color 300ms ease, box-shadow 300ms ease;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--color-bg-primary); color: var(--color-text-primary); font-size: var(--font-size-base); line-height: 1.5; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+    .ui-font { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+
+    .app-layout { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+    .main-area { display: flex; flex: 1; overflow: hidden; }
+
+    /* ===== Top Navigation ===== */
+    .top-nav { height: var(--topnav-height); min-height: var(--topnav-height); background: var(--color-bg-primary); border-bottom: 1px solid var(--color-border); display: flex; align-items: center; padding: 0 var(--space-4); gap: var(--space-4); z-index: 200; }
+    .top-nav .logo { display: flex; align-items: center; gap: var(--space-2); font-family: 'Inter', system-ui, sans-serif; font-weight: 600; font-size: var(--font-size-lg); color: var(--color-text-primary); width: var(--sidebar-width); padding-left: var(--space-1); flex-shrink: 0; position: relative; }
+    .top-nav .logo::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--color-accent); margin-right: 2px; }
+    .top-nav .logo i { color: var(--color-accent); font-size: 20px; }
+    .top-nav .search-wrap { flex: 1; max-width: 440px; margin: 0 auto; position: relative; }
+    .top-nav .search-bar { display: flex; align-items: center; height: 34px; background: #F0F0F0; border: 1.5px solid transparent; border-radius: 9999px; padding: 0 var(--space-4); gap: var(--space-2); transition: border-color 150ms ease, box-shadow 150ms ease, background 150ms ease; }
+    .top-nav .search-bar:focus-within { border-color: var(--color-accent); box-shadow: 0 0 0 3px var(--color-accent-soft); background: var(--color-bg-primary); }
+    .top-nav .search-bar i { font-size: 16px; color: var(--color-text-tertiary); flex-shrink: 0; }
+    .top-nav .search-bar input { flex: 1; border: none; background: transparent; font-size: var(--font-size-sm); font-family: inherit; color: var(--color-text-primary); outline: none; line-height: 1; }
+    .top-nav .search-bar input::placeholder { color: var(--color-text-tertiary); }
+    .top-nav .search-bar .kbd-hint { font-size: 10px; color: var(--color-text-tertiary); background: var(--color-bg-tertiary); padding: 2px 6px; border-radius: 4px; font-family: 'Inter', system-ui, sans-serif; font-weight: 500; letter-spacing: 0.3px; flex-shrink: 0; pointer-events: none; }
+    .top-nav .actions { display: flex; align-items: center; gap: var(--space-2); margin-left: auto; }
+    .top-nav .actions .btn-primary { display: flex; align-items: center; gap: var(--space-1); height: 36px; padding: 0 var(--space-3); background: var(--color-accent); color: var(--color-text-on-accent); border: none; border-radius: var(--radius-sm); font-size: var(--font-size-sm); font-family: 'Inter', system-ui, sans-serif; font-weight: 500; cursor: pointer; transition: background 150ms ease, box-shadow 150ms ease; box-shadow: 0 2px 4px rgba(59,130,246,0.25); }
+    .top-nav .actions .btn-primary:hover { background: var(--color-accent-hover); box-shadow: 0 3px 8px rgba(59,130,246,0.35); }
+    .top-nav .actions .btn-primary:active { transform: translateY(1px); box-shadow: 0 1px 2px rgba(59,130,246,0.2); }
+    .top-nav .actions .btn-primary i { font-size: 16px; }
+    .top-nav .actions .icon-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border: none; background: transparent; border-radius: var(--radius-sm); color: var(--color-text-secondary); cursor: pointer; font-size: 20px; transition: background 150ms ease, color 150ms ease; }
+    .top-nav .actions .icon-btn:hover { background: var(--color-bg-tertiary); color: var(--color-text-primary); }
+    .top-nav .actions .avatar-wrap { position: relative; width: 30px; height: 30px; flex-shrink: 0; cursor: pointer; }
+    .top-nav .actions .avatar-wrap .avatar { width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(135deg, #3B82F6, #6366F1); display: flex; align-items: center; justify-content: center; font-size: var(--font-size-xs); font-weight: 600; color: #fff; letter-spacing: 0.3px; }
+    .top-nav .actions .avatar-wrap .status-dot { position: absolute; bottom: 0; right: 0; width: 8px; height: 8px; border-radius: 50%; background: var(--color-success); border: 2px solid var(--color-bg-primary); }
+
+    /* ===== Sidebar ===== */
+    .sidebar { width: var(--sidebar-width); min-width: var(--sidebar-width); background: var(--color-bg-secondary); border-right: 1px solid var(--color-border); display: flex; flex-direction: column; overflow-y: auto; flex-shrink: 0; }
+    .sidebar::-webkit-scrollbar { width: 4px; }
+    .sidebar::-webkit-scrollbar-thumb { background: #D0D0D0; border-radius: 2px; }
+    .sidebar-scroll { padding: var(--space-3) 0; flex: 1; overflow-y: auto; }
+    .sidebar-scroll::-webkit-scrollbar { width: 4px; }
+    .sidebar-scroll::-webkit-scrollbar-thumb { background: #D0D0D0; border-radius: 2px; }
+
+    .sidebar-section { padding: 0 var(--space-3); margin-bottom: var(--space-1); }
+    .sidebar-section-title { display: flex; align-items: center; justify-content: space-between; font-family: 'Inter', system-ui, sans-serif; font-size: var(--font-size-xs); font-weight: 600; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.5px; padding: var(--space-2) var(--space-1); margin-top: var(--space-1); user-select: none; }
+    .sidebar-section-title .add-icon { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; border-radius: var(--radius-sm); cursor: pointer; font-size: 14px; color: var(--color-text-tertiary); transition: background 150ms ease, color 150ms ease; }
+    .sidebar-section-title .add-icon:hover { background: var(--color-bg-tertiary); color: var(--color-text-primary); }
+
+    .sidebar-item { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-1) var(--space-2); border-radius: var(--radius-sm); cursor: pointer; font-size: var(--font-size-sm); color: var(--color-text-primary); transition: background 150ms ease; position: relative; min-height: 36px; user-select: none; }
+    .sidebar-item:hover { background: var(--color-bg-tertiary); }
+    .sidebar-item.active { background: var(--color-accent-soft); color: var(--color-accent); }
+    .sidebar-item .item-icon { font-size: 16px; color: var(--color-text-secondary); flex-shrink: 0; width: 20px; text-align: center; }
+    .sidebar-item.active .item-icon { color: var(--color-accent); }
+    .sidebar-item .item-label { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .sidebar-item .item-count { font-size: var(--font-size-xs); color: var(--color-text-tertiary); background: var(--color-bg-tertiary); padding: 0 7px; border-radius: 8px; min-width: 18px; text-align: center; line-height: 16px; flex-shrink: 0; }
+    .sidebar-item .expand-icon { font-size: 14px; color: var(--color-text-tertiary); transition: transform 150ms ease; flex-shrink: 0; width: 16px; text-align: center; }
+    .sidebar-item .expand-icon.expanded { transform: rotate(90deg); }
+    .sidebar-item.nested-1 { padding-left: 32px; }
+    .sidebar-item.nested-2 { padding-left: 48px; }
+
+    .sidebar-item .tag-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .sidebar-item .tag-dot.dot-blue { background: var(--dot-blue); }
+    .sidebar-item .tag-dot.dot-purple { background: var(--dot-purple); }
+    .sidebar-item .tag-dot.dot-green { background: var(--dot-green); }
+    .sidebar-item .tag-dot.dot-orange { background: var(--dot-orange); }
+    .sidebar-item .tag-dot.dot-red { background: var(--dot-red); }
+    .sidebar-item .tag-dot.dot-yellow { background: var(--dot-yellow); }
+
+    .sidebar-divider { height: 1px; background: var(--color-border); margin: var(--space-2) var(--space-3); }
+
+    .sidebar-spacer { flex: 1; min-height: 0; }
+    .space-usage { padding: var(--space-3); border-top: 1px solid var(--color-border); flex-shrink: 0; }
+    .space-usage .usage-label { display: flex; align-items: center; justify-content: space-between; font-size: var(--font-size-xs); color: var(--color-text-tertiary); font-family: 'Inter', system-ui, sans-serif; margin-bottom: var(--space-1); }
+    .space-usage .usage-bar { height: 4px; background: var(--color-bg-tertiary); border-radius: 2px; overflow: hidden; }
+    .space-usage .usage-bar .fill { height: 100%; width: 35%; background: linear-gradient(90deg, var(--color-accent), #6366F1); border-radius: 2px; transition: width 300ms ease; }
+
+    /* ===== Content ===== */
+    .content { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: var(--color-bg-primary); }
+
+    .note-list-header { display: flex; align-items: center; justify-content: space-between; padding: var(--space-4) var(--space-5) 0; flex-shrink: 0; }
+    .note-list-header h2 { font-family: 'Inter', system-ui, sans-serif; font-size: var(--font-size-xl); font-weight: 600; color: var(--color-text-primary); }
+    .note-list-header .filters { display: flex; align-items: center; gap: var(--space-3); }
+    .note-list-header .filters .sort-select { display: flex; align-items: center; gap: var(--space-1); height: 28px; border: 1px solid #E0E0E0; border-radius: var(--radius-sm); background: var(--color-bg-primary); padding: 0 var(--space-2); font-size: var(--font-size-sm); font-family: 'Inter', system-ui, sans-serif; color: var(--color-text-secondary); outline: none; cursor: pointer; transition: border-color 150ms ease; }
+    .note-list-header .filters .sort-select:hover { border-color: var(--color-accent); }
+    .note-list-header .filters .sort-select i { font-size: 14px; color: var(--color-text-tertiary); }
+    .note-list-header .filters .view-toggle { display: flex; gap: 2px; }
+    .note-list-header .filters .view-toggle button { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border: 1px solid #E0E0E0; background: var(--color-bg-primary); color: var(--color-text-tertiary); border-radius: var(--radius-sm); cursor: pointer; font-size: 16px; transition: all 150ms ease; }
+    .note-list-header .filters .view-toggle button.active { background: var(--color-accent-soft); color: var(--color-accent); border-color: var(--color-accent); }
+    .note-list-header .filters .view-toggle button:hover { background: var(--color-bg-tertiary); }
+
+    .note-list { flex: 1; overflow-y: auto; padding: var(--space-3) var(--space-5) var(--space-5); }
+    .note-list::-webkit-scrollbar { width: 6px; }
+    .note-list::-webkit-scrollbar-thumb { background: #D0D0D0; border-radius: 3px; }
+
+    .date-group { margin-bottom: var(--space-6); }
+    .date-group:last-child { margin-bottom: 0; }
+    .date-group-header { display: flex; align-items: center; gap: var(--space-3); font-family: 'Inter', system-ui, sans-serif; font-size: var(--font-size-sm); font-weight: 500; color: var(--color-text-secondary); padding: var(--space-2) 0; margin-bottom: var(--space-1); }
+    .date-group-header::after { content: ''; flex: 1; height: 1px; background: var(--color-border); }
+
+    .note-item { display: flex; align-items: flex-start; padding: var(--space-4) var(--space-5); cursor: pointer; transition: background 150ms ease; position: relative; gap: var(--space-3); }
+    .note-item:hover { background: #F0F0F0; }
+    .note-item:hover .note-more-btn { opacity: 1; }
+    .note-item.active { background: var(--color-accent-soft); }
+    .note-item.active::before, .note-item.pinned::before { content: ''; position: absolute; left: 0; top: 8px; bottom: 8px; width: 3px; background: var(--color-accent); border-radius: 0 2px 2px 0; }
+    .note-item .note-content { flex: 1; min-width: 0; }
+    .note-item .note-title { font-size: var(--font-size-base); font-weight: 600; color: var(--color-text-primary); margin-bottom: 2px; line-height: 1.4; font-family: 'Inter', system-ui, sans-serif; }
+    .note-item .note-title .unsaved-badge { display: inline-flex; align-items: center; gap: 3px; font-size: var(--font-size-xs); color: var(--color-warning); font-weight: 400; margin-left: var(--space-2); }
+    .note-item .note-title .unsaved-badge i { font-size: 12px; }
+    .note-item .note-summary { font-size: var(--font-size-sm); color: var(--color-text-secondary); line-height: 1.5; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; margin-bottom: var(--space-2); }
+    .note-item .note-meta { display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; }
+    .note-item .note-meta .tag { display: inline-flex; align-items: center; gap: var(--space-1); font-size: var(--font-size-xs); padding: 1px 8px; border-radius: var(--radius-sm); font-family: 'Inter', system-ui, sans-serif; color: var(--color-text-secondary); font-weight: 400; transition: background 150ms ease; }
+    .note-item .note-meta .tag.tag-red { background: var(--tag-red); }
+    .note-item .note-meta .tag.tag-blue { background: var(--tag-blue); }
+    .note-item .note-meta .tag.tag-green { background: var(--tag-green); }
+    .note-item .note-meta .tag.tag-purple { background: var(--tag-purple); }
+    .note-item .note-meta .tag.tag-orange { background: var(--tag-orange); }
+    .note-item .note-meta .tag.tag-yellow { background: var(--tag-yellow); }
+    .note-item .note-meta .tag.tag-teal { background: var(--tag-teal); }
+    .note-item .note-meta .tag.tag-pink { background: var(--tag-pink); }
+    .note-item .note-meta .tag.tag-overflow { background: var(--color-bg-tertiary); color: var(--color-text-tertiary); }
+    .note-item .note-meta .tag-bullet { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+    .note-item .note-meta .tag-bullet.bullet-red { background: var(--dot-red); }
+    .note-item .note-meta .tag-bullet.bullet-blue { background: var(--dot-blue); }
+    .note-item .note-meta .tag-bullet.bullet-green { background: var(--dot-green); }
+    .note-item .note-meta .tag-bullet.bullet-purple { background: var(--dot-purple); }
+    .note-item .note-meta .tag-bullet.bullet-orange { background: var(--dot-orange); }
+    .note-item .note-meta .tag-bullet.bullet-yellow { background: var(--dot-yellow); }
+    .note-item .note-meta .backlink-count { display: inline-flex; align-items: center; gap: 2px; font-size: var(--font-size-xs); color: var(--color-text-link); }
+    .note-item .note-meta .backlink-count i { font-size: 12px; }
+    .note-item .note-right { display: flex; flex-direction: column; align-items: flex-end; gap: var(--space-1); flex-shrink: 0; min-width: 30px; }
+    .note-item .note-right .pin-btn { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; border: none; background: transparent; color: var(--color-text-tertiary); cursor: pointer; font-size: 14px; opacity: 0; transition: opacity 150ms ease, color 150ms ease; border-radius: var(--radius-sm); }
+    .note-item:hover .note-right .pin-btn { opacity: 1; }
+    .note-item .note-right .pin-btn:hover { color: var(--color-warning); }
+    .note-item .note-right .pin-btn.pinned { opacity: 1; color: var(--color-warning); }
+    .note-item .note-right .time { font-size: var(--font-size-sm); color: var(--color-text-tertiary); font-family: 'Inter', system-ui, sans-serif; white-space: nowrap; margin-top: 2px; }
+    .note-item .note-more-btn { position: absolute; right: var(--space-4); top: var(--space-4); width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border: none; background: transparent; color: var(--color-text-tertiary); cursor: pointer; border-radius: var(--radius-sm); font-size: 16px; opacity: 0; transition: opacity 150ms ease, background 150ms ease; }
+    .note-item .note-more-btn:hover { background: var(--color-bg-tertiary); color: var(--color-text-primary); }
+    .note-item .note-more-btn::before { content: ''; position: absolute; inset: -6px; }
+
+    /* ===== Context Menu ===== */
+    .context-menu { position: fixed; background: var(--color-bg-primary); border: 1px solid #E0E0E0; border-radius: var(--radius-md); box-shadow: var(--shadow-md); padding: var(--space-1) 0; min-width: 180px; z-index: 300; display: none; }
+    .context-menu.visible { display: block; }
+    .context-menu-item { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-1) var(--space-3); font-size: var(--font-size-sm); color: var(--color-text-primary); cursor: pointer; transition: background 100ms ease; }
+    .context-menu-item:hover { background: var(--color-bg-tertiary); }
+    .context-menu-item i { font-size: 16px; color: var(--color-text-secondary); }
+    .context-menu-item.danger { color: var(--color-error); }
+    .context-menu-item.danger i { color: var(--color-error); }
+    .context-menu-divider { height: 1px; background: var(--color-border); margin: var(--space-1) 0; }
+
+    /* ===== Bottom Status Bar ===== */
+    .bottom-status { height: var(--statusbar-height); min-height: var(--statusbar-height); background: var(--color-bg-secondary); border-top: 1px solid var(--color-border); display: flex; align-items: center; justify-content: space-between; padding: 0 var(--space-4); font-size: var(--font-size-xs); color: var(--color-text-tertiary); flex-shrink: 0; }
+    .bottom-status .status-left { display: flex; align-items: center; gap: var(--space-3); }
+    .bottom-status .status-left .sync-indicator { display: flex; align-items: center; gap: var(--space-1); }
+    .bottom-status .status-left .sync-indicator .sync-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--color-success); display: inline-block; }
+    .bottom-status .status-right { display: flex; align-items: center; gap: var(--space-3); }
+
+    /* ===== State Switcher (Design Demo) ===== */
+    .state-switcher { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-2) var(--space-5); border-bottom: 1px solid var(--color-border); background: var(--color-bg-primary); flex-shrink: 0; }
+    .state-switcher .state-label { font-size: var(--font-size-xs); color: var(--color-text-tertiary); font-weight: 500; margin-right: var(--space-2); }
+    .state-btn { font-size: var(--font-size-xs); font-family: 'Inter', system-ui, sans-serif; padding: 3px 12px; border: 1px solid var(--color-border); background: var(--color-bg-primary); color: var(--color-text-secondary); border-radius: var(--radius-full); cursor: pointer; transition: all 150ms ease; height: 28px; display: flex; align-items: center; font-weight: 500; }
+    .state-btn:hover { border-color: var(--color-accent); color: var(--color-accent); }
+    .state-btn.active { background: var(--color-accent); color: var(--color-text-on-accent); border-color: var(--color-accent); }
+
+    /* ===== Skeleton Loading ===== */
+    @keyframes shimmer { 0% { background-position: -300px 0; } 100% { background-position: calc(300px + 100%) 0; } }
+    .skeleton-list { flex: 1; overflow-y: auto; padding: var(--space-3) var(--space-5) var(--space-5); }
+    .skeleton-list::-webkit-scrollbar { width: 6px; }
+    .skeleton-list::-webkit-scrollbar-thumb { background: #D0D0D0; border-radius: 3px; }
+    .skeleton-card { padding: var(--space-4) var(--space-5); margin-bottom: 2px; }
+    .skeleton-line { height: 14px; border-radius: 4px; background: linear-gradient(90deg, #ECECEC 25%, #E0E0E0 50%, #ECECEC 75%); background-size: 300px 100%; animation: shimmer 1.6s ease-in-out infinite; }
+    .skeleton-line.skel-title { width: 55%; height: 18px; margin-bottom: 12px; }
+    .skeleton-line.skel-summary-1 { width: 95%; height: 13px; margin-bottom: 8px; }
+    .skeleton-line.skel-summary-2 { width: 72%; height: 13px; margin-bottom: 14px; }
+    .skeleton-tag-row { display: flex; gap: var(--space-2); }
+    .skeleton-tag { width: 56px; height: 20px; border-radius: var(--radius-sm); background: linear-gradient(90deg, #ECECEC 25%, #E0E0E0 50%, #ECECEC 75%); background-size: 300px 100%; animation: shimmer 1.6s ease-in-out infinite; }
+
+    /* ===== Empty State ===== */
+    .empty-state { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: var(--space-16) var(--space-5); gap: var(--space-4); }
+    .empty-state i { font-size: 48px; color: var(--color-text-tertiary); opacity: 0.35; }
+    .empty-state p { font-size: var(--font-size-base); color: var(--color-text-secondary); text-align: center; }
+    .empty-state .btn-primary { display: inline-flex; align-items: center; gap: var(--space-1); height: 36px; padding: 0 var(--space-4); background: var(--color-accent); color: var(--color-text-on-accent); border: none; border-radius: var(--radius-sm); font-size: var(--font-size-sm); font-family: 'Inter', system-ui, sans-serif; font-weight: 500; cursor: pointer; transition: background 150ms ease, box-shadow 150ms ease; box-shadow: 0 2px 4px rgba(59,130,246,0.25); margin-top: var(--space-2); }
+    .empty-state .btn-primary:hover { background: var(--color-accent-hover); box-shadow: 0 3px 8px rgba(59,130,246,0.35); }
+    .empty-state .btn-primary i { font-size: 16px; color: inherit; opacity: 1; }
+  </style>
+</head>
+<body>
+  <div class="app-layout">
+    <!-- ===== Top Navigation ===== -->
+    <header class="top-nav">
+      <div class="logo">
+        <span>MindFlow</span>
+      </div>
+      <div class="search-wrap">
+        <div class="search-bar">
+          <i class="mdi mdi-magnify"></i>
+          <input type="text" placeholder="搜索笔记…" />
+          <span class="kbd-hint">&#8984;K</span>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="icon-btn theme-toggle" id="theme-toggle" title="切换主题">
+          <i id="theme-icon" class="mdi mdi-weather-night"></i>
+        </button>
+        <button class="btn-primary"><i class="mdi mdi-plus"></i> 新建笔记</button>
+        <button class="icon-btn" title="设置"><i class="mdi mdi-cog-outline"></i></button>
+        <div class="avatar-wrap">
+          <div class="avatar">JD</div>
+          <span class="status-dot"></span>
+        </div>
+      </div>
+    </header>
+
+    <!-- ===== Main Area ===== -->
+    <div class="main-area">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="sidebar-scroll">
+          <!-- Shortcuts -->
+          <div class="sidebar-section">
+            <div class="sidebar-item active">
+              <i class="mdi mdi-note-text-outline item-icon"></i>
+              <span class="item-label">所有笔记</span>
+              <span class="item-count">23</span>
+            </div>
+            <div class="sidebar-item">
+              <i class="mdi mdi-calendar-text-outline item-icon"></i>
+              <span class="item-label">每日笔记</span>
+            </div>
+            <div class="sidebar-item">
+              <i class="mdi mdi-delete-outline item-icon"></i>
+              <span class="item-label">回收站</span>
+            </div>
+          </div>
+
+          <div class="sidebar-divider"></div>
+
+          <!-- Notebook Tree -->
+          <div class="sidebar-section">
+            <div class="sidebar-section-title">
+              <span>笔记本</span>
+              <i class="mdi mdi-plus add-icon"></i>
+            </div>
+            <div class="sidebar-item notebook-toggle" data-target="work-children">
+              <i class="mdi mdi-chevron-right expand-icon expanded" data-toggle-icon></i>
+              <i class="mdi mdi-folder-open-outline item-icon"></i>
+              <span class="item-label">工作</span>
+              <span class="item-count">8</span>
+            </div>
+            <div class="sidebar-item nested-1 notebook-child" data-parent="work-children">
+              <i class="mdi mdi-file-document-outline item-icon"></i>
+              <span class="item-label">产品设计</span>
+              <span class="item-count">5</span>
+            </div>
+            <div class="sidebar-item nested-1 notebook-child active" data-parent="work-children">
+              <i class="mdi mdi-file-document-outline item-icon"></i>
+              <span class="item-label">会议记录</span>
+              <span class="item-count">3</span>
+            </div>
+            <div class="sidebar-item notebook-toggle" data-target="personal-children">
+              <i class="mdi mdi-chevron-right expand-icon expanded" data-toggle-icon></i>
+              <i class="mdi mdi-folder-open-outline item-icon"></i>
+              <span class="item-label">个人</span>
+              <span class="item-count">12</span>
+            </div>
+            <div class="sidebar-item nested-1 notebook-child" data-parent="personal-children">
+              <i class="mdi mdi-file-document-outline item-icon"></i>
+              <span class="item-label">阅读</span>
+              <span class="item-count">7</span>
+            </div>
+            <div class="sidebar-item nested-1 notebook-child" data-parent="personal-children">
+              <i class="mdi mdi-file-document-outline item-icon"></i>
+              <span class="item-label">日记</span>
+              <span class="item-count">5</span>
+            </div>
+            <div class="sidebar-item notebook-toggle" data-target="study-children">
+              <i class="mdi mdi-chevron-right expand-icon" data-toggle-icon></i>
+              <i class="mdi mdi-folder-outline item-icon"></i>
+              <span class="item-label">学习</span>
+              <span class="item-count">3</span>
+            </div>
+            <div class="sidebar-item nested-1 notebook-child" data-parent="study-children" style="display:none;">
+              <i class="mdi mdi-file-document-outline item-icon"></i>
+              <span class="item-label">AI 课程</span>
+              <span class="item-count">2</span>
+            </div>
+            <div class="sidebar-item nested-1 notebook-child" data-parent="study-children" style="display:none;">
+              <i class="mdi mdi-file-document-outline item-icon"></i>
+              <span class="item-label">读书笔记</span>
+              <span class="item-count">1</span>
+            </div>
+          </div>
+
+          <div class="sidebar-divider"></div>
+
+          <!-- Tag Tree -->
+          <div class="sidebar-section">
+            <div class="sidebar-section-title">
+              <span>标签</span>
+              <i class="mdi mdi-plus add-icon"></i>
+            </div>
+            <div class="sidebar-item tag-toggle" data-target="tech-tags">
+              <i class="mdi mdi-chevron-right expand-icon expanded" data-toggle-icon></i>
+              <span class="tag-dot dot-blue" aria-hidden="true"></span>
+              <span class="item-label">科技/AI</span>
+              <span class="item-count">6</span>
+            </div>
+            <div class="sidebar-item nested-1 tag-child" data-parent="tech-tags">
+              <span class="tag-dot dot-blue" aria-hidden="true"></span>
+              <span class="item-label">LLM</span>
+              <span class="item-count">3</span>
+            </div>
+            <div class="sidebar-item nested-1 tag-child" data-parent="tech-tags">
+              <span class="tag-dot dot-blue" aria-hidden="true"></span>
+              <span class="item-label">Agent</span>
+              <span class="item-count">3</span>
+            </div>
+            <div class="sidebar-item">
+              <span class="tag-dot dot-purple" aria-hidden="true"></span>
+              <span class="item-label">阅读</span>
+              <span class="item-count">5</span>
+            </div>
+            <div class="sidebar-item">
+              <span class="tag-dot dot-orange" aria-hidden="true"></span>
+              <span class="item-label">设计</span>
+              <span class="item-count">4</span>
+            </div>
+            <div class="sidebar-item">
+              <span class="tag-dot dot-green" aria-hidden="true"></span>
+              <span class="item-label">工作</span>
+              <span class="item-count">8</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Space Usage -->
+        <div class="space-usage">
+          <div class="usage-label">
+            <span>存储空间</span>
+            <span>35% &#183; 1.2 GB / 5 GB</span>
+          </div>
+          <div class="usage-bar"><div class="fill"></div></div>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="content">
+        <div class="note-list-header">
+          <h2>所有笔记</h2>
+          <div class="filters">
+            <div class="sort-select">
+              <i class="mdi mdi-swap-vertical"></i>
+              <span>最近修改</span>
+              <i class="mdi mdi-chevron-down" style="font-size:14px;"></i>
+            </div>
+            <div class="view-toggle">
+              <button class="active"><i class="mdi mdi-format-list-bulleted"></i></button>
+              <button><i class="mdi mdi-view-grid-outline"></i></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== State Switcher (Design Demo) ===== -->
+        <div class="state-switcher">
+          <span class="state-label">状态切换：</span>
+          <button class="state-btn active" data-state="normal">正常列表</button>
+          <button class="state-btn" data-state="loading">加载中</button>
+          <button class="state-btn" data-state="empty">空结果</button>
+        </div>
+
+        <!-- ===== Normal State ===== -->
+        <div class="note-list" id="note-list-normal">
+          <!-- ===== Today ===== -->
+          <div class="date-group">
+            <div class="date-group-header">今天</div>
+
+            <!-- Note 1: Pinned + Active -->
+            <div class="note-item active pinned">
+              <div class="note-content">
+                <div class="note-title">AI Agent 技术架构设计</div>
+                <div class="note-summary">本文对 AI Agent 在互联网行业的应用进行了系统性汇总，涉及推荐系统、客服智能体、内容生成等多个方向。重点分析了如何将 Agent 整合到现有的业务流程中，以及在不同场景下的最佳实践。</div>
+                <div class="note-meta">
+                  <span class="tag tag-blue"><span class="tag-bullet bullet-blue"></span>科技/AI</span>
+                  <span class="tag tag-purple"><span class="tag-bullet bullet-purple"></span>Agent</span>
+                  <span class="backlink-count"><i class="mdi mdi-link-variant"></i>3</span>
+                </div>
+              </div>
+              <div class="note-right">
+                <button class="pin-btn pinned"><i class="mdi mdi-pin"></i></button>
+                <span class="time">2分钟前</span>
+              </div>
+              <button class="note-more-btn"><i class="mdi mdi-dots-horizontal"></i></button>
+            </div>
+
+            <!-- Note 2 -->
+            <div class="note-item">
+              <div class="note-content">
+                <div class="note-title">MindFlow 产品设计方案 v0.1</div>
+                <div class="note-summary">定义了 MindFlow 的产品定位和核心商业价值，并初步设计了核心功能模块，包括笔记编辑器、知识图谱、全局搜索等。本次迭代聚焦于 Web MVP 版本的核心体验打磨。</div>
+                <div class="note-meta">
+                  <span class="tag tag-orange"><span class="tag-bullet bullet-orange"></span>设计</span>
+                  <span class="backlink-count"><i class="mdi mdi-link-variant"></i>5</span>
+                </div>
+              </div>
+              <div class="note-right">
+                <button class="pin-btn"><i class="mdi mdi-pin-outline"></i></button>
+                <span class="time">15分钟前</span>
+              </div>
+              <button class="note-more-btn"><i class="mdi mdi-dots-horizontal"></i></button>
+            </div>
+
+            <!-- Note 3 -->
+            <div class="note-item">
+              <div class="note-content">
+                <div class="note-title">《深度学习》笔记 — Chapter 5: 卷积神经网络</div>
+                <div class="note-summary">卷积神经网络的核心概念包括卷积操作、池化层、全连接层和深度可分离卷积。本章记录了对 CNN 网络结构的理解和实际应用中的注意事项，以及在图像识别任务中的调优经验。</div>
+                <div class="note-meta">
+                  <span class="tag tag-blue"><span class="tag-bullet bullet-blue"></span>科技/AI</span>
+                  <span class="tag tag-green"><span class="tag-bullet bullet-green"></span>阅读</span>
+                  <span class="time">1小时前</span>
+                </div>
+              </div>
+              <div class="note-right">
+                <button class="pin-btn"><i class="mdi mdi-pin-outline"></i></button>
+                <span class="time">1小时前</span>
+              </div>
+              <button class="note-more-btn"><i class="mdi mdi-dots-horizontal"></i></button>
+            </div>
+
+            <!-- Note 4 -->
+            <div class="note-item">
+              <div class="note-content">
+                <div class="note-title">多 Agent 协作框架设计思路 <span class="unsaved-badge"><i class="mdi mdi-alert-circle-outline"></i>未保存</span></div>
+                <div class="note-summary">探讨了多种多 Agent 协作模式，包括主从式、对等式和混合式架构。分析了各模式在任务分解、信息共享和冲突解决方面的优劣，以及实际工程中的落地挑战。</div>
+                <div class="note-meta">
+                  <span class="tag tag-blue"><span class="tag-bullet bullet-blue"></span>科技/AI</span>
+                  <span class="tag tag-purple"><span class="tag-bullet bullet-purple"></span>Agent</span>
+                  <span class="backlink-count"><i class="mdi mdi-link-variant"></i>2</span>
+                </div>
+              </div>
+              <div class="note-right">
+                <button class="pin-btn"><i class="mdi mdi-pin-outline"></i></button>
+                <span class="time">3小时前</span>
+              </div>
+              <button class="note-more-btn"><i class="mdi mdi-dots-horizontal"></i></button>
+            </div>
+          </div>
+
+          <!-- ===== Yesterday ===== -->
+          <div class="date-group">
+            <div class="date-group-header">昨天</div>
+
+            <!-- Note 5 -->
+            <div class="note-item">
+              <div class="note-content">
+                <div class="note-title">产品设计周会 2026-07-01 会议纪要</div>
+                <div class="note-summary">会议重点讨论了 Q3 的产品路线图，确定了 MindFlow 的开发优先级和时间表。决定将基础笔记功能作为 P0 先发布，知识图谱作为 P1。讨论了技术选型和团队分工安排。</div>
+                <div class="note-meta">
+                  <span class="tag tag-yellow"><span class="tag-bullet bullet-yellow"></span>工作</span>
+                  <span class="tag tag-orange"><span class="tag-bullet bullet-orange"></span>设计</span>
+                  <span class="time">昨天</span>
+                </div>
+              </div>
+              <div class="note-right">
+                <button class="pin-btn"><i class="mdi mdi-pin-outline"></i></button>
+                <span class="time">昨天</span>
+              </div>
+              <button class="note-more-btn"><i class="mdi mdi-dots-horizontal"></i></button>
+            </div>
+
+            <!-- Note 6 -->
+            <div class="note-item">
+              <div class="note-content">
+                <div class="note-title">介绍 LangChain Agent 架构</div>
+                <div class="note-summary">LangChain Agent 的架构设计分为两大部分：Planning 和 Execution。Planning 阶段，Agent 会根据用户输入生成行动计划，然后 Execution 阶段执行具体步骤并访问外部工具。</div>
+                <div class="note-meta">
+                  <span class="tag tag-blue"><span class="tag-bullet bullet-blue"></span>科技/AI</span>
+                  <span class="tag tag-purple"><span class="tag-bullet bullet-purple"></span>Agent</span>
+                  <span class="tag tag-purple"><span class="tag-bullet bullet-purple"></span>LLM</span>
+                  <span class="tag tag-overflow">+1</span>
+                  <span class="time">昨天</span>
+                </div>
+              </div>
+              <div class="note-right">
+                <button class="pin-btn"><i class="mdi mdi-pin-outline"></i></button>
+                <span class="time">昨天</span>
+              </div>
+              <button class="note-more-btn"><i class="mdi mdi-dots-horizontal"></i></button>
+            </div>
+
+            <!-- Note 7 -->
+            <div class="note-item">
+              <div class="note-content">
+                <div class="note-title">用户增长策略分析报告</div>
+                <div class="note-summary">分析了当前产品的用户增长数据，包括获客渠道转化率、留存曲线和 LTV 预测。提出了以内容营销和 SEO 为核心的新增长策略，预计 Q3 可提升 30% 的自然流量。</div>
+                <div class="note-meta">
+                  <span class="tag tag-yellow"><span class="tag-bullet bullet-yellow"></span>工作</span>
+                  <span class="tag tag-orange"><span class="tag-bullet bullet-orange"></span>产品</span>
+                  <span class="backlink-count"><i class="mdi mdi-link-variant"></i>1</span>
+                  <span class="time">昨天</span>
+                </div>
+              </div>
+              <div class="note-right">
+                <button class="pin-btn"><i class="mdi mdi-pin-outline"></i></button>
+                <span class="time">昨天</span>
+              </div>
+              <button class="note-more-btn"><i class="mdi mdi-dots-horizontal"></i></button>
+            </div>
+          </div>
+
+          <!-- ===== This Week ===== -->
+          <div class="date-group">
+            <div class="date-group-header">本周</div>
+
+            <!-- Note 8 -->
+            <div class="note-item">
+              <div class="note-content">
+                <div class="note-title">《设计之道》读后感 — 设计哲学与实践</div>
+                <div class="note-summary">深入探讨了设计不仅是视觉呈现，更是对用户需求的深度理解。好的设计应当是有目的的、克制的、以人为本的。书中关于「少即是多」的理念在数字化产品设计中尤为重要。</div>
+                <div class="note-meta">
+                  <span class="tag tag-green"><span class="tag-bullet bullet-green"></span>阅读</span>
+                  <span class="tag tag-orange"><span class="tag-bullet bullet-orange"></span>设计</span>
+                  <span class="time">周二</span>
+                </div>
+              </div>
+              <div class="note-right">
+                <button class="pin-btn"><i class="mdi mdi-pin-outline"></i></button>
+                <span class="time">周二</span>
+              </div>
+              <button class="note-more-btn"><i class="mdi mdi-dots-horizontal"></i></button>
+            </div>
+
+            <!-- Note 9 -->
+            <div class="note-item">
+              <div class="note-content">
+                <div class="note-title">RAG 技术方案研究 — Embedding 模型选型</div>
+                <div class="note-summary">对比了 OpenAI text-embedding-3-small/large、Cohere embed-v3、 bge-large-zh 等模型在中文场景下的映射表现。bge-large-zh 在中文文档检索上表现最优，text-embedding-3-small 在速度上占优势。</div>
+                <div class="note-meta">
+                  <span class="tag tag-blue"><span class="tag-bullet bullet-blue"></span>科技/AI</span>
+                  <span class="tag tag-purple"><span class="tag-bullet bullet-purple"></span>LLM</span>
+                  <span class="time">周一</span>
+                </div>
+              </div>
+              <div class="note-right">
+                <button class="pin-btn"><i class="mdi mdi-pin-outline"></i></button>
+                <span class="time">周一</span>
+              </div>
+              <button class="note-more-btn"><i class="mdi mdi-dots-horizontal"></i></button>
+            </div>
+
+            <!-- Note 10 -->
+            <div class="note-item">
+              <div class="note-content">
+                <div class="note-title">2026 年度目标进度回顾 — Q2 总结</div>
+                <div class="note-summary">Q2 目标完成情况总结，包括职业发展、技术学习、阅读计划等多个维度。总体完成率约 78%，下季度需要调整 OKR 的可量化标准，特别是在阅读和技术输出方面需要加强。</div>
+                <div class="note-meta">
+                  <span class="tag tag-green"><span class="tag-bullet bullet-green"></span>阅读</span>
+                  <span class="tag tag-purple"><span class="tag-bullet bullet-purple"></span>日记</span>
+                  <span class="time">周一</span>
+                </div>
+              </div>
+              <div class="note-right">
+                <button class="pin-btn"><i class="mdi mdi-pin-outline"></i></button>
+                <span class="time">周一</span>
+              </div>
+              <button class="note-more-btn"><i class="mdi mdi-dots-horizontal"></i></button>
+            </div>
+
+            <!-- Note 11 -->
+            <div class="note-item">
+              <div class="note-content">
+                <div class="note-title">Figma 实用技巧整理 — Auto Layout 进阶用法</div>
+                <div class="note-summary">整理了 Figma Auto Layout 的进阶用法，包括子元素对齐、复杂嵌套、和响应式设计中的具体应用。掌握这些技巧可以大幅提升设计效率和一致性，减少手动调整的工作量。</div>
+                <div class="note-meta">
+                  <span class="tag tag-orange"><span class="tag-bullet bullet-orange"></span>设计</span>
+                  <span class="tag tag-yellow"><span class="tag-bullet bullet-yellow"></span>工作</span>
+                  <span class="time">周日</span>
+                </div>
+              </div>
+              <div class="note-right">
+                <button class="pin-btn"><i class="mdi mdi-pin-outline"></i></button>
+                <span class="time">周日</span>
+              </div>
+              <button class="note-more-btn"><i class="mdi mdi-dots-horizontal"></i></button>
+            </div>
+
+            <!-- Note 12 -->
+            <div class="note-item">
+              <div class="note-content">
+                <div class="note-title">多模态大模型技术综述 — GPT-4V 与 Gemini</div>
+                <div class="note-summary">综述了当前主流多模态大模型的技术路线，包括 GPT-4V、Gemini、Claude 3 等。对比了它们在图文理解、视频分析、多模态推理等任务上的表现差异和各自优势。</div>
+                <div class="note-meta">
+                  <span class="tag tag-blue"><span class="tag-bullet bullet-blue"></span>科技/AI</span>
+                  <span class="tag tag-purple"><span class="tag-bullet bullet-purple"></span>LLM</span>
+                  <span class="time">周六</span>
+                </div>
+              </div>
+              <div class="note-right">
+                <button class="pin-btn"><i class="mdi mdi-pin-outline"></i></button>
+                <span class="time">周六</span>
+              </div>
+              <button class="note-more-btn"><i class="mdi mdi-dots-horizontal"></i></button>
+            </div>
+
+            <!-- Note 13 -->
+            <div class="note-item">
+              <div class="note-content">
+                <div class="note-title">健康饮食与作息计划</div>
+                <div class="note-summary">制定了新的健康计划，包括每日运动 30 分钟、早睡早起（23:00 - 7:00）、减少咖啡摄入和增加蔬菜比例。目标是在三个月内改善睡眠质量和提升日间精力水平。</div>
+                <div class="note-meta">
+                  <span class="tag tag-pink"><span class="tag-bullet bullet-pink"></span>个人</span>
+                  <span class="tag tag-green"><span class="tag-bullet bullet-green"></span>日记</span>
+                  <span class="time">周六</span>
+                </div>
+              </div>
+              <div class="note-right">
+                <button class="pin-btn"><i class="mdi mdi-pin-outline"></i></button>
+                <span class="time">周六</span>
+              </div>
+              <button class="note-more-btn"><i class="mdi mdi-dots-horizontal"></i></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== Loading State (Skeleton) ===== -->
+        <div class="skeleton-list" id="note-list-loading" style="display:none;">
+          <div class="skeleton-card">
+            <div class="skeleton-line skel-title"></div>
+            <div class="skeleton-line skel-summary-1"></div>
+            <div class="skeleton-line skel-summary-2"></div>
+            <div class="skeleton-tag-row" style="margin-top:12px;">
+              <span class="skeleton-tag"></span>
+              <span class="skeleton-tag" style="width:64px;"></span>
+            </div>
+          </div>
+          <div class="skeleton-card">
+            <div class="skeleton-line skel-title" style="width:48%;"></div>
+            <div class="skeleton-line skel-summary-1"></div>
+            <div class="skeleton-line skel-summary-2" style="width:80%;"></div>
+            <div class="skeleton-tag-row" style="margin-top:12px;">
+              <span class="skeleton-tag"></span>
+              <span class="skeleton-tag" style="width:44px;"></span>
+              <span class="skeleton-tag" style="width:52px;"></span>
+            </div>
+          </div>
+          <div class="skeleton-card">
+            <div class="skeleton-line skel-title" style="width:62%;"></div>
+            <div class="skeleton-line skel-summary-1" style="width:90%;"></div>
+            <div class="skeleton-line skel-summary-2" style="width:68%;"></div>
+            <div class="skeleton-tag-row" style="margin-top:12px;">
+              <span class="skeleton-tag"></span>
+            </div>
+          </div>
+          <div class="skeleton-card">
+            <div class="skeleton-line skel-title" style="width:58%;"></div>
+            <div class="skeleton-line skel-summary-1" style="width:92%;"></div>
+            <div class="skeleton-line skel-summary-2" style="width:74%;"></div>
+            <div class="skeleton-tag-row" style="margin-top:12px;">
+              <span class="skeleton-tag"></span>
+              <span class="skeleton-tag" style="width:60px;"></span>
+            </div>
+          </div>
+          <div class="skeleton-card">
+            <div class="skeleton-line skel-title" style="width:52%;"></div>
+            <div class="skeleton-line skel-summary-1" style="width:88%;"></div>
+            <div class="skeleton-line skel-summary-2" style="width:70%;"></div>
+            <div class="skeleton-tag-row" style="margin-top:12px;">
+              <span class="skeleton-tag"></span>
+              <span class="skeleton-tag" style="width:56px;"></span>
+            </div>
+          </div>
+          <div class="skeleton-card">
+            <div class="skeleton-line skel-title" style="width:45%;"></div>
+            <div class="skeleton-line skel-summary-1"></div>
+            <div class="skeleton-line skel-summary-2" style="width:76%;"></div>
+            <div class="skeleton-tag-row" style="margin-top:12px;">
+              <span class="skeleton-tag"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== Empty State ===== -->
+        <div class="empty-state" id="note-list-empty" style="display:none;">
+          <i class="mdi mdi-note-text-outline"></i>
+          <p>这个笔记本还没有笔记<br>点击下方按钮创建你的第一篇笔记</p>
+          <button class="btn-primary"><i class="mdi mdi-plus"></i> 新建笔记</button>
+        </div>
+      </main>
+    </div>
+
+    <!-- ===== Bottom Status Bar ===== -->
+    <footer class="bottom-status">
+      <div class="status-left">
+        <div class="sync-indicator">
+          <span class="sync-dot"></span>
+          <span>已同步</span>
+        </div>
+        <span>&#183;</span>
+        <span>刚刚</span>
+      </div>
+      <div class="status-right">
+        <span>23 笔记</span>
+        <span>&#183;</span>
+        <span>0 失败</span>
+        <span>&#183;</span>
+        <span>John Doe</span>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Context Menu -->
+  <div class="context-menu" id="context-menu">
+    <div class="context-menu-item"><i class="mdi mdi-pencil-outline"></i> 重命名</div>
+    <div class="context-menu-item"><i class="mdi mdi-folder-move-outline"></i> 移动</div>
+    <div class="context-menu-item"><i class="mdi mdi-content-copy"></i> 复制链接</div>
+    <div class="context-menu-divider"></div>
+    <div class="context-menu-item danger"><i class="mdi mdi-delete-outline"></i> 删除</div>
+  </div>
+
+  <script>
+    // === Theme Toggle ===
+    function toggleTheme() {
+      const html = document.documentElement;
+      const icon = document.getElementById('theme-icon');
+      const currentTheme = html.getAttribute('data-theme');
+      const transitioning = document.createAttribute('data-theme-transitioning');
+
+      html.setAttribute('data-theme-transitioning', '');
+      html.setAttribute('data-theme', currentTheme === 'dark' ? 'light' : 'dark');
+      icon.className = 'mdi ' + (currentTheme === 'dark' ? 'mdi-white-balance-sunny' : 'mdi-weather-night');
+
+      setTimeout(() => {
+        html.removeAttribute('data-theme-transitioning');
+      }, 350);
+    }
+
+    document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+
+    // === Note item selection ===
+    document.querySelectorAll('.note-item').forEach(item => {
+      item.addEventListener('click', function(e) {
+        if (e.target.closest('.pin-btn') || e.target.closest('.note-more-btn')) return;
+        // Navigate to editor on click (simulated)
+        window.location.href = 'editor.html';
+      });
+    });
+
+    // === Pin toggle ===
+    document.querySelectorAll('.pin-btn').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        this.classList.toggle('pinned');
+        const icon = this.querySelector('i');
+        if (this.classList.contains('pinned')) {
+          icon.className = 'mdi mdi-pin';
+          this.closest('.note-item').classList.add('pinned');
+        } else {
+          icon.className = 'mdi mdi-pin-outline';
+          this.closest('.note-item').classList.remove('pinned');
+        }
+      });
+    });
+
+    // === Sidebar item selection ===
+    document.querySelectorAll('.sidebar-item:not(.notebook-toggle):not(.tag-toggle)').forEach(item => {
+      item.addEventListener('click', function() {
+        document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    // === Notebook tree expand/collapse ===
+    document.querySelectorAll('.notebook-toggle').forEach(item => {
+      item.addEventListener('click', function() {
+        const target = this.dataset.target;
+        const children = document.querySelectorAll(`.notebook-child[data-parent="${target}"]`);
+        const icon = this.querySelector('[data-toggle-icon]');
+        children.forEach(child => {
+          if (child.style.display === 'none') {
+            child.style.display = 'flex';
+            icon.classList.add('expanded');
+          } else {
+            child.style.display = 'none';
+            icon.classList.remove('expanded');
+          }
+        });
+      });
+    });
+
+    // === Tag tree expand/collapse ===
+    document.querySelectorAll('.tag-toggle').forEach(item => {
+      item.addEventListener('click', function() {
+        const target = this.dataset.target;
+        const children = document.querySelectorAll(`.tag-child[data-parent="${target}"]`);
+        const icon = this.querySelector('[data-toggle-icon]');
+        children.forEach(child => {
+          if (child.style.display === 'none') {
+            child.style.display = 'flex';
+            icon.classList.add('expanded');
+          } else {
+            child.style.display = 'none';
+            icon.classList.remove('expanded');
+          }
+        });
+      });
+    });
+
+    // === View toggle ===
+    document.querySelectorAll('.view-toggle button').forEach(btn => {
+      btn.addEventListener('click', function() {
+        this.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    // === Context menu on "more" button ===
+    const ctxMenu = document.getElementById('context-menu');
+    document.querySelectorAll('.note-more-btn').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const rect = this.getBoundingClientRect();
+        ctxMenu.style.left = (rect.right - 180) + 'px';
+        ctxMenu.style.top = (rect.bottom + 4) + 'px';
+        ctxMenu.classList.toggle('visible');
+      });
+    });
+
+    document.addEventListener('click', function() {
+      ctxMenu.classList.remove('visible');
+    });
+
+    ctxMenu.addEventListener('click', function(e) {
+      e.stopPropagation();
+      this.classList.remove('visible');
+    });
+
+    // === Search bar — navigate to search page ===
+    const searchInput = document.querySelector('.search-bar input');
+    if (searchInput) {
+      searchInput.addEventListener('focus', function() {
+        this.closest('.search-bar').classList.add('focused');
+        this.blur(); // Don't keep focus, navigate instead
+        window.location.href = 'search-panel.html';
+      });
+    }
+
+    // === State switching (normal / loading / empty) ===
+    const stateBtns = document.querySelectorAll('.state-btn');
+    const normalList = document.getElementById('note-list-normal');
+    const loadingList = document.getElementById('note-list-loading');
+    const emptyState = document.getElementById('note-list-empty');
+
+    function setListState(state) {
+      stateBtns.forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.state === state);
+      });
+      normalList.style.display = state === 'normal' ? '' : 'none';
+      loadingList.style.display = state === 'loading' ? '' : 'none';
+      emptyState.style.display = state === 'empty' ? '' : 'none';
+    }
+
+    stateBtns.forEach(btn => {
+      btn.addEventListener('click', function() {
+        setListState(this.dataset.state);
+      });
+    });
+  </script>
+</body>
+</html>

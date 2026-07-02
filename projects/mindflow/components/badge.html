@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Badge 徽章 | MindFlow 组件</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-bg-primary: #FAFAFA; --color-bg-secondary: #F5F5F5; --color-bg-tertiary: #EEEEEE;
+      --color-text-primary: #1A1A1A; --color-text-secondary: #6B6B6B; --color-text-tertiary: #9E9E9E;
+      --color-text-link: #3B82F6; --color-text-on-accent: #FFFFFF;
+      --color-accent: #3B82F6; --color-accent-hover: #2563EB; --color-accent-soft: #E8F0FE;
+      --color-success: #10B981; --color-warning: #F59E0B; --color-error: #EF4444;
+      --font-family-ui: 'Inter', system-ui, -apple-system, sans-serif;
+      --font-family-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-size-xs: 11px; --font-size-sm: 13px; --font-size-base: 15px;
+      --font-size-lg: 18px; --font-size-xl: 22px; --font-size-2xl: 28px; --font-size-3xl: 36px;
+      --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 20px; --space-6: 24px;
+      --space-8: 32px; --space-10: 40px; --space-12: 48px; --space-16: 64px;
+      --radius-sm: 4px; --radius-md: 8px; --radius-lg: 12px; --radius-xl: 16px; --radius-full: 9999px;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05); --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
+      --shadow-lg: 0 8px 24px rgba(0,0,0,0.12); --shadow-xl: 0 16px 48px rgba(0,0,0,0.16);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: var(--font-family-body); background: var(--color-bg-primary); color: var(--color-text-primary); padding: var(--space-6); -webkit-font-smoothing: antialiased; }
+    .page-header { margin-bottom: var(--space-8); display: flex; align-items: flex-start; gap: var(--space-4); }
+    .page-header a { color: var(--color-accent); text-decoration: none; font-size: var(--font-size-sm); font-family: var(--font-family-ui); display: flex; align-items: center; gap: 4px; padding: 6px 12px; border-radius: var(--radius-sm); transition: background 0.15s; flex-shrink: 0; }
+    .page-header a:hover { background: var(--color-accent-soft); }
+    .page-header h1 { font-family: var(--font-family-ui); font-size: var(--font-size-2xl); font-weight: 700; }
+    .page-header p { color: var(--color-text-secondary); font-size: var(--font-size-sm); margin-top: var(--space-1); }
+    .section { margin-bottom: var(--space-10); }
+    .section-title { font-family: var(--font-family-ui); font-size: var(--font-size-base); font-weight: 600; padding-bottom: var(--space-2); margin-bottom: var(--space-4); border-bottom: 1px solid #E8E8E8; display: flex; align-items: center; gap: var(--space-2); }
+    .section-title code { font-size: var(--font-size-xs); background: var(--color-bg-secondary); padding: 2px 8px; border-radius: var(--radius-sm); color: var(--color-text-secondary); }
+    .demo-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4); padding: var(--space-4); background: #fff; border: 1px solid #E8E8E8; border-radius: var(--radius-md); margin-bottom: var(--space-3); }
+    .demo-row-label { width: 100%; font-size: var(--font-size-xs); color: var(--color-text-secondary); font-family: var(--font-family-ui); font-weight: 500; margin-bottom: -4px; }
+
+    /* ===== BADGE BASE ===== */
+    .badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      font-family: var(--font-family-ui); font-weight: 600; white-space: nowrap;
+    }
+
+    /* Dot badge */
+    .badge-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .badge-dot-sm { width: 6px; height: 6px; }
+    .badge-dot-lg { width: 10px; height: 10px; }
+
+    /* Number badge */
+    .badge-num {
+      border-radius: var(--radius-full); min-width: 18px; height: 18px;
+      padding: 0 5px; font-size: 10px; line-height: 18px;
+    }
+    .badge-num-sm { min-width: 14px; height: 14px; padding: 0 3px; font-size: 8px; line-height: 14px; }
+    .badge-num-lg { min-width: 22px; height: 22px; padding: 0 7px; font-size: 12px; line-height: 22px; }
+
+    /* Text badge */
+    .badge-text {
+      border-radius: var(--radius-sm); padding: 2px 8px; font-size: var(--font-size-xs);
+    }
+    .badge-text-sm { padding: 1px 6px; font-size: 10px; }
+    .badge-text-lg { padding: 3px 12px; font-size: var(--font-size-sm); }
+
+    /* Colors (applied via background/foreground) */
+    .badge-accent { background: var(--color-accent); color: #fff; }
+    .badge-accent-soft { background: var(--color-accent-soft); color: var(--color-accent); }
+    .badge-success { background: #D1FAE5; color: #065F46; }
+    .badge-warning { background: #FEF3C7; color: #92400E; }
+    .badge-error { background: #FEE2E2; color: #991B1B; }
+    .badge-gray { background: var(--color-bg-secondary); color: var(--color-text-secondary); }
+
+    /* Tag colors (pastel bg + dark text) */
+    .badge-red { background: #FEE2E2; color: #7F1D1D; }
+    .badge-orange { background: #FFEDD5; color: #7C2D12; }
+    .badge-yellow { background: #FEF3C7; color: #78350F; }
+    .badge-green { background: #D1FAE5; color: #064E3B; }
+    .badge-teal { background: #CCFBF1; color: #134E4A; }
+    .badge-blue { background: #DBEAFE; color: #1E3A5F; }
+    .badge-purple { background: #EDE9FE; color: #4C1D95; }
+    .badge-pink { background: #FCE7F3; color: #831843; }
+
+    /* Dot colors */
+    .badge-dot-accent { background: var(--color-accent); }
+    .badge-dot-success { background: var(--color-success); }
+    .badge-dot-warning { background: var(--color-warning); }
+    .badge-dot-error { background: var(--color-error); }
+    .badge-dot-gray { background: #B0B0B0; }
+
+    /* Positioned on icon/button */
+    .badge-container {
+      position: relative; display: inline-flex; align-items: center; justify-content: center;
+    }
+    .badge-top-right {
+      position: absolute; top: -4px; right: -4px; pointer-events: none;
+    }
+
+    .icon-large { font-size: 28px; color: var(--color-text-secondary); }
+    .demo-color-row {
+      display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); padding: var(--space-3); background: #fff; border: 1px solid #E8E8E8; border-radius: var(--radius-md); margin-bottom: var(--space-3);
+    }
+    .color-label {
+      font-size: var(--font-size-xs); color: var(--color-text-tertiary); min-width: 60px;
+      font-family: var(--font-family-ui);
+    }
+  </style>
+</head>
+<body>
+  <div class="page-header">
+    <a href="index.html"><i class="mdi mdi-arrow-left"></i> 返回</a>
+    <div>
+      <h1>Badge 徽章</h1>
+      <p>Dot / Number / Text 三种变体，11 种颜色，支持附加在图标和按钮上展示。</p>
+    </div>
+  </div>
+
+  <!-- Dot Badge -->
+  <div class="section">
+    <div class="section-title">Dot Badge <code>纯圆点</code></div>
+    <div class="demo-row">
+      <div class="demo-row-label">颜色变体</div>
+      <span class="badge badge-dot badge-dot-accent" title="Accent"></span>
+      <span class="badge badge-dot badge-dot-success" title="Success"></span>
+      <span class="badge badge-dot badge-dot-warning" title="Warning"></span>
+      <span class="badge badge-dot badge-dot-error" title="Error"></span>
+      <span class="badge badge-dot badge-dot-gray" title="Gray"></span>
+      <span style="font-size:var(--font-size-xs);color:var(--color-text-secondary)">—— 常用于在线状态、未读指示</span>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">尺寸：Small / Default / Large</div>
+      <span class="badge badge-dot badge-dot-sm badge-dot-accent"></span>
+      <span class="badge badge-dot badge-dot-accent"></span>
+      <span class="badge badge-dot badge-dot-lg badge-dot-accent"></span>
+    </div>
+  </div>
+
+  <!-- Number Badge -->
+  <div class="section">
+    <div class="section-title">Number Badge <code>数字徽章</code></div>
+    <div class="demo-row">
+      <div class="demo-row-label">颜色变体</div>
+      <span class="badge badge-num badge-accent">3</span>
+      <span class="badge badge-num badge-success">99</span>
+      <span class="badge badge-num badge-warning">7</span>
+      <span class="badge badge-num badge-error">!</span>
+      <span class="badge badge-num badge-gray">12</span>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">尺寸：Small / Default / Large</div>
+      <span class="badge badge-num badge-num-sm badge-accent">9</span>
+      <span class="badge badge-num badge-accent">99</span>
+      <span class="badge badge-num badge-num-lg badge-accent">99+</span>
+    </div>
+  </div>
+
+  <!-- Text Badge -->
+  <div class="section">
+    <div class="section-title">Text Badge <code>文字标签</code></div>
+    <div class="demo-row">
+      <div class="demo-row-label">Pastel 8 色</div>
+      <span class="badge badge-text badge-red">热门</span>
+      <span class="badge badge-text badge-orange">待处理</span>
+      <span class="badge badge-text badge-yellow">进行中</span>
+      <span class="badge badge-text badge-green">已完成</span>
+      <span class="badge badge-text badge-teal">归档</span>
+      <span class="badge badge-text badge-blue">设计</span>
+      <span class="badge badge-text badge-purple">开发</span>
+      <span class="badge badge-text badge-pink">个人</span>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">语义色</div>
+      <span class="badge badge-text badge-accent">默认</span>
+      <span class="badge badge-text badge-success">成功</span>
+      <span class="badge badge-text badge-warning">警告</span>
+      <span class="badge badge-text badge-error">错误</span>
+      <span class="badge badge-text badge-gray">信息</span>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">尺寸：Small / Default / Large</div>
+      <span class="badge badge-text badge-text-sm badge-blue">小</span>
+      <span class="badge badge-text badge-blue">默认</span>
+      <span class="badge badge-text badge-text-lg badge-blue">大标签</span>
+    </div>
+  </div>
+
+  <!-- Show all 8 tag colors in one row -->
+  <div class="section">
+    <div class="section-title">8 色标签全景</div>
+    <div class="demo-color-row">
+      <span class="color-label">Red</span>
+      <span class="badge badge-text badge-red">设计</span>
+      <span class="badge badge-dot badge-dot-accent"></span>
+      <span class="badge badge-num badge-accent">3</span>
+    </div>
+    <div class="demo-color-row">
+      <span class="color-label">Orange</span>
+      <span class="badge badge-text badge-orange">创意</span>
+    </div>
+    <div class="demo-color-row">
+      <span class="color-label">Yellow</span>
+      <span class="badge badge-text badge-yellow">想法</span>
+    </div>
+    <div class="demo-color-row">
+      <span class="color-label">Green</span>
+      <span class="badge badge-text badge-green">完成</span>
+    </div>
+    <div class="demo-color-row">
+      <span class="color-label">Teal</span>
+      <span class="badge badge-text badge-teal">归档</span>
+    </div>
+    <div class="demo-color-row">
+      <span class="color-label">Blue</span>
+      <span class="badge badge-text badge-blue">工作</span>
+    </div>
+    <div class="demo-color-row">
+      <span class="color-label">Purple</span>
+      <span class="badge badge-text badge-purple">学习</span>
+    </div>
+    <div class="demo-color-row">
+      <span class="color-label">Pink</span>
+      <span class="badge badge-text badge-pink">个人</span>
+    </div>
+  </div>
+
+  <!-- Positioned -->
+  <div class="section">
+    <div class="section-title">定位展示 <code>on icons / buttons</code></div>
+    <div class="demo-row">
+      <div class="demo-row-label">附加在图标上</div>
+      <span class="badge-container">
+        <i class="mdi mdi-bell icon-large"></i>
+        <span class="badge badge-num badge-num-sm badge-error badge-top-right">3</span>
+      </span>
+      <span class="badge-container">
+        <i class="mdi mdi-email icon-large"></i>
+        <span class="badge badge-dot badge-dot-accent badge-top-right" style="top:-2px;right:-2px"></span>
+      </span>
+      <span class="badge-container">
+        <i class="mdi mdi-cart icon-large"></i>
+        <span class="badge badge-num badge-num-sm badge-accent badge-top-right">99+</span>
+      </span>
+      <span class="badge-container">
+        <i class="mdi mdi-message-text icon-large"></i>
+        <span class="badge badge-num badge-num-sm badge-warning badge-top-right">7</span>
+      </span>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">附加在按钮上</div>
+      <button class="btn btn-secondary btn-md" style="position:relative;display:inline-flex;align-items:center;gap:6px;font-family:var(--font-family-ui);font-weight:500;border-radius:var(--radius-sm);height:36px;padding:0 16px;font-size:13px;border:1px solid #D0D0D0;background:#fff;color:var(--color-text-primary);cursor:pointer">
+        <i class="mdi mdi-bell"></i> 通知
+        <span class="badge badge-num badge-num-sm badge-error" style="position:static;margin-left:-2px">3</span>
+      </button>
+      <button class="btn btn-primary btn-md" style="position:relative;display:inline-flex;align-items:center;gap:6px;font-family:var(--font-family-ui);font-weight:500;border-radius:var(--radius-sm);height:36px;padding:0 16px;font-size:13px;border:1px solid var(--color-accent);background:var(--color-accent);color:#fff;cursor:pointer">
+        消息
+        <span class="badge badge-num badge-num-sm badge-error" style="background:#fff;color:var(--color-error);position:static">5</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- 独立展示 -->
+  <div class="section">
+    <div class="section-title">独立展示</div>
+    <div class="demo-row" style="flex-direction:column;align-items:flex-start;gap:var(--space-3)">
+      <div style="display:flex;gap:var(--space-2);align-items:center">
+        <span class="badge badge-dot badge-dot-accent"></span>
+        <span style="font-size:var(--font-size-sm)">在线状态指示器</span>
+      </div>
+      <div style="display:flex;gap:var(--space-2);align-items:center">
+        <i class="mdi mdi-tag" style="font-size:16px;color:var(--color-text-secondary)"></i>
+        <span class="badge badge-text badge-blue">工作</span>
+        <span class="badge badge-text badge-green">完成</span>
+        <span class="badge badge-text badge-purple">设计系统</span>
+      </div>
+      <div style="display:flex;gap:var(--space-2);align-items:center">
+        <span style="font-size:var(--font-size-sm);color:var(--color-text-secondary)">项目进度</span>
+        <span class="badge badge-num badge-num-sm badge-accent">3</span>
+        <span style="font-size:var(--font-size-sm);color:var(--color-text-secondary)">个待办事项</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

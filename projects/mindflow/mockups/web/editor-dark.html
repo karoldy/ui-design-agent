@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MindFlow — Markdown 编辑器 (暗色模式)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+  <style>
+    :root {
+      --color-bg-primary: #FAFAFA;
+      --color-bg-secondary: #F5F5F5;
+      --color-bg-tertiary: #EEEEEE;
+      --color-text-primary: #1A1A1A;
+      --color-text-secondary: #6B6B6B;
+      --color-text-tertiary: #9E9E9E;
+      --color-text-link: #3B82F6;
+      --color-text-on-accent: #FFFFFF;
+      --color-accent: #3B82F6;
+      --color-accent-hover: #2563EB;
+      --color-accent-soft: #E8F0FE;
+      --color-success: #10B981;
+      --color-warning: #F59E0B;
+      --color-error: #EF4444;
+      --color-border: #E8E8E8;
+      --shadow-xl: 0 16px 48px rgba(0,0,0,0.16);
+      --tag-red: #FEE2E2;
+      --tag-orange: #FFEDD5;
+      --tag-yellow: #FEF3C7;
+      --tag-green: #D1FAE5;
+      --tag-teal: #CCFBF1;
+      --tag-blue: #DBEAFE;
+      --tag-purple: #EDE9FE;
+      --tag-pink: #FCE7F3;
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-full: 9999px;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+      --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
+      --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+      --space-10: 40px;
+      --space-12: 48px;
+      --space-16: 64px;
+      --font-size-xs: 11px;
+      --font-size-sm: 13px;
+      --font-size-base: 15px;
+      --font-size-lg: 18px;
+      --font-size-xl: 22px;
+      --font-size-2xl: 28px;
+      --font-size-3xl: 36px;
+      --sidebar-width: 240px;
+      --topnav-height: 48px;
+      --statusbar-height: 28px;
+      --editor-max-width: 680px;
+      --toolbar-height: 44px;
+    }
+
+    /* ===== Dark Mode Tokens ===== */
+    [data-theme="dark"] {
+      --color-bg-primary: #1A1A1A;
+      --color-bg-secondary: #242424;
+      --color-bg-tertiary: #2E2E2E;
+      --color-text-primary: #E8E8E8;
+      --color-text-secondary: #A0A0A0;
+      --color-text-tertiary: #6B6B6B;
+      --color-text-link: #60A5FA;
+      --color-text-on-accent: #FFFFFF;
+      --color-accent: #60A5FA;
+      --color-accent-hover: #93C5FD;
+      --color-accent-soft: #1E3A5F;
+      --color-success: #34D399;
+      --color-warning: #FBBF24;
+      --color-error: #F87171;
+      --tag-red: #3B1818;
+      --tag-orange: #3D2000;
+      --tag-yellow: #3D3000;
+      --tag-green: #0D2818;
+      --tag-teal: #0D2820;
+      --tag-blue: #182A3B;
+      --tag-purple: #201838;
+      --tag-pink: #381825;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+      --shadow-md: 0 2px 8px rgba(0,0,0,0.4);
+      --shadow-lg: 0 8px 24px rgba(0,0,0,0.5);
+      --shadow-xl: 0 16px 48px rgba(0,0,0,0.6);
+      --color-border: #3A3A3A;
+    }
+
+    /* ===== Dark mode hardcoded overrides ===== */
+    [data-theme="dark"] .top-nav .search-bar { background: var(--color-bg-tertiary); }
+    [data-theme="dark"] .sidebar::-webkit-scrollbar-thumb,
+    [data-theme="dark"] .sidebar-scroll::-webkit-scrollbar-thumb,
+    [data-theme="dark"] .editor-body::-webkit-scrollbar-thumb { background: #555; }
+    [data-theme="dark"] .editor-toolbar { background: rgba(26,26,26,0.92); }
+    [data-theme="dark"] .toolbar-divider { background: var(--color-border); }
+    [data-theme="dark"] .toolbar-btn .tooltip { background: #555; }
+    [data-theme="dark"] .toolbar-btn .tooltip::after { border-top-color: #555; }
+    [data-theme="dark"] .editor-content blockquote { background: var(--color-bg-secondary); }
+    [data-theme="dark"] .editor-content pre { background: #0D0D0D; }
+    [data-theme="dark"] .editor-content pre .clnum { color: #555; }
+    [data-theme="dark"] .editor-content .wikilink:hover { background: #2A4A6A; color: var(--color-text-link); }
+    [data-theme="dark"] .editor-content .hashtag.hash-blue { color: var(--color-text-primary); }
+    [data-theme="dark"] .editor-content .hashtag.hash-green { color: var(--color-text-primary); }
+    [data-theme="dark"] .editor-content .hashtag.hash-purple { color: var(--color-text-primary); }
+    [data-theme="dark"] .editor-content .hashtag.hash-orange { color: var(--color-text-primary); }
+    [data-theme="dark"] .editor-content .hashtag.hash-teal { color: var(--color-text-primary); }
+    [data-theme="dark"] .editor-content hr { border-top-color: var(--color-border); }
+    [data-theme="dark"] .link-suggest { border-color: var(--color-border); }
+    [data-theme="dark"] .auto-save-indicator { border-color: var(--color-border); }
+    [data-theme="dark"] .status-sync-state .retry-btn:hover { background: rgba(248,113,113,0.15); }
+    [data-theme="dark"] .state-demo-btn { border-color: var(--color-border); }
+    [data-theme="dark"] .state-demo-btn:hover { background: var(--color-bg-tertiary); }
+
+    /* Theme transition */
+    [data-theme-transitioning] .app-layout,
+    [data-theme-transitioning] .top-nav,
+    [data-theme-transitioning] .sidebar,
+    [data-theme-transitioning] .content,
+    [data-theme-transitioning] .bottom-status,
+    [data-theme-transitioning] .editor-toolbar,
+    [data-theme-transitioning] .editor-body,
+    [data-theme-transitioning] .auto-save-indicator,
+    [data-theme-transitioning] .state-demo-bar {
+      transition: background-color 300ms ease, border-color 300ms ease, color 300ms ease, box-shadow 300ms ease;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--color-bg-primary); color: var(--color-text-primary); font-size: var(--font-size-base); line-height: 1.5; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+    .ui-font { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+
+    .app-layout { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+    .main-area { display: flex; flex: 1; overflow: hidden; transition: all 200ms ease-out; }
+
+    /* ===== Focus Mode ===== */
+    .app-layout.focus-mode .sidebar { transform: translateX(-240px); min-width: 0; width: 0; overflow: hidden; }
+    .app-layout.focus-mode .top-nav { opacity: 0; pointer-events: none; }
+    .app-layout.focus-mode .editor-toolbar { opacity: 0; pointer-events: none; }
+    .app-layout.focus-mode .bottom-status { opacity: 0; pointer-events: none; }
+    .app-layout.focus-mode .state-demo-bar { opacity: 0; pointer-events: none; }
+    .app-layout.focus-mode .auto-save-indicator { bottom: var(--space-6); }
+
+    /* ===== Top Navigation ===== */
+    .top-nav { height: var(--topnav-height); min-height: var(--topnav-height); background: var(--color-bg-primary); border-bottom: 1px solid var(--color-border); display: flex; align-items: center; padding: 0 var(--space-4); gap: var(--space-4); z-index: 200; transition: opacity 200ms ease; }
+    .top-nav .nav-left { display: flex; align-items: center; gap: var(--space-2); width: var(--sidebar-width); flex-shrink: 0; }
+    .top-nav .nav-left .back-btn { display: flex; align-items: center; justify-content: center; min-width: 36px; min-height: 36px; padding: 4px; border: none; background: transparent; border-radius: var(--radius-sm); color: var(--color-text-secondary); cursor: pointer; font-size: 20px; transition: background 150ms ease, color 150ms ease; }
+    .top-nav .nav-left .back-btn:hover { background: var(--color-bg-tertiary); color: var(--color-text-primary); }
+    .top-nav .nav-left .logo { display: flex; align-items: center; gap: var(--space-2); font-family: 'Inter', system-ui, sans-serif; font-weight: 600; font-size: var(--font-size-lg); color: var(--color-text-primary); }
+    .top-nav .nav-left .logo::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--color-accent); margin-right: 2px; }
+    .top-nav .search-wrap { flex: 1; max-width: 440px; margin: 0 auto; position: relative; }
+    .top-nav .search-bar { display: flex; align-items: center; height: 34px; background: #F0F0F0; border: 1.5px solid transparent; border-radius: 9999px; padding: 0 var(--space-4); gap: var(--space-2); transition: border-color 150ms ease, box-shadow 150ms ease, background 150ms ease; }
+    .top-nav .search-bar:focus-within { border-color: var(--color-accent); box-shadow: 0 0 0 3px var(--color-accent-soft); background: var(--color-bg-primary); }
+    .top-nav .search-bar i { font-size: 16px; color: var(--color-text-tertiary); flex-shrink: 0; }
+    .top-nav .search-bar input { flex: 1; border: none; background: transparent; font-size: var(--font-size-sm); font-family: inherit; color: var(--color-text-primary); outline: none; }
+    .top-nav .search-bar input::placeholder { color: var(--color-text-tertiary); }
+    .top-nav .search-bar .kbd-hint { font-size: 10px; color: var(--color-text-tertiary); background: var(--color-bg-tertiary); padding: 2px 6px; border-radius: 4px; font-family: 'Inter', system-ui, sans-serif; font-weight: 500; flex-shrink: 0; pointer-events: none; }
+    .top-nav .actions { display: flex; align-items: center; gap: var(--space-2); margin-left: auto; }
+    .top-nav .actions .icon-btn { min-width: 36px; min-height: 36px; padding: 4px; display: flex; align-items: center; justify-content: center; border: none; background: transparent; border-radius: var(--radius-sm); color: var(--color-text-secondary); cursor: pointer; font-size: 20px; transition: background 150ms ease, color 150ms ease; }
+    .top-nav .actions .icon-btn:hover { background: var(--color-bg-tertiary); color: var(--color-text-primary); }
+    .top-nav .actions .avatar-wrap { position: relative; width: 30px; height: 30px; flex-shrink: 0; cursor: pointer; }
+    .top-nav .actions .avatar-wrap .avatar { width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(135deg, #3B82F6, #6366F1); display: flex; align-items: center; justify-content: center; font-size: var(--font-size-xs); font-weight: 600; color: #fff; }
+    .top-nav .actions .avatar-wrap .status-dot { position: absolute; bottom: 0; right: 0; width: 8px; height: 8px; border-radius: 50%; background: var(--color-success); border: 2px solid var(--color-bg-primary); }
+
+    /* ===== Sidebar ===== */
+    .sidebar { width: var(--sidebar-width); min-width: var(--sidebar-width); background: var(--color-bg-secondary); border-right: 1px solid var(--color-border); display: flex; flex-direction: column; overflow-y: auto; flex-shrink: 0; transition: transform 200ms ease, width 200ms ease, min-width 200ms ease; }
+    .sidebar::-webkit-scrollbar { width: 4px; }
+    .sidebar::-webkit-scrollbar-thumb { background: #D0D0D0; border-radius: 2px; }
+    .sidebar-scroll { padding: var(--space-3) 0; flex: 1; overflow-y: auto; }
+    .sidebar-section { padding: 0 var(--space-3); margin-bottom: var(--space-1); }
+    .sidebar-section-title { font-family: 'Inter', system-ui, sans-serif; font-size: var(--font-size-xs); font-weight: 600; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.5px; padding: var(--space-2) var(--space-1); margin-top: var(--space-1); user-select: none; }
+    .sidebar-item { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-1) var(--space-2); border-radius: var(--radius-sm); cursor: pointer; font-size: var(--font-size-sm); color: var(--color-text-primary); transition: background 150ms ease; min-height: 30px; user-select: none; }
+    .sidebar-item:hover { background: var(--color-bg-tertiary); }
+    .sidebar-item.active { background: var(--color-accent-soft); color: var(--color-accent); }
+    .sidebar-item .item-icon { font-size: 16px; color: var(--color-text-secondary); flex-shrink: 0; width: 20px; text-align: center; }
+    .sidebar-item.active .item-icon { color: var(--color-accent); }
+    .sidebar-item .item-label { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .sidebar-item .item-count { font-size: var(--font-size-xs); color: var(--color-text-tertiary); background: var(--color-bg-tertiary); padding: 0 7px; border-radius: 8px; min-width: 18px; text-align: center; line-height: 16px; flex-shrink: 0; }
+    .sidebar-item .expand-icon { font-size: 14px; color: var(--color-text-tertiary); transition: transform 150ms ease; flex-shrink: 0; width: 16px; text-align: center; }
+    .sidebar-item .expand-icon.expanded { transform: rotate(90deg); }
+    .sidebar-item.nested-1 { padding-left: 32px; }
+    .sidebar-divider { height: 1px; background: var(--color-border); margin: var(--space-2) var(--space-3); }
+    .sidebar-spacer { flex: 1; min-height: 0; }
+    .space-usage { padding: var(--space-3); border-top: 1px solid var(--color-border); flex-shrink: 0; }
+    .space-usage .usage-label { display: flex; align-items: center; justify-content: space-between; font-size: var(--font-size-xs); color: var(--color-text-tertiary); font-family: 'Inter', system-ui, sans-serif; margin-bottom: var(--space-1); }
+    .space-usage .usage-bar { height: 4px; background: var(--color-bg-tertiary); border-radius: 2px; overflow: hidden; }
+    .space-usage .usage-bar .fill { height: 100%; width: 35%; background: linear-gradient(90deg, var(--color-accent), #6366F1); border-radius: 2px; }
+
+    /* ===== Editor Content ===== */
+    .content { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: var(--color-bg-primary); }
+
+    /* ===== Editor Toolbar (floating) ===== */
+    .editor-toolbar { display: flex; align-items: center; justify-content: center; padding: var(--space-2) var(--space-5); border-bottom: 1px solid var(--color-border); flex-shrink: 0; gap: var(--space-1); background: rgba(250,250,250,0.92); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); transition: opacity 300ms ease; position: relative; z-index: 50; }
+    .toolbar-group { display: flex; align-items: center; gap: 2px; padding: 0 var(--space-1); }
+    .toolbar-divider { width: 1px; height: 20px; background: #E0E0E0; margin: 0 var(--space-1); }
+    .toolbar-btn { min-width: 36px; min-height: 36px; padding: 4px; display: flex; align-items: center; justify-content: center; border: none; background: transparent; border-radius: var(--radius-sm); color: var(--color-text-secondary); cursor: pointer; font-size: 15px; font-family: 'Inter', system-ui, sans-serif; transition: background 100ms ease, color 100ms ease; position: relative; }
+    .toolbar-btn:hover { background: var(--color-bg-tertiary); color: var(--color-text-primary); }
+    .toolbar-btn:active { background: var(--color-accent-soft); color: var(--color-accent); }
+    .toolbar-btn.active { background: var(--color-accent-soft); color: var(--color-accent); }
+    .toolbar-btn .label { font-size: 11px; font-weight: 500; letter-spacing: -0.3px; }
+    .toolbar-btn .label-bold { font-weight: 700; font-size: 13px; }
+    .toolbar-btn .label-italic { font-style: italic; font-size: 13px; font-family: Georgia, serif; }
+    .toolbar-btn .tooltip { position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%); background: #333; color: #fff; font-size: 10px; padding: 3px 8px; border-radius: 4px; white-space: nowrap; font-family: 'Inter', system-ui, sans-serif; opacity: 0; pointer-events: none; transition: opacity 120ms ease; }
+    .toolbar-btn .tooltip::after { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border: 4px solid transparent; border-top-color: #333; }
+    .toolbar-btn:hover .tooltip { opacity: 1; }
+    .toolbar-right { margin-left: auto; display: flex; align-items: center; gap: 2px; }
+
+    /* ===== State Demo Toggle Bar ===== */
+    .state-demo-bar { display: flex; align-items: center; justify-content: center; padding: var(--space-1) var(--space-4); background: var(--color-bg-secondary); border-bottom: 1px solid var(--color-border); gap: var(--space-2); font-size: var(--font-size-xs); flex-shrink: 0; min-height: 32px; transition: opacity 200ms ease; }
+    .state-demo-label { color: var(--color-text-tertiary); font-weight: 500; user-select: none; }
+    .state-demo-group { display: flex; gap: 2px; }
+    .state-demo-btn { padding: 2px 10px; border: 1px solid transparent; border-radius: var(--radius-sm); background: transparent; color: var(--color-text-secondary); cursor: pointer; font-size: var(--font-size-xs); font-family: inherit; transition: all 120ms ease; min-height: 24px; }
+    .state-demo-btn:hover { background: var(--color-bg-tertiary); }
+    .state-demo-btn.active { background: var(--color-accent-soft); color: var(--color-accent); border-color: var(--color-accent); font-weight: 500; }
+    .state-demo-divider { color: var(--color-text-tertiary); user-select: none; margin: 0 var(--space-1); }
+
+    /* ===== Editor Body ===== */
+    .editor-body { flex: 1; overflow-y: auto; padding: var(--space-10) var(--space-5) var(--space-16); }
+    .editor-body::-webkit-scrollbar { width: 6px; }
+    .editor-body::-webkit-scrollbar-thumb { background: #D0D0D0; border-radius: 3px; }
+    .editor-container { width: 100%; max-width: var(--editor-max-width); margin: 0 auto; }
+
+    /* Title */
+    .editor-title { font-family: 'Inter', system-ui, sans-serif; font-size: var(--font-size-2xl); font-weight: 600; line-height: 1.3; color: var(--color-text-primary); border: none; outline: none; width: 100%; padding: var(--space-3) 0; margin-bottom: var(--space-6); background: transparent; border-bottom: 1px solid var(--color-border); cursor: text; }
+    .editor-title:empty::before { content: '无标题笔记'; color: var(--color-text-tertiary); }
+    .editor-title:focus { border-bottom-color: var(--color-accent); }
+    .editor-title.empty-title:empty::before { content: '无标题笔记'; color: var(--color-text-tertiary); }
+
+    /* Rendered Markdown */
+    .editor-content { font-size: var(--font-size-base); line-height: 1.8; color: var(--color-text-primary); }
+    .editor-content h2 { font-family: 'Inter', system-ui, sans-serif; font-size: var(--font-size-2xl); font-weight: 600; margin: var(--space-6) 0 var(--space-2); line-height: 1.3; color: var(--color-text-primary); }
+    .editor-content h3 { font-family: 'Inter', system-ui, sans-serif; font-size: var(--font-size-xl); font-weight: 600; margin: var(--space-5) 0 var(--space-2); line-height: 1.3; color: var(--color-text-primary); }
+    .editor-content p { margin-bottom: var(--space-4); }
+    .editor-content strong { font-weight: 600; }
+    .editor-content em { font-style: italic; }
+    .editor-content ul, .editor-content ol { margin: var(--space-2) 0 var(--space-4); padding-left: var(--space-6); }
+    .editor-content li { margin-bottom: var(--space-1); }
+    .editor-content blockquote { border-left: 3px solid var(--color-accent); padding: var(--space-3) var(--space-5); margin: var(--space-4) 0; background: #F8F8F8; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; color: var(--color-text-secondary); font-style: italic; }
+    .editor-content blockquote p { margin-bottom: 0; }
+    .editor-content code:not(pre code) { font-family: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace; background: var(--color-bg-secondary); padding: 2px 6px; border-radius: 3px; font-size: 0.85em; color: #E83E8C; }
+    .editor-content pre { background: #1E1E1E; border-radius: var(--radius-md); padding: var(--space-4) 0; margin: var(--space-4) 0; overflow-x: auto; position: relative; }
+    .editor-content pre code { font-family: 'JetBrains Mono', 'SF Mono', 'Cascadia Code', monospace; font-size: 13px; line-height: 1.6; display: block; padding: 0; background: transparent; color: #D4D4D4; }
+    .editor-content pre .cline { display: flex; align-items: flex-start; padding: 0 var(--space-5); }
+    .editor-content pre .clnum { width: 32px; text-align: right; color: #6B6B6B; user-select: none; flex-shrink: 0; padding-right: var(--space-3); }
+    .editor-content pre .cltxt { flex: 1; white-space: pre; }
+    .editor-content pre .kw { color: #C586C0; }
+    .editor-content pre .str { color: #CE9178; }
+    .editor-content pre .cm { color: #6A9955; }
+    .editor-content pre .fn { color: #DCDCAA; }
+    .editor-content pre .tp { color: #4EC9B0; }
+    .editor-content pre .num { color: #B5CEA8; }
+    .editor-content pre .op { color: #D4D4D4; }
+    .editor-content .wikilink { display: inline; color: var(--color-text-link); cursor: pointer; background: var(--color-accent-soft); padding: 1px 6px; border-radius: var(--radius-sm); text-decoration: none; transition: background 150ms ease, color 150ms ease; }
+    .editor-content .wikilink:hover { background: #D0E2FF; color: var(--color-accent-hover); text-decoration: underline; }
+    .editor-content .hashtag { display: inline-flex; align-items: center; padding: 0 8px; height: 22px; border-radius: var(--radius-sm); font-size: var(--font-size-xs); font-weight: 400; margin: 0 2px; cursor: default; transition: transform 150ms ease; }
+    .editor-content .hashtag:hover { transform: scale(1.02); }
+    .editor-content .hashtag.hash-blue { background: var(--tag-blue); color: #1e40af; }
+    .editor-content .hashtag.hash-green { background: var(--tag-green); color: #065f46; }
+    .editor-content .hashtag.hash-purple { background: var(--tag-purple); color: #5b21b6; }
+    .editor-content .hashtag.hash-orange { background: var(--tag-orange); color: #92400e; }
+    .editor-content .hashtag.hash-teal { background: var(--tag-teal); color: #0f766e; }
+    .editor-content hr { border: none; border-top: 1px solid #E0E0E0; margin: var(--space-6) 0; }
+
+    /* Block handle */
+    .block-wrapper { position: relative; }
+    .block-wrapper .block-handle { display: none; position: absolute; left: -28px; top: 4px; width: 22px; height: 22px; align-items: center; justify-content: center; color: var(--color-text-tertiary); cursor: grab; font-size: 16px; border-radius: var(--radius-sm); transition: background 100ms ease; }
+    .block-wrapper:hover .block-handle { display: flex; }
+    .block-wrapper .block-handle:hover { background: var(--color-bg-tertiary); color: var(--color-text-secondary); }
+
+    /* Link suggest dropdown */
+    .link-suggest { position: absolute; background: var(--color-bg-primary); border: 1px solid #E0E0E0; border-radius: var(--radius-md); box-shadow: var(--shadow-md); padding: var(--space-1) 0; min-width: 280px; z-index: 300; font-size: var(--font-size-sm); }
+    .link-suggest-header { padding: var(--space-1) var(--space-3); font-size: var(--font-size-xs); color: var(--color-text-tertiary); font-family: 'Inter', system-ui, sans-serif; text-transform: uppercase; letter-spacing: 0.5px; }
+    .link-suggest-item { padding: var(--space-1) var(--space-3); display: flex; align-items: center; gap: var(--space-2); cursor: pointer; transition: background 100ms ease; }
+    .link-suggest-item:hover, .link-suggest-item.active { background: var(--color-bg-tertiary); }
+    .link-suggest-item i { font-size: 16px; color: var(--color-text-tertiary); }
+
+    /* ===== Empty State ===== */
+    .empty-state { display: none; }
+    .app-layout.empty-mode .editor-content { display: none; }
+    .app-layout.empty-mode .empty-state { display: block; }
+    .empty-placeholder { text-align: center; padding: var(--space-16) var(--space-5) var(--space-10); }
+    .empty-placeholder .empty-icon { display: block; font-size: 48px; color: var(--color-text-tertiary); margin-bottom: var(--space-4); opacity: 0.4; }
+    .empty-placeholder .empty-hint { font-size: var(--font-size-lg); color: var(--color-text-tertiary); margin-bottom: var(--space-2); }
+    .empty-placeholder .empty-subhint { font-size: var(--font-size-sm); color: var(--color-text-tertiary); opacity: 0.7; }
+    .empty-placeholder .empty-subhint code { font-family: 'JetBrains Mono', monospace; background: var(--color-bg-tertiary); padding: 1px 5px; border-radius: 3px; font-size: 0.9em; color: var(--color-text-secondary); }
+
+    /* ===== Auto-save Indicator ===== */
+    .auto-save-indicator { position: fixed; bottom: var(--statusbar-height); left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: var(--space-2); background: var(--color-bg-primary); border: 1px solid #E0E0E0; border-bottom: none; border-radius: var(--radius-md) var(--radius-md) 0 0; padding: var(--space-1) var(--space-3); font-size: var(--font-size-xs); color: var(--color-text-secondary); box-shadow: var(--shadow-sm); z-index: 100; transition: bottom 200ms ease; }
+    .auto-save-indicator .save-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+    .auto-save-indicator .save-dot.saved { background: var(--color-success); }
+    .auto-save-indicator .save-dot.saving { background: var(--color-warning); animation: pulse 1s ease-in-out infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+    /* ===== Bottom Status Bar ===== */
+    .bottom-status { height: var(--statusbar-height); min-height: var(--statusbar-height); background: var(--color-bg-secondary); border-top: 1px solid var(--color-border); display: flex; align-items: center; justify-content: space-between; padding: 0 var(--space-4); font-size: var(--font-size-xs); color: var(--color-text-tertiary); flex-shrink: 0; transition: opacity 200ms ease; }
+    .bottom-status .status-left { display: flex; align-items: center; gap: var(--space-3); }
+    .bottom-status .status-center { display: flex; align-items: center; gap: var(--space-2); }
+    .bottom-status .status-right { display: flex; align-items: center; gap: var(--space-3); }
+
+    /* Status indicator icons */
+    .status-indicator { display: flex; align-items: center; gap: var(--space-1); }
+    .status-indicator .status-icon { font-size: 14px; }
+    .status-indicator .status-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+    .status-indicator .status-dot.green { background: var(--color-success); }
+    .status-indicator .status-dot.yellow { background: var(--color-warning); }
+    .status-indicator .status-dot.red { background: var(--color-error); }
+
+    /* Sync state sections in status bar */
+    .status-sync-state { display: none; align-items: center; gap: var(--space-2); }
+    .status-sync-state.active { display: flex; }
+
+    .status-sync-state .sync-indicator { display: flex; align-items: center; gap: var(--space-1); }
+    .status-sync-state .retry-btn { display: inline-flex; align-items: center; gap: 3px; padding: 1px 8px; border: 1px solid var(--color-error); border-radius: var(--radius-sm); background: transparent; color: var(--color-error); cursor: pointer; font-size: var(--font-size-xs); font-family: inherit; transition: background 100ms ease; min-height: 20px; }
+    .status-sync-state .retry-btn:hover { background: #FEF2F2; }
+    .status-sync-state .offline-icon { font-size: 14px; color: var(--color-warning); }
+    .status-sync-state .error-icon { font-size: 14px; color: var(--color-error); }
+    .status-sync-state .sync-pending-icon { font-size: 13px; color: var(--color-text-tertiary); }
+    .status-sync-state .status-msg { color: var(--color-text-secondary); }
+
+    /* Error state highlight on status bar */
+    .bottom-status.sync-error { border-top-color: var(--color-error); }
+  </style>
+</head>
+<body>
+  <div class="app-layout">
+    <!-- ===== Top Navigation ===== -->
+    <header class="top-nav">
+      <div class="nav-left">
+        <a href="note-list.html" class="back-btn" title="返回笔记列表"><i class="mdi mdi-arrow-left"></i></a>
+        <div class="logo">
+          <span>MindFlow</span>
+        </div>
+      </div>
+      <div class="search-wrap">
+        <div class="search-bar">
+          <i class="mdi mdi-magnify"></i>
+          <input type="text" placeholder="搜索笔记…" />
+          <span class="kbd-hint">&#8984;K</span>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="icon-btn theme-toggle" id="theme-toggle" title="切换主题">
+          <i id="theme-icon" class="mdi mdi-weather-night"></i>
+        </button>
+        <button class="icon-btn" title="设置"><i class="mdi mdi-cog-outline"></i></button>
+        <div class="avatar-wrap">
+          <div class="avatar">JD</div>
+          <span class="status-dot"></span>
+        </div>
+      </div>
+    </header>
+
+    <!-- ===== Main Area ===== -->
+    <div class="main-area">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="sidebar-scroll">
+          <div class="sidebar-section">
+            <div class="sidebar-item">
+              <i class="mdi mdi-note-text-outline item-icon"></i>
+              <span class="item-label">所有笔记</span>
+              <span class="item-count">23</span>
+            </div>
+            <div class="sidebar-item">
+              <i class="mdi mdi-calendar-text-outline item-icon"></i>
+              <span class="item-label">每日笔记</span>
+            </div>
+            <div class="sidebar-item">
+              <i class="mdi mdi-delete-outline item-icon"></i>
+              <span class="item-label">回收站</span>
+            </div>
+          </div>
+          <div class="sidebar-divider"></div>
+          <div class="sidebar-section">
+            <div class="sidebar-section-title">笔记本</div>
+            <div class="sidebar-item">
+              <i class="mdi mdi-chevron-right expand-icon expanded"></i>
+              <i class="mdi mdi-folder-open-outline item-icon"></i>
+              <span class="item-label">工作</span>
+              <span class="item-count">8</span>
+            </div>
+            <div class="sidebar-item nested-1 active">
+              <i class="mdi mdi-file-document-outline item-icon"></i>
+              <span class="item-label">产品设计</span>
+              <span class="item-count">5</span>
+            </div>
+            <div class="sidebar-item nested-1">
+              <i class="mdi mdi-file-document-outline item-icon"></i>
+              <span class="item-label">会议记录</span>
+              <span class="item-count">3</span>
+            </div>
+          </div>
+        </div>
+        <div class="space-usage">
+          <div class="usage-label">
+            <span>存储空间</span>
+            <span>35%</span>
+          </div>
+          <div class="usage-bar"><div class="fill"></div></div>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="content">
+        <!-- Editor Toolbar -->
+        <div class="editor-toolbar" id="editor-toolbar">
+          <div class="toolbar-group">
+            <button class="toolbar-btn" title="标题 1 (Cmd+1)"><span class="label">H1</span><span class="tooltip">Cmd+1</span></button>
+            <button class="toolbar-btn" title="标题 2 (Cmd+2)"><span class="label">H2</span><span class="tooltip">Cmd+2</span></button>
+            <button class="toolbar-btn" title="标题 3 (Cmd+3)"><span class="label">H3</span><span class="tooltip">Cmd+3</span></button>
+          </div>
+          <div class="toolbar-divider"></div>
+          <div class="toolbar-group">
+            <button class="toolbar-btn" title="加粗 (Cmd+B)"><span class="label-bold">B</span><span class="tooltip">Cmd+B</span></button>
+            <button class="toolbar-btn" title="斜体 (Cmd+I)"><span class="label-italic">I</span><span class="tooltip">Cmd+I</span></button>
+            <button class="toolbar-btn" title="删除线 (Cmd+Shift+S)"><span class="label" style="text-decoration:line-through;">S</span><span class="tooltip">Cmd+Shift+S</span></button>
+          </div>
+          <div class="toolbar-divider"></div>
+          <div class="toolbar-group">
+            <button class="toolbar-btn" title="代码"><i class="mdi mdi-code-tags"></i><span class="tooltip">` 代码</span></button>
+            <button class="toolbar-btn" title="引用块"><i class="mdi mdi-format-quote-open"></i><span class="tooltip">&gt; 引用</span></button>
+            <button class="toolbar-btn" title="分割线"><span class="label">&mdash;</span><span class="tooltip">---</span></button>
+          </div>
+          <div class="toolbar-divider"></div>
+          <div class="toolbar-group">
+            <button class="toolbar-btn" title="待办清单"><i class="mdi mdi-checkbox-marked-outline"></i><span class="tooltip">- [ ] 待办</span></button>
+            <button class="toolbar-btn" title="无序列表"><i class="mdi mdi-format-list-bulleted"></i><span class="tooltip">- 列表</span></button>
+            <button class="toolbar-btn" title="有序列表"><i class="mdi mdi-format-list-numbered"></i><span class="tooltip">1. 列表</span></button>
+          </div>
+          <div class="toolbar-divider"></div>
+          <div class="toolbar-group">
+            <button class="toolbar-btn" title="插入图片"><i class="mdi mdi-image-outline"></i><span class="tooltip">![图片]</span></button>
+            <button class="toolbar-btn" title="插入链接"><i class="mdi mdi-link-variant"></i><span class="tooltip">[文字](url)</span></button>
+          </div>
+          <div class="toolbar-right">
+            <button class="toolbar-btn" id="focus-mode-btn" title="专注模式"><i class="mdi mdi-fullscreen"></i><span class="tooltip">专注模式</span></button>
+            <button class="toolbar-btn" title="预览"><i class="mdi mdi-eye-outline"></i><span class="tooltip">预览</span></button>
+            <button class="toolbar-btn" title="更多"><i class="mdi mdi-dots-horizontal"></i><span class="tooltip">更多</span></button>
+          </div>
+        </div>
+
+        <!-- ===== State Demo Toggle Bar ===== -->
+        <div class="state-demo-bar">
+          <span class="state-demo-label">状态演示：</span>
+          <div class="state-demo-group">
+            <button class="state-demo-btn active" data-target="content">有内容</button>
+            <button class="state-demo-btn" data-target="empty">空笔记</button>
+          </div>
+          <span class="state-demo-divider">|</span>
+          <span class="state-demo-label">同步：</span>
+          <div class="state-demo-group">
+            <button class="state-demo-btn active" data-sync="synced">在线</button>
+            <button class="state-demo-btn" data-sync="offline">离线</button>
+            <button class="state-demo-btn" data-sync="error">失败</button>
+          </div>
+        </div>
+
+        <!-- Editor Body -->
+        <div class="editor-body" id="editor-body">
+          <div class="editor-container">
+            <!-- Title -->
+            <div class="editor-title" id="editor-title" contenteditable="true">AI Agent 技术架构设计</div>
+
+            <!-- Rendered Markdown Content -->
+            <div class="editor-content" id="editor-content">
+              <div class="block-wrapper">
+                <div class="block-handle"><i class="mdi mdi-drag-vertical"></i></div>
+                <p>随着 AI Agent 技术的日益成熟，越来越多的互联网公司开始将 Agent 整合到产品流程中。本文对这一趋势进行系统性回顾，并深入探讨核心架构设计思路。</p>
+              </div>
+
+              <div class="block-wrapper">
+                <div class="block-handle"><i class="mdi mdi-drag-vertical"></i></div>
+                <h2>1. 背景</h2>
+              </div>
+
+              <div class="block-wrapper">
+                <div class="block-handle"><i class="mdi mdi-drag-vertical"></i></div>
+                <p>随着 <strong>LLM 能力的快速提升</strong>，Agent 架构成为最近一年多以来最热门的技术话题。不同于传统的规则引擎，Agent 能够进行<em>多步推理（Multi-step Reasoning）</em>和<em>动态工具调用（Dynamic Tool Use）</em>。</p>
+              </div>
+
+              <div class="block-wrapper">
+                <div class="block-handle"><i class="mdi mdi-drag-vertical"></i></div>
+                <blockquote>
+                  <p>"Agent 不是简单的函数调用，而是一个可以进行<strong>计划、执行和反馈</strong>的自我迭代循环。" — LangChain 文档</p>
+                </blockquote>
+              </div>
+
+              <div class="block-wrapper">
+                <div class="block-handle"><i class="mdi mdi-drag-vertical"></i></div>
+                <h2>2. 核心组件</h2>
+              </div>
+
+              <div class="block-wrapper">
+                <div class="block-handle"><i class="mdi mdi-drag-vertical"></i></div>
+                <p>一个完整的 Agent 系统通常包含以下核心组件：</p>
+              </div>
+
+              <div class="block-wrapper">
+                <div class="block-handle"><i class="mdi mdi-drag-vertical"></i></div>
+                <ul>
+                  <li><strong>规划模块（Planning）</strong> — 任务分解与路径规划，如 ReAct、Plan-and-Execute 模式</li>
+                  <li><strong>记忆模块（Memory）</strong> — 短期工作记忆与长期知识存储，支持检索增强</li>
+                  <li><strong>工具调用（Tool Use）</strong> — 调用外部 API、数据库、搜索引擎等工具</li>
+                  <li><strong>反馈循环（Feedback Loop）</strong> — 执行结果评估与自我修正机制</li>
+                </ul>
+              </div>
+
+              <div class="block-wrapper">
+                <div class="block-handle"><i class="mdi mdi-drag-vertical"></i></div>
+                <p>更多细节可参考 <a class="wikilink" href="editor.html">[[RAG 技术方案研究 — Embedding 模型选型]]</a> 中提到的检索增强生成技术，以及 <a class="wikilink" href="editor.html">[[LangChain Agent 架构]]</a> 中的实现思路。</p>
+              </div>
+
+              <div class="block-wrapper">
+                <div class="block-handle"><i class="mdi mdi-drag-vertical"></i></div>
+                <h2>3. 代码示例</h2>
+              </div>
+
+              <div class="block-wrapper">
+                <div class="block-handle"><i class="mdi mdi-drag-vertical"></i></div>
+                <p>以下是一个简单的 Agent 核心执行逻辑示例：</p>
+              </div>
+
+              <div class="block-wrapper">
+                <div class="block-handle"><i class="mdi mdi-drag-vertical"></i></div>
+                <pre><code><span class="cline"><span class="clnum">1</span><span class="cltxt"><span class="kw">class</span> <span class="tp">Agent</span>:</span></span><span class="cline"><span class="clnum">2</span><span class="cltxt">    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="tp">self</span>):</span></span><span class="cline"><span class="clnum">3</span><span class="cltxt">        <span class="tp">self</span>.memory = []</span></span><span class="cline"><span class="clnum">4</span><span class="cltxt">        <span class="tp">self</span>.tools = {}</span></span><span class="cline"><span class="clnum">5</span><span class="cltxt"></span></span><span class="cline"><span class="clnum">6</span><span class="cltxt">    <span class="kw">async</span> <span class="kw">def</span> <span class="fn">execute</span>(<span class="tp">self</span>, task: <span class="tp">str</span>):</span></span><span class="cline"><span class="clnum">7</span><span class="cltxt">        <span class="cm"># Step 1: plan the action path</span></span></span><span class="cline"><span class="clnum">8</span><span class="cltxt">        plan = <span class="kw">await</span> <span class="tp">self</span>.planning(task)</span></span><span class="cline"><span class="clnum">9</span><span class="cltxt"></span></span><span class="cline"><span class="clnum">10</span><span class="cltxt">        <span class="cm"># Step 2: execute step by step</span></span></span><span class="cline"><span class="clnum">11</span><span class="cltxt">        <span class="kw">for</span> step <span class="kw">in</span> plan.steps:</span></span><span class="cline"><span class="clnum">12</span><span class="cltxt">            result = <span class="kw">await</span> <span class="tp">self</span>.execute_step(step)</span></span><span class="cline"><span class="clnum">13</span><span class="cltxt">            <span class="tp">self</span>.memory.append(result)</span></span><span class="cline"><span class="clnum">14</span><span class="cltxt"></span></span><span class="cline"><span class="clnum">15</span><span class="cltxt">        <span class="cm"># Step 3: reflect and summarize</span></span></span><span class="cline"><span class="clnum">16</span><span class="cltxt">        <span class="kw">return</span> <span class="kw">await</span> <span class="tp">self</span>.reflect(<span class="tp">self</span>.memory)</span></span></code></pre>
+              </div>
+
+              <div class="block-wrapper">
+                <div class="block-handle"><i class="mdi mdi-drag-vertical"></i></div>
+                <h2>4. 总结与展望</h2>
+              </div>
+
+              <div class="block-wrapper">
+                <div class="block-handle"><i class="mdi mdi-drag-vertical"></i></div>
+                <p>AI Agent 在互联网行业的应用已经超越了试验阶段，正在成为核心流程的一部分。建议各团队根据自身业务场景，从小范围落地开始逐步扩展。相关标签：<span class="hashtag hash-blue">#AI/Agent</span> <span class="hashtag hash-purple">#LLM</span> <span class="hashtag hash-teal">#技术架构</span></p>
+              </div>
+
+              <div class="block-wrapper">
+                <div class="block-handle"><i class="mdi mdi-drag-vertical"></i></div>
+                <hr>
+              </div>
+
+              <div class="block-wrapper">
+                <div class="block-handle"><i class="mdi mdi-drag-vertical"></i></div>
+                <p>参考链接：<a class="wikilink" href="editor.html">[[MindFlow 产品设计方案 v0.1]]</a> · <a class="wikilink" href="editor.html">[[多 Agent 协作框架设计思路]]</a> · <a class="wikilink" href="editor.html">[[多模态大模型技术综述]]</a></p>
+              </div>
+            </div>
+
+            <!-- Empty State -->
+            <div class="empty-state" id="empty-state">
+              <div class="editor-title empty-title" id="empty-title" contenteditable="true"></div>
+              <div class="empty-placeholder">
+                <span class="empty-icon"><i class="mdi mdi-pencil-outline"></i></span>
+                <p class="empty-hint">开始写作…</p>
+                <p class="empty-subhint">输入 <code>[[</code> 链接笔记，输入 <code>#</code> 添加标签</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Auto-save Indicator -->
+    <div class="auto-save-indicator" id="save-indicator">
+      <span class="save-dot saved"></span>
+      <span>已自动保存</span>
+      <span>&#183;</span>
+      <span id="save-time">15:32</span>
+    </div>
+
+    <!-- Bottom Status Bar -->
+    <footer class="bottom-status" id="bottom-status">
+      <div class="status-left">
+        <!-- Synced state -->
+        <div class="status-sync-state active" id="sync-state-synced">
+          <div class="sync-indicator">
+            <span class="status-icon"><i class="mdi mdi-cloud-check"></i></span>
+            <span>已同步</span>
+          </div>
+          <span>&#183;</span>
+          <span>刚刚</span>
+        </div>
+
+        <!-- Offline state -->
+        <div class="status-sync-state" id="sync-state-offline">
+          <div class="sync-indicator">
+            <span class="offline-icon"><i class="mdi mdi-cloud-off-outline"></i></span>
+            <span class="status-msg">离线模式 &#183; 编辑已保存到本地</span>
+            <i class="mdi mdi-sync-off sync-pending-icon" style="margin-left:4px;"></i>
+          </div>
+        </div>
+
+        <!-- Sync error state -->
+        <div class="status-sync-state" id="sync-state-error">
+          <div class="sync-indicator">
+            <span class="error-icon"><i class="mdi mdi-alert-circle-outline"></i></span>
+            <span class="status-msg">同步失败 &#183; 点击重试</span>
+            <button class="retry-btn"><i class="mdi mdi-refresh"></i> 重试</button>
+          </div>
+        </div>
+      </div>
+      <div class="status-right">
+        <span>23 笔记</span>
+        <span>&#183;</span>
+        <span>0 同步失败</span>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // === Theme Toggle ===
+    function toggleTheme() {
+      const html = document.documentElement;
+      const icon = document.getElementById('theme-icon');
+      const currentTheme = html.getAttribute('data-theme');
+
+      html.setAttribute('data-theme-transitioning', '');
+      html.setAttribute('data-theme', currentTheme === 'dark' ? 'light' : 'dark');
+      icon.className = 'mdi ' + (currentTheme === 'dark' ? 'mdi-white-balance-sunny' : 'mdi-weather-night');
+
+      setTimeout(() => {
+        html.removeAttribute('data-theme-transitioning');
+      }, 350);
+    }
+
+    document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+
+    // === Toolbar auto-hide ===
+    const toolbar = document.getElementById('editor-toolbar');
+    const editorBody = document.getElementById('editor-body');
+    let toolbarTimer;
+
+    function showToolbar() {
+      toolbar.style.opacity = '1';
+      clearTimeout(toolbarTimer);
+    }
+
+    function hideToolbarAfterDelay() {
+      clearTimeout(toolbarTimer);
+      toolbarTimer = setTimeout(() => {
+        toolbar.style.opacity = '0';
+      }, 2000);
+    }
+
+    if (editorBody) {
+      editorBody.addEventListener('mousemove', showToolbar);
+      editorBody.addEventListener('scroll', showToolbar);
+      editorBody.addEventListener('mouseleave', hideToolbarAfterDelay);
+    }
+
+    toolbar.addEventListener('mouseenter', showToolbar);
+    toolbar.addEventListener('mouseleave', () => {
+      hideToolbarAfterDelay();
+    });
+
+    hideToolbarAfterDelay();
+
+    // === Focus Mode ===
+    const focusBtn = document.getElementById('focus-mode-btn');
+    const appLayout = document.querySelector('.app-layout');
+
+    focusBtn.addEventListener('click', function() {
+      appLayout.classList.toggle('focus-mode');
+      this.classList.toggle('active');
+      const icon = this.querySelector('i');
+      if (appLayout.classList.contains('focus-mode')) {
+        icon.className = 'mdi mdi-fullscreen-exit';
+      } else {
+        icon.className = 'mdi mdi-fullscreen';
+      }
+    });
+
+    // === Escape exits focus mode ===
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && appLayout.classList.contains('focus-mode')) {
+        appLayout.classList.remove('focus-mode');
+        focusBtn.classList.remove('active');
+        focusBtn.querySelector('i').className = 'mdi mdi-fullscreen';
+      }
+    });
+
+    // === Toolbar button click (toggle active state for demo) ===
+    document.querySelectorAll('.toolbar-btn:not(#focus-mode-btn)').forEach(btn => {
+      btn.addEventListener('click', function() {
+        this.classList.toggle('active');
+      });
+    });
+
+    // === Sidebar item click ===
+    document.querySelectorAll('.sidebar-item').forEach(item => {
+      item.addEventListener('click', function() {
+        document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    // === Auto-save simulation ===
+    let saveCount = 0;
+    setInterval(() => {
+      const dot = document.querySelector('.save-dot');
+      const timeEl = document.getElementById('save-time');
+      dot.className = 'save-dot saving';
+      setTimeout(() => {
+        dot.className = 'save-dot saved';
+        const now = new Date();
+        timeEl.textContent = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+      }, 600);
+    }, 5000);
+
+    // === State Demo: Content / Empty toggle ===
+    const contentBtns = document.querySelectorAll('.state-demo-btn[data-target]');
+    contentBtns.forEach(btn => {
+      btn.addEventListener('click', function() {
+        contentBtns.forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        const target = this.getAttribute('data-target');
+        if (target === 'empty') {
+          appLayout.classList.add('empty-mode');
+          const titleEl = document.getElementById('editor-title');
+          titleEl.textContent = '';
+          titleEl.contentEditable = 'true';
+        } else {
+          appLayout.classList.remove('empty-mode');
+          const titleEl = document.getElementById('editor-title');
+          if (!titleEl.textContent.trim()) {
+            titleEl.textContent = 'AI Agent 技术架构设计';
+          }
+        }
+      });
+    });
+
+    // === State Demo: Sync status toggle ===
+    const syncBtns = document.querySelectorAll('.state-demo-btn[data-sync]');
+    const bottomStatus = document.getElementById('bottom-status');
+    const syncStates = {
+      synced: document.getElementById('sync-state-synced'),
+      offline: document.getElementById('sync-state-offline'),
+      error: document.getElementById('sync-state-error')
+    };
+
+    document.querySelectorAll('.retry-btn').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        syncBtns.forEach(b => b.classList.remove('active'));
+        document.querySelector('.state-demo-btn[data-sync="synced"]').classList.add('active');
+        Object.values(syncStates).forEach(el => el.classList.remove('active'));
+        syncStates.synced.classList.add('active');
+        bottomStatus.classList.remove('sync-error');
+        bottomStatus.style.borderTopColor = '';
+      });
+    });
+
+    syncBtns.forEach(btn => {
+      btn.addEventListener('click', function() {
+        syncBtns.forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        const syncVal = this.getAttribute('data-sync');
+
+        Object.values(syncStates).forEach(el => el.classList.remove('active'));
+        syncStates[syncVal].classList.add('active');
+
+        if (syncVal === 'error') {
+          bottomStatus.classList.add('sync-error');
+        } else {
+          bottomStatus.classList.remove('sync-error');
+          bottomStatus.style.borderTopColor = '';
+        }
+      });
+    });
+  </script>
+</body>
+</html>

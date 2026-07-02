@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MindFlow — 移动端编辑器</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+  <style>
+    :root {
+      --color-bg-primary: #FAFAFA;
+      --color-bg-secondary: #F5F5F5;
+      --color-bg-tertiary: #EEEEEE;
+      --color-text-primary: #1A1A1A;
+      --color-text-secondary: #6B6B6B;
+      --color-text-tertiary: #9E9E9E;
+      --color-text-link: #3B82F6;
+      --color-text-on-accent: #FFFFFF;
+      --color-accent: #3B82F6;
+      --color-accent-hover: #2563EB;
+      --color-accent-soft: #E8F0FE;
+      --color-success: #10B981;
+      --color-warning: #F59E0B;
+      --color-error: #EF4444;
+      --color-border: #E8E8E8;
+      --tag-red: #FEE2E2;
+      --tag-orange: #FFEDD5;
+      --tag-yellow: #FEF3C7;
+      --tag-green: #D1FAE5;
+      --tag-teal: #CCFBF1;
+      --tag-blue: #DBEAFE;
+      --tag-purple: #EDE9FE;
+      --tag-pink: #FCE7F3;
+      --dot-red: #EF4444;
+      --dot-orange: #F97316;
+      --dot-yellow: #EAB308;
+      --dot-green: #22C55E;
+      --dot-teal: #14B8A6;
+      --dot-blue: #3B82F6;
+      --dot-purple: #8B5CF6;
+      --dot-pink: #EC4899;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-full: 9999px;
+      --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --font-size-sm: 13px;
+      --font-size-base: 15px;
+      --font-size-lg: 18px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      height: 100%;
+      font-family: 'Noto Sans SC', 'Inter', system-ui, -apple-system, sans-serif;
+      background: #E0E0E0;
+      color: var(--color-text-primary);
+      font-size: var(--font-size-base);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .phone-frame {
+      width: 375px;
+      height: 812px;
+      background: #FFFFFF;
+      border-radius: 40px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2), 0 0 0 1px rgba(0,0,0,0.06);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* ===== Status Bar ===== */
+    .status-bar {
+      height: 44px;
+      min-height: 44px;
+      background: #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      flex-shrink: 0;
+    }
+    .status-bar .time { font-weight: 700; }
+    .status-bar .icons { display: flex; align-items: center; gap: 5px; font-size: 13px; }
+
+    /* ===== Top Navigation ===== */
+    .editor-top-nav {
+      height: 44px;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      padding: 0 var(--space-4);
+      background: #FFFFFF;
+      border-bottom: 1px solid var(--color-border);
+      flex-shrink: 0;
+    }
+    .editor-top-nav .back-btn {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      border: none;
+      background: transparent;
+      color: var(--color-accent);
+      font-size: 15px;
+      font-family: inherit;
+      font-weight: 500;
+      cursor: pointer;
+      padding: 8px 0;
+      height: 44px;
+      min-width: 44px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .editor-top-nav .back-btn i { font-size: 22px; }
+    .editor-top-nav .title-area {
+      flex: 1;
+      text-align: center;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--color-text-primary);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      padding: 0 var(--space-2);
+    }
+    .editor-top-nav .more-btn {
+      width: 44px;
+      height: 44px;
+      display: flex; align-items: center; justify-content: center;
+      border: none;
+      background: transparent;
+      color: var(--color-text-primary);
+      font-size: 22px;
+      cursor: pointer;
+      border-radius: var(--radius-md);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .editor-top-nav .more-btn:active { background: var(--color-bg-tertiary); }
+
+    /* ===== Formatting Toolbar ===== */
+    .format-toolbar {
+      height: 40px;
+      min-height: 40px;
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      padding: 0 8px;
+      background: var(--color-bg-secondary);
+      border-bottom: 1px solid var(--color-border);
+      flex-shrink: 0;
+      overflow-x: auto;
+    }
+    .format-toolbar::-webkit-scrollbar { height: 0; }
+    .format-btn {
+      width: 34px;
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      background: transparent;
+      color: var(--color-text-secondary);
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: var(--radius-md);
+      transition: background 100ms ease, color 100ms ease;
+      flex-shrink: 0;
+      font-family: 'Noto Sans SC', sans-serif;
+      font-weight: 600;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .format-btn:active { background: var(--color-bg-tertiary); color: var(--color-text-primary); }
+    .format-btn.active { background: var(--color-accent-soft); color: var(--color-accent); }
+    .format-btn i { font-size: 18px; }
+    .format-divider {
+      width: 1px;
+      height: 20px;
+      background: var(--color-border);
+      margin: 0 2px;
+      flex-shrink: 0;
+    }
+
+    /* ===== Editor Content ===== */
+    .editor-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: var(--space-4);
+      background: #FFFFFF;
+      -webkit-overflow-scrolling: touch;
+    }
+    .editor-content::-webkit-scrollbar { width: 0; }
+
+    .editor-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--color-text-primary);
+      line-height: 1.4;
+      margin-bottom: var(--space-4);
+      outline: none;
+      border: none;
+      width: 100%;
+      font-family: 'Noto Sans SC', sans-serif;
+      padding: 0;
+      resize: none;
+      min-height: 32px;
+    }
+    .editor-title::placeholder { color: var(--color-text-tertiary); }
+
+    .editor-body {
+      font-size: 16px;
+      line-height: 1.8;
+      color: var(--color-text-primary);
+      outline: none;
+      border: none;
+      width: 100%;
+      font-family: 'Noto Sans SC', sans-serif;
+      padding: 0;
+      resize: none;
+      min-height: 200px;
+    }
+    .editor-body::placeholder { color: var(--color-text-tertiary); }
+
+    .editor-body h2 {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 20px 0 8px;
+      color: var(--color-text-primary);
+    }
+
+    .editor-body .wikilink {
+      color: var(--color-text-link);
+      text-decoration: none;
+      background: var(--color-accent-soft);
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+
+    .editor-body .hash-tag {
+      color: var(--color-accent);
+      background: var(--color-accent-soft);
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .editor-body .tag-pill {
+      display: inline-block;
+      font-size: 13px;
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      margin: 2px 3px;
+    }
+    .editor-body .tag-pill.tag-ai { background: var(--tag-blue); color: #1E40AF; }
+    .editor-body .tag-pill.tag-agent { background: var(--tag-purple); color: #6D28D9; }
+    .editor-body .tag-pill.tag-llm { background: var(--tag-teal); color: #0F766E; }
+
+    /* ===== Saved Status ===== */
+    .saved-status {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 6px var(--space-4);
+      font-size: 11px;
+      color: var(--color-success);
+      background: var(--color-bg-secondary);
+      border-top: 1px solid var(--color-border);
+      flex-shrink: 0;
+    }
+    .saved-status i { font-size: 14px; }
+    .saved-status .sync-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--color-success);
+      display: inline-block;
+    }
+
+    /* ===== Keyboard Accessory ===== */
+    .accessory-bar {
+      height: 44px;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      padding: 0 var(--space-2);
+      background: var(--color-bg-secondary);
+      border-top: 1px solid var(--color-border);
+      gap: 2px;
+      flex-shrink: 0;
+    }
+    .accessory-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      height: 36px;
+      padding: 0 12px;
+      border: none;
+      background: transparent;
+      color: var(--color-text-secondary);
+      font-size: 15px;
+      font-family: inherit;
+      cursor: pointer;
+      border-radius: var(--radius-md);
+      transition: background 100ms ease, color 100ms ease;
+      font-weight: 500;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .accessory-btn:active { background: var(--color-bg-tertiary); color: var(--color-accent); }
+    .accessory-btn i { font-size: 18px; }
+    .accessory-btn .mdi { font-size: 18px; }
+    .accessory-divider {
+      width: 1px;
+      height: 20px;
+      background: var(--color-border);
+      margin: 0 2px;
+      flex-shrink: 0;
+    }
+    .accessory-spacer { flex: 1; }
+
+    /* ===== Keyboard Simulation ===== */
+    .keyboard-sim {
+      height: 220px;
+      min-height: 220px;
+      background: #D1D5DB;
+      border-top: 1px solid #B0B0B0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: var(--font-size-sm);
+      color: var(--color-text-tertiary);
+      user-select: none;
+    }
+    .keyboard-sim span {
+      background: #E5E7EB;
+      padding: 4px 16px;
+      border-radius: 6px;
+      color: #6B7280;
+    }
+
+    /* ===== Bottom Sheet (for [[ and # triggers) ===== */
+    .sheet-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.3);
+      z-index: 50;
+      display: none;
+      opacity: 0;
+      transition: opacity 250ms ease;
+    }
+    .sheet-overlay.visible {
+      display: block;
+      opacity: 1;
+    }
+    .bottom-sheet {
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      background: #FFFFFF;
+      border-radius: 16px 16px 0 0;
+      padding: var(--space-4) 0;
+      padding-bottom: 24px;
+      box-shadow: 0 -8px 24px rgba(0,0,0,0.12);
+      z-index: 51;
+      display: none;
+      transform: translateY(100%);
+      transition: transform 300ms cubic-bezier(0.32, 0.72, 0, 1);
+      max-height: 50%;
+      overflow-y: auto;
+    }
+    .bottom-sheet.visible {
+      display: block;
+      transform: translateY(0);
+    }
+    .bottom-sheet .sheet-handle {
+      width: 36px; height: 4px;
+      background: #D0D0D0;
+      border-radius: 2px;
+      margin: 0 auto var(--space-3);
+    }
+    .bottom-sheet .sheet-search {
+      padding: 0 var(--space-4) var(--space-3);
+    }
+    .bottom-sheet .sheet-search input {
+      width: 100%;
+      height: 36px;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: 0 var(--space-3);
+      font-size: var(--font-size-base);
+      font-family: inherit;
+      outline: none;
+      background: var(--color-bg-secondary);
+      transition: border-color 150ms ease;
+    }
+    .bottom-sheet .sheet-search input:focus {
+      border-color: var(--color-accent);
+      background: #FFFFFF;
+    }
+    .bottom-sheet .sheet-section-title {
+      font-size: var(--font-size-sm);
+      font-weight: 600;
+      color: var(--color-text-secondary);
+      padding: var(--space-2) var(--space-4) var(--space-1);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .bottom-sheet .sheet-list-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-3) var(--space-4);
+      cursor: pointer;
+      transition: background 100ms ease;
+      min-height: 44px;
+    }
+    .bottom-sheet .sheet-list-item:active { background: var(--color-bg-tertiary); }
+    .bottom-sheet .sheet-list-item .sli-icon {
+      width: 32px; height: 32px;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--color-accent-soft);
+      border-radius: var(--radius-md);
+      color: var(--color-accent);
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .bottom-sheet .sheet-list-item .sli-text {
+      flex: 1;
+      min-width: 0;
+    }
+    .bottom-sheet .sheet-list-item .sli-title {
+      font-size: var(--font-size-base);
+      font-weight: 500;
+      color: var(--color-text-primary);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .bottom-sheet .sheet-list-item .sli-desc {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-tertiary);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .bottom-sheet .sheet-empty {
+      text-align: center;
+      padding: var(--space-6);
+      color: var(--color-text-tertiary);
+      font-size: var(--font-size-sm);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="phone-frame">
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span class="time">9:41</span>
+      <span class="icons">
+        <i class="mdi mdi-signal-cellular-outline" style="font-size:14px;"></i>
+        <i class="mdi mdi-wifi" style="font-size:14px;"></i>
+        <i class="mdi mdi-battery" style="font-size:16px;"></i>
+      </span>
+    </div>
+
+    <!-- Top Navigation -->
+    <nav class="editor-top-nav">
+      <button class="back-btn" id="back-btn">
+        <i class="mdi mdi-chevron-left"></i>
+      </button>
+      <div class="title-area">编辑笔记</div>
+      <button class="more-btn" id="editor-more-btn"><i class="mdi mdi-dots-vertical"></i></button>
+    </nav>
+
+    <!-- Formatting Toolbar -->
+    <div class="format-toolbar">
+      <button class="format-btn" title="粗体"><span style="font-weight:700;font-size:15px;">B</span></button>
+      <button class="format-btn" title="斜体"><span style="font-style:italic;font-size:15px;font-weight:500;">I</span></button>
+      <button class="format-btn" title="标题"><span style="font-size:14px;font-weight:600;">H</span></button>
+      <div class="format-divider"></div>
+      <button class="format-btn" title="无序列表"><i class="mdi mdi-format-list-bulleted"></i></button>
+      <button class="format-btn" title="有序列表"><i class="mdi mdi-format-list-numbered"></i></button>
+      <button class="format-btn" title="代码块"><i class="mdi mdi-code-tags"></i></button>
+      <button class="format-btn" title="引用"><i class="mdi mdi-format-quote-open"></i></button>
+      <div class="format-divider"></div>
+      <button class="format-btn" title="撤销"><i class="mdi mdi-undo-variant"></i></button>
+      <button class="format-btn" title="重做"><i class="mdi mdi-redo-variant"></i></button>
+      <div class="format-divider"></div>
+      <button class="format-btn" title="更多"><i class="mdi mdi-dots-horizontal"></i></button>
+    </div>
+
+    <!-- Editor Content -->
+    <div class="editor-content" id="editor-content">
+      <textarea class="editor-title" id="editor-title" placeholder="无标题笔记" rows="1">AI Agent 技术架构设计</textarea>
+      <textarea class="editor-body" id="editor-body" placeholder="开始写作…">
+这是一篇关于 AI Agent 的技术架构设计笔记。Agent 架构正从单智能体向多智能体协作方向演进。
+
+## 1. 背景
+
+随着 LLM 能力的不断提升，Agent 架构已成为 AI 应用的核心范式。从简单的 ReAct 模式到复杂的多 Agent 协作系统，架构设计经历了多次迭代。
+
+## 2. 核心架构组件
+
+### 2.1 Planning 模块
+- 任务分解（Task Decomposition）
+- 路径规划（Path Planning）
+- 反思机制（Self-Reflection）
+
+### 2.2 Memory 系统
+- 短期记忆（Short-term）
+- 长期记忆（Long-term）
+- 工作记忆（Working Memory）
+
+相关笔记可以直接链接：[[RAG 技术方案研究]]
+
+## 3. 多 Agent 协作模式
+
+在协作场景中，Agent 之间的通信协议至关重要。常见的模式包括主从式、对等式和混合式。
+
+#AI/Agent #LLM #架构设计</textarea>
+    </div>
+
+    <!-- Saved Status -->
+    <div class="saved-status">
+      <span class="sync-dot"></span>
+      <span>已保存</span>
+      <span>&#183;</span>
+      <span>刚刚</span>
+    </div>
+
+    <!-- Keyboard Accessory Bar -->
+    <div class="accessory-bar">
+      <button class="accessory-btn" id="trigger-wikilink"><i class="mdi mdi-link-variant"></i> [[</button>
+      <button class="accessory-btn" id="trigger-tag"><i class="mdi mdi-pound"></i> #</button>
+      <div class="accessory-divider"></div>
+      <button class="accessory-btn"><i class="mdi mdi-image-outline"></i></button>
+      <button class="accessory-btn"><i class="mdi mdi-paperclip"></i></button>
+      <div class="accessory-spacer"></div>
+      <button class="accessory-btn"><i class="mdi mdi-checkbox-marked-circle-outline"></i></button>
+    </div>
+
+    <!-- Keyboard Simulation -->
+    <div class="keyboard-sim">
+      <span>iOS 键盘（模拟区域）</span>
+    </div>
+
+    <!-- Sheet Overlay -->
+    <div class="sheet-overlay" id="sheet-overlay"></div>
+
+    <!-- [[ Link Bottom Sheet -->
+    <div class="bottom-sheet" id="wikilink-sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-search">
+        <input type="text" placeholder="搜索笔记进行链接…" id="wikilink-search" value="RAG">
+      </div>
+      <div class="sheet-section-title">搜索结果</div>
+      <div class="sheet-list-item">
+        <div class="sli-icon"><i class="mdi mdi-file-document-outline"></i></div>
+        <div class="sli-text">
+          <div class="sli-title">RAG 技术方案研究 — Embedding 模型选型</div>
+          <div class="sli-desc">对比了 OpenAI、Cohere、bge-large-zh 等模型</div>
+        </div>
+      </div>
+      <div class="sheet-list-item">
+        <div class="sli-icon"><i class="mdi mdi-file-document-outline"></i></div>
+        <div class="sli-text">
+          <div class="sli-title">RAG 与 Fine-tuning 对比分析</div>
+          <div class="sli-desc">两种技术路线的适用场景和优劣势对比</div>
+        </div>
+      </div>
+      <div class="sheet-list-item">
+        <div class="sli-icon"><i class="mdi mdi-file-document-outline"></i></div>
+        <div class="sli-text">
+          <div class="sli-title">多模态 RAG 技术探索</div>
+          <div class="sli-desc">图文混合检索的实现方案与挑战</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- # Tag Bottom Sheet -->
+    <div class="bottom-sheet" id="tag-sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-search">
+        <input type="text" placeholder="搜索或新建标签…" id="tag-search" value="AI">
+      </div>
+      <div class="sheet-section-title">已有标签</div>
+      <div class="sheet-list-item">
+        <div class="sli-icon" style="background:var(--tag-blue);color:var(--dot-blue);"><span class="tag-dot" style="width:12px;height:12px;border-radius:50%;display:block;"></span></div>
+        <div class="sli-text">
+          <div class="sli-title"><span style="color:var(--color-accent);font-weight:600;">AI</span>/Agent</div>
+        </div>
+      </div>
+      <div class="sheet-list-item">
+        <div class="sli-icon" style="background:var(--tag-teal);color:var(--dot-teal);"><span class="tag-dot" style="width:12px;height:12px;border-radius:50%;display:block;"></span></div>
+        <div class="sli-text">
+          <div class="sli-title"><span style="color:var(--color-accent);font-weight:600;">AI</span>/LLM</div>
+        </div>
+      </div>
+      <div class="sheet-list-item">
+        <div class="sli-icon" style="background:var(--tag-orange);color:var(--dot-orange);"><span class="tag-dot" style="width:12px;height:12px;border-radius:50%;display:block;"></span></div>
+        <div class="sli-text">
+          <div class="sli-title">架构设计</div>
+        </div>
+      </div>
+      <div class="sheet-list-item">
+        <div class="sli-icon" style="background:var(--tag-green);color:var(--dot-green);"><span class="tag-dot" style="width:12px;height:12px;border-radius:50%;display:block;"></span></div>
+        <div class="sli-text">
+          <div class="sli-title">阅读</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // === Back Button ===
+    document.getElementById('back-btn').addEventListener('click', function() {
+      window.location.href = 'mobile-note-list.html';
+    });
+
+    // === More Button -> Action Sheet Preview ===
+    document.getElementById('editor-more-btn').addEventListener('click', function() {
+      alert('更多操作：分享 / 导出 / 删除 / 移动到…');
+    });
+
+    // === Auto-resize textareas ===
+    function autoResize(el) {
+      el.style.height = 'auto';
+      el.style.height = el.scrollHeight + 'px';
+    }
+    const titleEl = document.getElementById('editor-title');
+    const bodyEl = document.getElementById('editor-body');
+    titleEl.addEventListener('input', function() { autoResize(this); });
+    bodyEl.addEventListener('input', function() { autoResize(this); });
+
+    // === Bottom Sheet logic ===
+    const sheetOverlay = document.getElementById('sheet-overlay');
+    const wikilinkSheet = document.getElementById('wikilink-sheet');
+    const tagSheet = document.getElementById('tag-sheet');
+
+    function showSheet(sheet) {
+      sheetOverlay.classList.add('visible');
+      void sheet.offsetWidth;
+      sheet.classList.add('visible');
+    }
+
+    function hideAllSheets() {
+      wikilinkSheet.classList.remove('visible');
+      tagSheet.classList.remove('visible');
+      sheetOverlay.classList.remove('visible');
+    }
+
+    document.getElementById('trigger-wikilink').addEventListener('click', function() {
+      showSheet(wikilinkSheet);
+      setTimeout(() => {
+        document.getElementById('wikilink-search').focus();
+      }, 350);
+    });
+
+    document.getElementById('trigger-tag').addEventListener('click', function() {
+      showSheet(tagSheet);
+      setTimeout(() => {
+        document.getElementById('tag-search').focus();
+      }, 350);
+    });
+
+    sheetOverlay.addEventListener('click', hideAllSheets);
+
+    // Sheet list item selection closes sheet
+    document.querySelectorAll('.bottom-sheet .sheet-list-item').forEach(item => {
+      item.addEventListener('click', hideAllSheets);
+    });
+
+    // === Format toolbar active toggle (visual only) ===
+    document.querySelectorAll('.format-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        // Toggle active state for Bold/Italic
+        const text = this.textContent.trim();
+        if (text === 'B' || text === 'I' || text === 'H') {
+          this.classList.toggle('active');
+        }
+      });
+    });
+
+    // === Handle tabindex for simulated scrolling ===
+    // Auto-size on load
+    setTimeout(() => {
+      autoResize(titleEl);
+      autoResize(bodyEl);
+    }, 100);
+  </script>
+</body>
+</html>

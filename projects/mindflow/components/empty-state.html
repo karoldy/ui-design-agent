@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EmptyState — 空状态组件 | MindFlow 复合组件</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-bg-primary: #FAFAFA;
+      --color-bg-secondary: #F5F5F5;
+      --color-bg-tertiary: #EEEEEE;
+      --color-text-primary: #1A1A1A;
+      --color-text-secondary: #6B6B6B;
+      --color-text-tertiary: #9E9E9E;
+      --color-text-link: #3B82F6;
+      --color-text-on-accent: #FFFFFF;
+      --color-accent: #3B82F6;
+      --color-accent-hover: #2563EB;
+      --color-accent-soft: #E8F0FE;
+      --color-error: #EF4444;
+      --color-warning: #F59E0B;
+      --color-divider: #E8E8E8;
+
+      --font-family-ui: 'Inter', system-ui, -apple-system, sans-serif;
+      --font-family-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-size-xs: 11px;
+      --font-size-sm: 13px;
+      --font-size-base: 15px;
+      --font-size-lg: 18px;
+      --font-size-xl: 22px;
+
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+      --space-10: 40px;
+      --space-12: 48px;
+
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-full: 9999px;
+
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+      --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-family-ui);
+      background: var(--color-bg-primary);
+      color: var(--color-text-primary);
+      padding: var(--space-8);
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    .page-title { font-size: var(--font-size-xl); font-weight: 600; margin-bottom: var(--space-2); }
+    .page-desc { font-size: var(--font-size-sm); color: var(--color-text-secondary); margin-bottom: var(--space-8); line-height: 1.5; }
+    .section { margin-bottom: var(--space-8); }
+    .section-title { font-size: var(--font-size-base); font-weight: 600; margin-bottom: var(--space-3); padding-bottom: var(--space-1); border-bottom: 1px solid var(--color-divider); }
+    .section-desc { font-size: var(--font-size-xs); color: var(--color-text-secondary); margin-bottom: var(--space-3); }
+
+    .scene-group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+
+    .scene-label {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-secondary);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: var(--space-1) 0;
+      border-bottom: 1px solid var(--color-divider);
+    }
+
+    /* ==============================
+       Empty State Component
+       ============================== */
+
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: var(--space-12) var(--space-8);
+      border: 1px dashed var(--color-divider);
+      border-radius: var(--radius-lg);
+      background: white;
+      transition: background 200ms ease;
+    }
+
+    .empty-state.compact {
+      padding: var(--space-8) var(--space-6);
+    }
+
+    .empty-state.error-state {
+      border-color: #FECACA;
+      background: #FFF5F5;
+    }
+
+    /* Illustration area */
+    .empty-illustration {
+      width: 120px;
+      height: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: var(--space-6);
+      color: var(--color-accent);
+      position: relative;
+    }
+
+    .empty-illustration svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .empty-illustration .mdi {
+      font-size: 64px;
+      opacity: 0.3;
+      color: var(--color-text-tertiary);
+    }
+
+    .empty-icon-wrap {
+      width: 72px;
+      height: 72px;
+      border-radius: var(--radius-full);
+      background: var(--color-accent-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: var(--space-5);
+    }
+
+    .empty-icon-wrap .mdi {
+      font-size: 32px;
+      color: var(--color-accent);
+    }
+
+    .empty-icon-wrap.warning {
+      background: #FEF3C7;
+    }
+    .empty-icon-wrap.warning .mdi {
+      color: var(--color-warning);
+    }
+    .empty-icon-wrap.error {
+      background: #FEE2E2;
+    }
+    .empty-icon-wrap.error .mdi {
+      color: var(--color-error);
+    }
+
+    .empty-title {
+      font-size: var(--font-size-lg);
+      font-weight: 600;
+      color: var(--color-text-primary);
+      margin-bottom: var(--space-2);
+    }
+
+    .empty-subtitle {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+      line-height: 1.6;
+      margin-bottom: var(--space-5);
+      max-width: 320px;
+    }
+
+    .empty-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--font-size-sm);
+      font-weight: 600;
+      padding: var(--space-2) var(--space-5);
+      background: var(--color-accent);
+      color: var(--color-text-on-accent);
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: background 150ms ease;
+    }
+
+    .empty-cta:hover {
+      background: var(--color-accent-hover);
+    }
+
+    .empty-cta .mdi {
+      font-size: 18px;
+    }
+
+    .empty-secondary-action {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
+      font-size: var(--font-size-xs);
+      color: var(--color-text-link);
+      margin-top: var(--space-3);
+      cursor: pointer;
+      padding: var(--space-1) var(--space-2);
+      border-radius: var(--radius-sm);
+      transition: background 120ms ease;
+      border: none;
+      background: none;
+    }
+
+    .empty-secondary-action:hover {
+      background: var(--color-accent-soft);
+    }
+
+    .empty-secondary-action .mdi {
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <h1 class="page-title">空状态组件 — Empty State</h1>
+  <p class="page-desc">
+    各种空状态场景的复用组件。采用居中布局、极简 SVG 插画（或 MDI 图标）风格。
+    统一使用 accent 色的极简线条风格，所有空状态保持一致的视觉语言。
+  </p>
+
+  <div class="scene-group">
+    <!-- ============ Scene 1: No Notes ============ -->
+    <div class="section">
+      <div class="scene-label">场景 1：无笔记 (新用户)</div>
+      <p class="section-desc">新用户首次使用，引导创建第一篇笔记。</p>
+      <div class="empty-state">
+        <div class="empty-illustration">
+          <svg viewBox="0 0 120 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="25" y="15" width="70" height="55" rx="6" stroke="#3B82F6" stroke-width="2" fill="none"/>
+            <line x1="35" y1="32" x2="70" y2="32" stroke="#3B82F6" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+            <line x1="35" y1="42" x2="85" y2="42" stroke="#3B82F6" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+            <line x1="35" y1="52" x2="60" y2="52" stroke="#3B82F6" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+            <circle cx="18" cy="70" r="8" stroke="#3B82F6" stroke-width="1.5" fill="none" opacity="0.4"/>
+            <circle cx="25" cy="64" r="3" fill="#3B82F6" opacity="0.6"/>
+            <line x1="102" y1="15" x2="102" y2="70" stroke="#3B82F6" stroke-width="1.5" stroke-linecap="round" opacity="0.3"/>
+            <path d="M98 70 L102 75 L106 70" stroke="#3B82F6" stroke-width="1" fill="none" opacity="0.3"/>
+          </svg>
+        </div>
+        <h2 class="empty-title">欢迎来到 MindFlow</h2>
+        <p class="empty-subtitle">点击下方按钮开始你的第一篇笔记<br>输入 [[ 链接笔记，输入 # 添加标签</p>
+        <button class="empty-cta" onclick="alert('新建笔记')">
+          <span class="mdi mdi-plus"></span>
+          新建笔记
+        </button>
+        <button class="empty-secondary-action" onclick="alert('导入数据')">
+          <span class="mdi mdi-upload-outline"></span>
+          导入数据
+        </button>
+      </div>
+    </div>
+
+    <!-- ============ Scene 2: No Search Results ============ -->
+    <div class="section">
+      <div class="scene-label">场景 2：无搜索结果</div>
+      <p class="section-desc">搜索无匹配结果，建议调整关键词。</p>
+      <div class="empty-state">
+        <div class="empty-icon-wrap">
+          <span class="mdi mdi-magnify-close"></span>
+        </div>
+        <h2 class="empty-title">未找到相关笔记</h2>
+        <p class="empty-subtitle">尝试不同的关键词或检查拼写<br>搜索范围：全部笔记</p>
+      </div>
+    </div>
+
+    <!-- ============ Scene 3: No Tags ============ -->
+    <div class="section">
+      <div class="scene-label">场景 3：无标签</div>
+      <p class="section-desc">尚未创建标签时的引导。</p>
+      <div class="empty-state compact">
+        <div class="empty-icon-wrap" style="width:56px;height:56px;">
+          <span class="mdi mdi-tag-outline" style="font-size:24px;"></span>
+        </div>
+        <h2 class="empty-title" style="font-size:var(--font-size-base);">暂无标签</h2>
+        <p class="empty-subtitle" style="margin-bottom:var(--space-3);">在编辑笔记时输入 # 为笔记添加标签，标签会在此自动显示</p>
+      </div>
+    </div>
+
+    <!-- ============ Scene 4: No Graph Links ============ -->
+    <div class="section">
+      <div class="scene-label">场景 4：无链接图谱</div>
+      <p class="section-desc">知识图谱页面，没有 [[ 双向链接。</p>
+      <div class="empty-state">
+        <div class="empty-icon-wrap">
+          <span class="mdi mdi-graph-outline"></span>
+        </div>
+        <h2 class="empty-title">知识图谱尚未建立</h2>
+        <p class="empty-subtitle">创建 <strong>[[ 双向链接</strong> 来建立笔记之间的联系<br>链接越多，知识网络越丰富</p>
+        <button class="empty-cta" onclick="alert('了解更多')" style="background:transparent;color:var(--color-accent);border:1px solid var(--color-accent);">
+          <span class="mdi mdi-lightbulb-outline"></span>
+          了解双向链接
+        </button>
+      </div>
+    </div>
+
+    <!-- ============ Scene 5: Empty Trash ============ -->
+    <div class="section">
+      <div class="scene-label">场景 5：回收站为空</div>
+      <p class="section-desc">回收站没有内容。</p>
+      <div class="empty-state compact">
+        <div class="empty-icon-wrap" style="width:56px;height:56px;background:var(--color-bg-secondary);">
+          <span class="mdi mdi-delete-outline" style="font-size:24px;color:var(--color-text-tertiary);"></span>
+        </div>
+        <h2 class="empty-title" style="font-size:var(--font-size-base);color:var(--color-text-secondary);">回收站为空</h2>
+        <p class="empty-subtitle">删除的笔记会出现在这里</p>
+      </div>
+    </div>
+
+    <!-- ============ Scene 6: Network Error ============ -->
+    <div class="section">
+      <div class="scene-label">场景 6：网络错误 / 加载失败</div>
+      <p class="section-desc">数据加载失败时的错误状态。</p>
+      <div class="empty-state error-state">
+        <div class="empty-icon-wrap error">
+          <span class="mdi mdi-cloud-alert"></span>
+        </div>
+        <h2 class="empty-title">加载失败</h2>
+        <p class="empty-subtitle">网络连接出现问题，请检查网络后重试</p>
+        <button class="empty-cta" onclick="alert('重试')">
+          <span class="mdi mdi-refresh"></span>
+          重试
+        </button>
+      </div>
+    </div>
+
+    <!-- ============ Scene 7: No Notes in Notebook ============ -->
+    <div class="section">
+      <div class="scene-label">场景 7：笔记本内无笔记</div>
+      <p class="section-desc">切换到一个空的笔记本。</p>
+      <div class="empty-state compact">
+        <div class="empty-icon-wrap" style="width:56px;height:56px;">
+          <span class="mdi mdi-folder-open-outline" style="font-size:24px;"></span>
+        </div>
+        <h2 class="empty-title" style="font-size:var(--font-size-base);">该笔记本还没有笔记</h2>
+        <p class="empty-subtitle" style="margin-bottom:var(--space-3);">点击下方按钮创建你的第一篇笔记</p>
+        <button class="empty-cta" style="font-size:var(--font-size-xs);padding:var(--space-1) var(--space-4);" onclick="alert('新建笔记')">
+          <span class="mdi mdi-plus"></span>
+          新建笔记
+        </button>
+      </div>
+    </div>
+
+    <!-- ============ Scene 8: Sync First Time ============ -->
+    <div class="section">
+      <div class="scene-label">场景 8：尚未同步</div>
+      <p class="section-desc">首次使用同步功能。</p>
+      <div class="empty-state compact">
+        <div class="empty-icon-wrap" style="width:56px;height:56px;background:var(--color-bg-secondary);">
+          <span class="mdi mdi-sync" style="font-size:24px;color:var(--color-text-tertiary);"></span>
+        </div>
+        <h2 class="empty-title" style="font-size:var(--font-size-base);color:var(--color-text-secondary);">尚未同步过</h2>
+        <p class="empty-subtitle">同步功能将你的笔记安全地保存在云端</p>
+        <button class="empty-cta" onclick="alert('开始同步')" style="font-size:var(--font-size-xs);padding:var(--space-1) var(--space-4);">
+          <span class="mdi mdi-cloud-upload-outline"></span>
+          开始同步
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================ SECTION: Visual Design Specs ================ -->
+  <div class="section" style="margin-top:var(--space-8);">
+    <h2 class="section-title">设计规范 Design Specs</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4);">
+      <div style="background:white;border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:var(--space-4);">
+        <div class="scene-label" style="margin-bottom:var(--space-3);">插画风格</div>
+        <ul style="font-size:var(--font-size-sm);color:var(--color-text-secondary);list-style:none;display:flex;flex-direction:column;gap:var(--space-2);">
+          <li><span class="mdi mdi-check-circle" style="color:var(--color-success);font-size:14px;margin-right:var(--space-1);"></span> 极简线性 + 单色（accent blue）</li>
+          <li><span class="mdi mdi-check-circle" style="color:var(--color-success);font-size:14px;margin-right:var(--space-1);"></span> 线条粗细：1.5-2px</li>
+          <li><span class="mdi mdi-check-circle" style="color:var(--color-success);font-size:14px;margin-right:var(--space-1);"></span> 圆角端点，保持干净感</li>
+          <li><span class="mdi mdi-check-circle" style="color:var(--color-success);font-size:14px;margin-right:var(--space-1);"></span> 图标替代方案：MDI icon 72px 圆形容器</li>
+        </ul>
+      </div>
+      <div style="background:white;border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:var(--space-4);">
+        <div class="scene-label" style="margin-bottom:var(--space-3);">排版规范</div>
+        <ul style="font-size:var(--font-size-sm);color:var(--color-text-secondary);list-style:none;display:flex;flex-direction:column;gap:var(--space-2);">
+          <li><span class="mdi mdi-check-circle" style="color:var(--color-success);font-size:14px;margin-right:var(--space-1);"></span> 主标题：18px, 600 weight</li>
+          <li><span class="mdi mdi-check-circle" style="color:var(--color-success);font-size:14px;margin-right:var(--space-1);"></span> 副标题：13px, secondary 色, max 320px 宽</li>
+          <li><span class="mdi mdi-check-circle" style="color:var(--color-success);font-size:14px;margin-right:var(--space-1);"></span> CTA 按钮：accent 色 solid</li>
+          <li><span class="mdi mdi-check-circle" style="color:var(--color-success);font-size:14px;margin-right:var(--space-1);"></span> 居中对齐，不打扰周围 UI</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
