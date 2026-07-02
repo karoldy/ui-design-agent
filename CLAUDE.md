@@ -41,6 +41,14 @@ project-name/
 - 图表、流程图可用 Mermaid
 - 组件库可与 Claude Design System (claude.ai/design) 同步
 
+### 图标规范
+
+- **统一使用 Material Design Icons (MDI)** 作为全项目图标库
+- 通过 CDN 引入：`<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">`
+- 使用方式：`<i class="mdi mdi-{icon-name}"></i>`
+- 图标颜色通过 CSS `color` 属性控制，尺寸通过 `font-size` 控制（默认 24px）
+- **禁止使用 Emoji 作为图标**（跨平台渲染不一致），也**不使用 SF Symbols**（非 Apple 平台不可用）
+
 ### 组件设计稿交互规范
 
 组件设计稿（`components/` 目录下的 `.html` 文件）必须是**可在浏览器中独立运行的可交互页面**，而非静态截图：

@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>线框图 - 统计页 | 个人记账工具</title>
+  <style>
+    /* ===== Reset ===== */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #DEE1E6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
+    }
+
+    /* ===== Phone Frame ===== */
+    .phone {
+      width: 375px;
+      height: 812px;
+      background: #FFFFFF;
+      border-radius: 44px;
+      box-shadow:
+        0 0 0 6px #1C1C1E,
+        0 12px 60px rgba(0,0,0,0.25);
+      overflow: hidden;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .screen {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ===== Notch ===== */
+    .notch {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 150px;
+      height: 30px;
+      background: #1C1C1E;
+      border-radius: 0 0 18px 18px;
+      z-index: 10;
+    }
+
+    /* ===== Status Bar ===== */
+    .status-bar {
+      height: 44px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 24px;
+      padding-top: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #1A1A2E;
+      border-bottom: 1px dashed #D0D3D8;
+      position: relative;
+      background: #FFFFFF;
+      flex-shrink: 0;
+    }
+    .status-bar .annot {
+      position: absolute;
+      bottom: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    /* ===== Annotation ===== */
+    .annot {
+      font-size: 8px;
+      color: #9CA3AF;
+      letter-spacing: 0.3px;
+      white-space: nowrap;
+      font-weight: 400;
+      line-height: 1.2;
+    }
+    .annot-line {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 0 16px;
+    }
+    .annot-line::before,
+    .annot-line::after {
+      content: '';
+      flex: 1;
+      height: 0;
+      border-top: 1px dashed #D0D3D8;
+    }
+
+    /* ===== Scrollable Content ===== */
+    .scroll-content {
+      flex: 1;
+      overflow-y: auto;
+      position: relative;
+      -webkit-overflow-scrolling: touch;
+    }
+    .scroll-content::-webkit-scrollbar {
+      width: 0;
+    }
+
+    /* ===== Section pattern (common) ===== */
+    .section-label {
+      font-size: 7px;
+      color: #B0B0B0;
+      text-align: center;
+      padding: 2px 0;
+      letter-spacing: 0.5px;
+      border-bottom: 1px dashed #E0E2E5;
+      background: #FAFBFC;
+    }
+
+    /* ===== Spacing Variables ===== */
+    :root {
+      --sp-1: 4px;
+      --sp-2: 8px;
+      --sp-3: 12px;
+      --sp-4: 16px;
+      --sp-5: 20px;
+      --sp-6: 24px;
+      --sp-8: 32px;
+      --sp-12: 48px;
+    }
+
+    /* ===== Month Switcher ===== */
+    .month-switcher {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--sp-4);
+      padding: var(--sp-3) var(--sp-4);
+      border-bottom: 1px dashed #E8EAED;
+      position: relative;
+      background: #fff;
+    }
+    .month-switcher .annot-pos {
+      position: absolute;
+      right: 4px;
+      top: 2px;
+    }
+    .month-arrow {
+      width: 32px;
+      height: 32px;
+      border: 1px dashed #C0C4C8;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      color: #6B7280;
+      cursor: pointer;
+    }
+    .month-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #1A1A2E;
+      min-width: 100px;
+      text-align: center;
+    }
+
+    /* ===== Monthly Summary ===== */
+    .monthly-summary {
+      padding: var(--sp-4) var(--sp-4) var(--sp-3);
+      text-align: center;
+      border-bottom: 1px dashed #E8EAED;
+      position: relative;
+    }
+    .monthly-summary .annot-pos {
+      position: absolute;
+      right: 4px;
+      top: 2px;
+    }
+    .total-expense {
+      font-size: 32px;
+      font-weight: 600;
+      color: #1A1A2E;
+      letter-spacing: 0.5px;
+      font-variant-numeric: tabular-nums;
+    }
+    .total-expense .label {
+      font-size: 15px;
+      font-weight: 400;
+      color: #6B7280;
+      margin-right: 4px;
+    }
+    .daily-avg {
+      font-size: 13px;
+      color: #9CA3AF;
+      margin-top: var(--sp-1);
+    }
+    .daily-avg .label {
+      margin-right: 4px;
+    }
+
+    /* ===== Pie Chart Area ===== */
+    .pie-section {
+      padding: var(--sp-4) var(--sp-4) var(--sp-3);
+      border-bottom: 1px dashed #E8EAED;
+      position: relative;
+    }
+    .pie-section .annot-pos {
+      position: absolute;
+      right: 4px;
+      top: 2px;
+    }
+    .pie-container {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-5);
+    }
+    .donut-chart {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      border: 2px dashed #C0C4C8;
+      position: relative;
+      flex-shrink: 0;
+      background: #FAFBFC;
+    }
+    .donut-chart .center-hole {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 60px;
+      height: 60px;
+      background: #FFFFFF;
+      border-radius: 50%;
+      border: 1px dashed #D0D3D8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      color: #6B7280;
+    }
+    .donut-chart .segment-marker {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      border: 1px dashed #B0B0B0;
+      border-radius: 2px;
+    }
+    .donut-chart .segment-marker:nth-child(2) { top: 10px; left: 50%; transform: translateX(-50%); }
+    .donut-chart .segment-marker:nth-child(3) { right: 10px; top: 30%; }
+    .donut-chart .segment-marker:nth-child(4) { bottom: 20%; left: 20%; }
+    .donut-chart .segment-marker:nth-child(5) { bottom: 10%; right: 30%; }
+    .pie-labels {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .pie-label-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: #6B7280;
+    }
+    .pie-label-item .dot {
+      width: 8px;
+      height: 8px;
+      border: 1px dashed #B0B0B0;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .pie-label-item .pct {
+      margin-left: auto;
+      color: #1A1A2E;
+      font-weight: 500;
+    }
+
+    /* ===== Category Ranking ===== */
+    .ranking-section {
+      padding: var(--sp-3) var(--sp-4);
+      border-bottom: 1px dashed #E8EAED;
+      position: relative;
+    }
+    .ranking-section .annot-pos {
+      position: absolute;
+      right: 4px;
+      top: 2px;
+    }
+    .section-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #1A1A2E;
+      margin-bottom: var(--sp-2);
+    }
+    .ranking-item {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-2);
+      margin-bottom: var(--sp-2);
+      position: relative;
+    }
+    .ranking-item:last-child { margin-bottom: 0; }
+    .ranking-icon {
+      font-size: 14px;
+      width: 20px;
+      text-align: center;
+    }
+    .ranking-name {
+      font-size: 12px;
+      color: #1A1A2E;
+      width: 28px;
+      flex-shrink: 0;
+    }
+    .ranking-bar-bg {
+      flex: 1;
+      height: 16px;
+      background: #F0F0F0;
+      border: 1px dashed #D0D3D8;
+      border-radius: 4px;
+      position: relative;
+      overflow: hidden;
+    }
+    .ranking-bar-fill {
+      height: 100%;
+      background: repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 3px,
+        #E0E2E5 3px,
+        #E0E2E5 6px
+      );
+      border-right: 1px dashed #B0B0B0;
+      position: relative;
+    }
+    .ranking-amount {
+      font-size: 11px;
+      color: #6B7280;
+      width: 48px;
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+      flex-shrink: 0;
+    }
+
+    /* ===== Trend Section ===== */
+    .trend-section {
+      padding: var(--sp-3) var(--sp-4) var(--sp-6);
+      border-bottom: 1px dashed #E8EAED;
+      position: relative;
+    }
+    .trend-section .annot-pos {
+      position: absolute;
+      right: 4px;
+      top: 2px;
+    }
+    .segmented-control {
+      display: flex;
+      gap: 0;
+      margin-bottom: var(--sp-3);
+      border: 1px dashed #C0C4C8;
+      border-radius: 6px;
+      width: fit-content;
+      overflow: hidden;
+    }
+    .seg-item {
+      padding: 4px 16px;
+      font-size: 12px;
+      color: #6B7280;
+      cursor: pointer;
+      border-right: 1px dashed #D0D3D8;
+    }
+    .seg-item:last-child { border-right: none; }
+    .seg-item.active {
+      background: #E8EAED;
+      color: #1A1A2E;
+      font-weight: 500;
+    }
+    .chart-area {
+      width: 100%;
+      height: 120px;
+      border: 1px dashed #C0C4C8;
+      border-radius: 6px;
+      background: #FAFBFC;
+      position: relative;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 8px;
+    }
+    .chart-area .annot-inset {
+      font-size: 8px;
+      color: #B0B0B0;
+      text-align: center;
+    }
+    /* Simple line chart wireframe */
+    .line-chart-wire {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+    .line-chart-wire svg {
+      width: 100%;
+      height: 100%;
+    }
+    .line-chart-wire .grid-line {
+      stroke: #E0E2E5;
+      stroke-width: 1;
+      stroke-dasharray: 3,3;
+    }
+    .line-chart-wire .data-line {
+      fill: none;
+      stroke: #B0B0B0;
+      stroke-width: 2;
+      stroke-dasharray: 4,3;
+    }
+    .line-chart-wire .data-point {
+      fill: #B0B0B0;
+    }
+
+    .day-labels {
+      display: flex;
+      justify-content: space-around;
+      margin-top: var(--sp-2);
+      padding: 0 4px;
+    }
+    .day-label {
+      font-size: 9px;
+      color: #9CA3AF;
+    }
+
+    /* ===== Empty State ===== */
+    .empty-state {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: var(--sp-12) var(--sp-4);
+      gap: var(--sp-4);
+    }
+    .empty-state.visible {
+      display: flex;
+    }
+    .empty-state .placeholder-illustration {
+      width: 120px;
+      height: 100px;
+      border: 1px dashed #D0D3D8;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      color: #C0C4C8;
+    }
+    .empty-state .empty-text {
+      font-size: 14px;
+      color: #9CA3AF;
+      text-align: center;
+    }
+    .empty-state .empty-btn {
+      padding: 8px 24px;
+      border: 1px dashed #B0B0B0;
+      border-radius: 8px;
+      font-size: 13px;
+      color: #6B7280;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    /* ===== Tab Bar ===== */
+    .tab-bar {
+      height: 50px;
+      display: flex;
+      align-items: center;
+      border-top: 1px solid #E8EAED;
+      background: #F8F9FA;
+      position: relative;
+      flex-shrink: 0;
+    }
+    .tab-bar .annot-pos {
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .tab-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      text-decoration: none;
+      color: #9CA3AF;
+      font-size: 10px;
+      padding: 4px 0;
+    }
+    .tab-item.active {
+      color: #00A86B;
+    }
+    .tab-item.active .tab-icon {
+      border-color: #00A86B;
+    }
+    .tab-icon {
+      width: 22px;
+      height: 22px;
+      border: 1.5px solid #C0C4C8;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      color: #9CA3AF;
+    }
+    .tab-item.active .tab-icon {
+      border-color: #00A86B;
+      color: #00A86B;
+    }
+    .tab-label {
+      font-size: 9px;
+      line-height: 1;
+    }
+
+    /* ===== Safe Area ===== */
+    .safe-area {
+      height: 34px;
+      background: #F8F9FA;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .safe-area .annot-pos {
+      position: absolute;
+      top: 2px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    /* ===== State Controls ===== */
+    .controls {
+      position: fixed;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      display: flex;
+      gap: 8px;
+      background: rgba(255,255,255,0.95);
+      padding: 8px 16px;
+      border-radius: 10px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+    }
+    .controls .title {
+      font-size: 12px;
+      font-weight: 600;
+      color: #6B7280;
+      margin-right: 8px;
+      line-height: 24px;
+    }
+    .controls button {
+      padding: 4px 12px;
+      font-size: 11px;
+      border: 1px solid #D0D3D8;
+      border-radius: 6px;
+      background: #fff;
+      color: #6B7280;
+      cursor: pointer;
+    }
+    .controls button.active {
+      background: #1A1A2E;
+      color: #fff;
+      border-color: #1A1A2E;
+    }
+
+    /* ===== Dimension lines inline ===== */
+    .dim-annot {
+      font-size: 7px;
+      color: #B0B0B0;
+    }
+
+    @media (max-height: 860px) {
+      .phone { transform: scale(0.85); }
+    }
+    @media (max-height: 740px) {
+      .phone { transform: scale(0.7); }
+    }
+    @media (max-width: 420px) {
+      .phone { transform: scale(0.9); transform-origin: center center; }
+      .controls { top: 8px; padding: 4px 10px; }
+      .controls button { padding: 3px 8px; font-size: 10px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- State Controls -->
+  <div class="controls">
+    <span class="title">状态切换</span>
+    <button id="state-data" class="active">有数据</button>
+    <button id="state-empty">空状态</button>
+  </div>
+
+  <!-- Phone Frame -->
+  <div class="phone">
+    <div class="screen">
+
+      <!-- Notch -->
+      <div class="notch"></div>
+
+      <!-- Status Bar -->
+      <div class="status-bar">
+        <span>9:41</span>
+        <span style="font-size:10px; opacity:0.6">🔋 📶</span>
+        <span class="annot">Status Bar ⎯ 44px</span>
+      </div>
+
+      <!-- Scrollable Content -->
+      <div class="scroll-content" id="scrollContent">
+
+        <!-- Data content -->
+        <div id="dataContent">
+
+          <!-- Month Switcher -->
+          <div class="month-switcher">
+            <div class="month-arrow">&lt;</div>
+            <div class="month-title">2026年7月</div>
+            <div class="month-arrow">&gt;</div>
+            <span class="annot annot-pos">padding 16px</span>
+          </div>
+
+          <!-- Monthly Summary -->
+          <div class="monthly-summary">
+            <div class="total-expense">
+              <span class="label">本月支出</span>
+              <span>¥3,280.50</span>
+            </div>
+            <div class="daily-avg">
+              <span class="label">日均</span>
+              <span>¥108.52</span>
+            </div>
+            <span class="annot annot-pos">间距 16px</span>
+          </div>
+
+          <!-- Pie Chart Section -->
+          <div class="pie-section">
+            <div class="section-title">支出分布</div>
+            <div class="pie-container">
+              <div class="donut-chart">
+                <div class="center-hole">¥3,280</div>
+                <!-- Segment markers simulating a wireframe donut -->
+                <div class="segment-marker" style="top:15px; left:50%; width:25px; height:8px; transform:translateX(-50%); background:#E0E2E5;"></div>
+                <div class="segment-marker" style="top:30px; right:15px; width:20px; height:8px; background:#E0E2E5; transform:rotate(30deg);"></div>
+                <div class="segment-marker" style="bottom:35px; left:12px; width:16px; height:8px; background:#E0E2E5; transform:rotate(-20deg);"></div>
+                <div class="segment-marker" style="bottom:15px; right:25px; width:18px; height:8px; background:#E0E2E5; transform:rotate(15deg);"></div>
+                <div class="segment-marker" style="top:55px; left:10px; width:14px; height:8px; background:#E0E2E5; transform:rotate(-40deg);"></div>
+                <span class="annot" style="position:absolute; bottom:-14px; left:50%; transform:translateX(-50%);">环形图示意 140x140px</span>
+              </div>
+              <div class="pie-labels">
+                <div class="pie-label-item">
+                  <span class="dot"></span> 餐饮 <span class="pct">35%</span>
+                </div>
+                <div class="pie-label-item">
+                  <span class="dot"></span> 居住 <span class="pct">25%</span>
+                </div>
+                <div class="pie-label-item">
+                  <span class="dot"></span> 交通 <span class="pct">18%</span>
+                </div>
+                <div class="pie-label-item">
+                  <span class="dot"></span> 购物 <span class="pct">13%</span>
+                </div>
+                <div class="pie-label-item">
+                  <span class="dot"></span> 娱乐 <span class="pct">9%</span>
+                </div>
+              </div>
+            </div>
+            <span class="annot annot-pos">padding 16px</span>
+          </div>
+
+          <!-- Category Ranking -->
+          <div class="ranking-section">
+            <div class="section-title">分类排行 Top5</div>
+            <!-- 餐饮 -->
+            <div class="ranking-item">
+              <span class="ranking-icon">🍜</span>
+              <span class="ranking-name">餐饮</span>
+              <div class="ranking-bar-bg">
+                <div class="ranking-bar-fill" style="width:70%;"></div>
+              </div>
+              <span class="ranking-amount">¥1,148</span>
+            </div>
+            <!-- 居住 -->
+            <div class="ranking-item">
+              <span class="ranking-icon">🏠</span>
+              <span class="ranking-name">居住</span>
+              <div class="ranking-bar-bg">
+                <div class="ranking-bar-fill" style="width:55%;"></div>
+              </div>
+              <span class="ranking-amount">¥820</span>
+            </div>
+            <!-- 交通 -->
+            <div class="ranking-item">
+              <span class="ranking-icon">🚌</span>
+              <span class="ranking-name">交通</span>
+              <div class="ranking-bar-bg">
+                <div class="ranking-bar-fill" style="width:40%;"></div>
+              </div>
+              <span class="ranking-amount">¥590</span>
+            </div>
+            <!-- 购物 -->
+            <div class="ranking-item">
+              <span class="ranking-icon">🛒</span>
+              <span class="ranking-name">购物</span>
+              <div class="ranking-bar-bg">
+                <div class="ranking-bar-fill" style="width:30%;"></div>
+              </div>
+              <span class="ranking-amount">¥420</span>
+            </div>
+            <!-- 娱乐 -->
+            <div class="ranking-item">
+              <span class="ranking-icon">🎮</span>
+              <span class="ranking-name">娱乐</span>
+              <div class="ranking-bar-bg">
+                <div class="ranking-bar-fill" style="width:22%;"></div>
+              </div>
+              <span class="ranking-amount">¥302</span>
+            </div>
+            <span class="annot annot-pos">间距 12px</span>
+          </div>
+
+          <!-- Trend Section -->
+          <div class="trend-section">
+            <div class="section-title">消费趋势</div>
+            <div class="segmented-control">
+              <div class="seg-item active">周</div>
+              <div class="seg-item">月</div>
+            </div>
+            <div class="chart-area">
+              <div class="line-chart-wire">
+                <svg viewBox="0 0 300 100">
+                  <!-- Grid lines -->
+                  <line x1="0" y1="20" x2="300" y2="20" class="grid-line" />
+                  <line x1="0" y1="40" x2="300" y2="40" class="grid-line" />
+                  <line x1="0" y1="60" x2="300" y2="60" class="grid-line" />
+                  <line x1="0" y1="80" x2="300" y2="80" class="grid-line" />
+                  <!-- Dashed data line -->
+                  <polyline points="10,75 50,45 90,55 130,30 170,50 210,25 250,60 290,40" class="data-line" />
+                  <!-- Data points -->
+                  <circle cx="10" cy="75" r="3" class="data-point" />
+                  <circle cx="50" cy="45" r="3" class="data-point" />
+                  <circle cx="90" cy="55" r="3" class="data-point" />
+                  <circle cx="130" cy="30" r="3" class="data-point" />
+                  <circle cx="170" cy="50" r="3" class="data-point" />
+                  <circle cx="210" cy="25" r="3" class="data-point" />
+                  <circle cx="250" cy="60" r="3" class="data-point" />
+                  <circle cx="290" cy="40" r="3" class="data-point" />
+                </svg>
+              </div>
+              <span class="annot annot-inset">折线图 300ms 过渡</span>
+            </div>
+            <div class="day-labels">
+              <span class="day-label">周一</span>
+              <span class="day-label">周二</span>
+              <span class="day-label">周三</span>
+              <span class="day-label">周四</span>
+              <span class="day-label">周五</span>
+              <span class="day-label">周六</span>
+              <span class="day-label">周日</span>
+            </div>
+            <span class="annot annot-pos">padding 12px</span>
+          </div>
+
+          <div style="height:8px;"></div>
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" id="emptyState">
+          <div class="placeholder-illustration">
+            空状态插画
+          </div>
+          <div class="empty-text">还没有支出记录<br>去记一笔吧</div>
+          <a href="home.html" class="empty-btn">去记账</a>
+        </div>
+
+      </div>
+
+      <!-- Tab Bar -->
+      <div class="tab-bar">
+        <a href="home.html" class="tab-item">
+          <div class="tab-icon">🏠</div>
+          <span class="tab-label">记账</span>
+        </a>
+        <a href="stats.html" class="tab-item active">
+          <div class="tab-icon">📊</div>
+          <span class="tab-label">统计</span>
+        </a>
+        <a href="records.html" class="tab-item">
+          <div class="tab-icon">📋</div>
+          <span class="tab-label">记录</span>
+        </a>
+        <span class="annot annot-pos">Tab Bar ⎯ 50px</span>
+      </div>
+
+      <!-- Safe Area -->
+      <div class="safe-area">
+        <span class="annot annot-pos">Safe Area ⎯ 34px</span>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    const stateDataBtn = document.getElementById('state-data');
+    const stateEmptyBtn = document.getElementById('state-empty');
+    const dataContent = document.getElementById('dataContent');
+    const emptyState = document.getElementById('emptyState');
+
+    function setState(state) {
+      stateDataBtn.classList.toggle('active', state === 'data');
+      stateEmptyBtn.classList.toggle('active', state === 'empty');
+
+      if (state === 'data') {
+        dataContent.style.display = 'block';
+        emptyState.classList.remove('visible');
+      } else if (state === 'empty') {
+        dataContent.style.display = 'none';
+        emptyState.classList.add('visible');
+      }
+    }
+
+    stateDataBtn.addEventListener('click', () => setState('data'));
+    stateEmptyBtn.addEventListener('click', () => setState('empty'));
+
+    // Initial state
+    setState('data');
+  </script>
+
+</body>
+</html>
