@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>线框图 - 记录页 | 个人记账工具</title>
+  <style>
+    /* ===== Reset ===== */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #DEE1E6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
+    }
+
+    /* ===== Phone Frame ===== */
+    .phone {
+      width: 375px;
+      height: 812px;
+      background: #FFFFFF;
+      border-radius: 44px;
+      box-shadow:
+        0 0 0 6px #1C1C1E,
+        0 12px 60px rgba(0,0,0,0.25);
+      overflow: hidden;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .screen {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ===== Notch ===== */
+    .notch {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 150px;
+      height: 30px;
+      background: #1C1C1E;
+      border-radius: 0 0 18px 18px;
+      z-index: 10;
+    }
+
+    /* ===== Status Bar ===== */
+    .status-bar {
+      height: 44px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 24px;
+      padding-top: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #1A1A2E;
+      border-bottom: 1px dashed #D0D3D8;
+      position: relative;
+      background: #FFFFFF;
+      flex-shrink: 0;
+    }
+    .status-bar .annot {
+      position: absolute;
+      bottom: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    /* ===== Annotation ===== */
+    .annot {
+      font-size: 8px;
+      color: #9CA3AF;
+      letter-spacing: 0.3px;
+      white-space: nowrap;
+      font-weight: 400;
+      line-height: 1.2;
+    }
+
+    /* ===== Spacing Variables ===== */
+    :root {
+      --sp-1: 4px;
+      --sp-2: 8px;
+      --sp-3: 12px;
+      --sp-4: 16px;
+      --sp-5: 20px;
+      --sp-6: 24px;
+      --sp-8: 32px;
+      --sp-12: 48px;
+    }
+
+    /* ===== Filter Tags (horizontal scroll) ===== */
+    .filter-tags {
+      padding: var(--sp-3) var(--sp-4);
+      display: flex;
+      gap: var(--sp-2);
+      overflow-x: auto;
+      overflow-y: hidden;
+      border-bottom: 1px dashed #E8EAED;
+      flex-shrink: 0;
+      position: relative;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      background: #fff;
+    }
+    .filter-tags::-webkit-scrollbar {
+      display: none;
+    }
+    .filter-tags .annot-pos {
+      position: absolute;
+      right: 4px;
+      top: 2px;
+    }
+    .filter-tag {
+      padding: 5px 14px;
+      border: 1px dashed #C0C4C8;
+      border-radius: 999px;
+      font-size: 13px;
+      color: #6B7280;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+      background: #FFFFFF;
+    }
+    .filter-tag.active {
+      background: #E8EAED;
+      border-style: solid;
+      border-color: #9CA3AF;
+      color: #1A1A2E;
+      font-weight: 500;
+    }
+
+    /* ===== Scrollable Content ===== */
+    .scroll-content {
+      flex: 1;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      position: relative;
+    }
+    .scroll-content::-webkit-scrollbar {
+      width: 0;
+    }
+
+    /* ===== Date Group ===== */
+    .date-group {
+      padding: var(--sp-3) 0 0;
+    }
+    .date-group-header {
+      padding: 0 var(--sp-4) var(--sp-2);
+      font-size: 15px;
+      font-weight: 600;
+      color: #1A1A2E;
+      display: flex;
+      align-items: center;
+      gap: var(--sp-2);
+      position: relative;
+    }
+    .date-group-header .total {
+      font-size: 12px;
+      font-weight: 400;
+      color: #9CA3AF;
+      margin-left: auto;
+    }
+    .date-group-header .annot-pos {
+      position: absolute;
+      right: 4px;
+      bottom: -14px;
+    }
+
+    /* ===== Record Card ===== */
+    .record-card {
+      display: flex;
+      align-items: center;
+      padding: var(--sp-2) var(--sp-4);
+      margin: 0 var(--sp-4) var(--sp-1);
+      border: 1px dashed #D0D3D8;
+      border-radius: 10px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s;
+      background: #fff;
+    }
+    /* Left-swipe delete hint */
+    .record-card .delete-hint {
+      position: absolute;
+      right: -60px;
+      top: 0;
+      bottom: 0;
+      width: 60px;
+      background: #E0E0E0;
+      border-left: 1px dashed #C0C4C8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      color: #6B7280;
+      transition: right 0.2s;
+    }
+    .record-card.swiped .delete-hint {
+      right: 0;
+    }
+    .record-card .card-content {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-2);
+      flex: 1;
+      min-width: 0;
+    }
+    .record-card .category-icon {
+      width: 36px;
+      height: 36px;
+      border: 1px dashed #C0C4C8;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+      background: #FAFBFC;
+    }
+    .record-card .info-area {
+      flex: 1;
+      min-width: 0;
+    }
+    .record-card .category-name {
+      font-size: 15px;
+      color: #1A1A2E;
+      font-weight: 500;
+    }
+    .record-card .meta {
+      font-size: 11px;
+      color: #9CA3AF;
+      margin-top: 2px;
+      display: flex;
+      gap: var(--sp-2);
+    }
+    .record-card .meta .note-text {
+      max-width: 140px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .record-card .amount {
+      font-size: 17px;
+      font-weight: 500;
+      color: #1A1A2E;
+      font-variant-numeric: tabular-nums;
+      flex-shrink: 0;
+      margin-left: var(--sp-2);
+    }
+    .record-card .swipe-annot {
+      font-size: 7px;
+      color: #C0C4C8;
+      position: absolute;
+      bottom: 2px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    /* Delete button exposed (for left-swipe hint state) */
+    .record-card .exposed-delete {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 60px;
+      background: repeating-linear-gradient(
+        45deg,
+        #E0E2E5,
+        #E0E2E5 2px,
+        #D0D3D8 2px,
+        #D0D3D8 4px
+      );
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      color: #6B7280;
+      border-left: 1px dashed #C0C4C8;
+    }
+    .record-card.delete-visible .exposed-delete {
+      display: flex;
+    }
+    .record-card.delete-visible {
+      position: relative;
+    }
+
+    /* ===== Load More ===== */
+    .load-more {
+      padding: var(--sp-4) var(--sp-4) var(--sp-8);
+      text-align: center;
+      color: #9CA3AF;
+      font-size: 13px;
+      cursor: pointer;
+      position: relative;
+    }
+    .load-more .btn-border {
+      display: inline-block;
+      padding: 8px 32px;
+      border: 1px dashed #C0C4C8;
+      border-radius: 8px;
+      color: #6B7280;
+    }
+    .load-more .annot-pos {
+      position: absolute;
+      bottom: 6px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    /* ===== Empty State ===== */
+    .empty-state {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: var(--sp-12) var(--sp-4);
+      gap: var(--sp-4);
+      flex: 1;
+    }
+    .empty-state.visible {
+      display: flex;
+    }
+    .empty-state .placeholder-illustration {
+      width: 120px;
+      height: 100px;
+      border: 1px dashed #D0D3D8;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      color: #C0C4C8;
+    }
+    .empty-state .empty-text {
+      font-size: 14px;
+      color: #9CA3AF;
+      text-align: center;
+    }
+    .empty-state .empty-btn {
+      padding: 8px 24px;
+      border: 1px dashed #B0B0B0;
+      border-radius: 8px;
+      font-size: 13px;
+      color: #6B7280;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    /* ===== Tab Bar ===== */
+    .tab-bar {
+      height: 50px;
+      display: flex;
+      align-items: center;
+      border-top: 1px solid #E8EAED;
+      background: #F8F9FA;
+      position: relative;
+      flex-shrink: 0;
+    }
+    .tab-bar .annot-pos {
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .tab-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      text-decoration: none;
+      color: #9CA3AF;
+      font-size: 10px;
+      padding: 4px 0;
+    }
+    .tab-item.active {
+      color: #00A86B;
+    }
+    .tab-item.active .tab-icon {
+      border-color: #00A86B;
+    }
+    .tab-icon {
+      width: 22px;
+      height: 22px;
+      border: 1.5px solid #C0C4C8;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      color: #9CA3AF;
+    }
+    .tab-item.active .tab-icon {
+      border-color: #00A86B;
+      color: #00A86B;
+    }
+    .tab-label {
+      font-size: 9px;
+      line-height: 1;
+    }
+
+    /* ===== Safe Area ===== */
+    .safe-area {
+      height: 34px;
+      background: #F8F9FA;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .safe-area .annot-pos {
+      position: absolute;
+      top: 2px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    /* ===== State Controls ===== */
+    .controls {
+      position: fixed;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      display: flex;
+      gap: 8px;
+      background: rgba(255,255,255,0.95);
+      padding: 8px 16px;
+      border-radius: 10px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+    }
+    .controls .title {
+      font-size: 12px;
+      font-weight: 600;
+      color: #6B7280;
+      margin-right: 8px;
+      line-height: 24px;
+    }
+    .controls button {
+      padding: 4px 12px;
+      font-size: 11px;
+      border: 1px solid #D0D3D8;
+      border-radius: 6px;
+      background: #fff;
+      color: #6B7280;
+      cursor: pointer;
+    }
+    .controls button.active {
+      background: #1A1A2E;
+      color: #fff;
+      border-color: #1A1A2E;
+    }
+
+    @media (max-height: 860px) {
+      .phone { transform: scale(0.85); }
+    }
+    @media (max-height: 740px) {
+      .phone { transform: scale(0.7); }
+    }
+    @media (max-width: 420px) {
+      .phone { transform: scale(0.9); transform-origin: center center; }
+      .controls { top: 8px; padding: 4px 10px; }
+      .controls button { padding: 3px 8px; font-size: 10px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- State Controls -->
+  <div class="controls">
+    <span class="title">状态切换</span>
+    <button id="state-data" class="active">默认列表</button>
+    <button id="state-swipe">左滑删除</button>
+    <button id="state-empty">空状态</button>
+  </div>
+
+  <!-- Phone Frame -->
+  <div class="phone">
+    <div class="screen">
+
+      <!-- Notch -->
+      <div class="notch"></div>
+
+      <!-- Status Bar -->
+      <div class="status-bar">
+        <span>9:41</span>
+        <span style="font-size:10px; opacity:0.6">🔋 📶</span>
+        <span class="annot">Status Bar ⎯ 44px</span>
+      </div>
+
+      <!-- Filter Tags -->
+      <div class="filter-tags">
+        <span class="filter-tag active">全部</span>
+        <span class="filter-tag">🍜 餐饮</span>
+        <span class="filter-tag">🚌 交通</span>
+        <span class="filter-tag">🛒 购物</span>
+        <span class="filter-tag">🏠 居住</span>
+        <span class="filter-tag">🎮 娱乐</span>
+        <span class="filter-tag">💊 医疗</span>
+        <span class="annot annot-pos">横向滚动 tags，间距 8px</span>
+      </div>
+
+      <!-- Scrollable Content -->
+      <div class="scroll-content" id="scrollContent">
+
+        <!-- Data content -->
+        <div id="dataContent">
+
+          <!-- ===== Today Group ===== -->
+          <div class="date-group">
+            <div class="date-group-header">
+              <span>今天</span>
+              <span class="total">¥98.00</span>
+              <span class="annot annot-pos">日期分组标题</span>
+            </div>
+
+            <!-- Record Card 1 -->
+            <div class="record-card" id="card1">
+              <div class="card-content">
+                <div class="category-icon">🍜</div>
+                <div class="info-area">
+                  <div class="category-name">餐饮</div>
+                  <div class="meta">
+                    <span class="note-text">午餐 · 公司楼下</span>
+                    <span>12:30</span>
+                  </div>
+                </div>
+                <div class="amount">¥32.00</div>
+              </div>
+              <div class="exposed-delete">删除</div>
+              <span class="swipe-annot">左滑删除</span>
+            </div>
+
+            <!-- Record Card 2 -->
+            <div class="record-card">
+              <div class="card-content">
+                <div class="category-icon">🚌</div>
+                <div class="info-area">
+                  <div class="category-name">交通</div>
+                  <div class="meta">
+                    <span class="note-text">公交</span>
+                    <span>08:15</span>
+                  </div>
+                </div>
+                <div class="amount">¥4.00</div>
+              </div>
+              <div class="exposed-delete">删除</div>
+              <span class="swipe-annot">左滑删除</span>
+            </div>
+
+            <!-- Record Card 3 -->
+            <div class="record-card">
+              <div class="card-content">
+                <div class="category-icon">☕</div>
+                <div class="info-area">
+                  <div class="category-name">餐饮</div>
+                  <div class="meta">
+                    <span class="note-text">下午茶 · 星巴克</span>
+                    <span>15:20</span>
+                  </div>
+                </div>
+                <div class="amount">¥42.00</div>
+              </div>
+              <div class="exposed-delete">删除</div>
+              <span class="swipe-annot">左滑删除</span>
+            </div>
+
+          </div>
+
+          <!-- ===== Yesterday Group ===== -->
+          <div class="date-group">
+            <div class="date-group-header">
+              <span>昨天</span>
+              <span class="total">¥345.00</span>
+            </div>
+
+            <!-- Record Card 4 -->
+            <div class="record-card">
+              <div class="card-content">
+                <div class="category-icon">🛒</div>
+                <div class="info-area">
+                  <div class="category-name">购物</div>
+                  <div class="meta">
+                    <span class="note-text">超市日用品</span>
+                    <span>19:20</span>
+                  </div>
+                </div>
+                <div class="amount">¥289.00</div>
+              </div>
+              <div class="exposed-delete">删除</div>
+              <span class="swipe-annot">左滑删除</span>
+            </div>
+
+            <!-- Record Card 5 -->
+            <div class="record-card">
+              <div class="card-content">
+                <div class="category-icon">🍜</div>
+                <div class="info-area">
+                  <div class="category-name">餐饮</div>
+                  <div class="meta">
+                    <span class="note-text">和朋友吃饭 · 川菜馆</span>
+                    <span>18:30</span>
+                  </div>
+                </div>
+                <div class="amount">¥56.00</div>
+              </div>
+              <div class="exposed-delete">删除</div>
+              <span class="swipe-annot">左滑删除</span>
+            </div>
+
+          </div>
+
+          <!-- ===== July 1 Group ===== -->
+          <div class="date-group">
+            <div class="date-group-header">
+              <span>7月1日</span>
+              <span class="total">¥128.50</span>
+            </div>
+
+            <div class="record-card">
+              <div class="card-content">
+                <div class="category-icon">🏠</div>
+                <div class="info-area">
+                  <div class="category-name">居住</div>
+                  <div class="meta">
+                    <span class="note-text">电费</span>
+                    <span>14:00</span>
+                  </div>
+                </div>
+                <div class="amount">¥95.00</div>
+              </div>
+              <div class="exposed-delete">删除</div>
+              <span class="swipe-annot">左滑删除</span>
+            </div>
+
+            <div class="record-card">
+              <div class="card-content">
+                <div class="category-icon">🚌</div>
+                <div class="info-area">
+                  <div class="category-name">交通</div>
+                  <div class="meta">
+                    <span class="note-text">地铁</span>
+                    <span>09:05</span>
+                  </div>
+                </div>
+                <div class="amount">¥5.00</div>
+              </div>
+              <div class="exposed-delete">删除</div>
+              <span class="swipe-annot">左滑删除</span>
+            </div>
+
+            <div class="record-card">
+              <div class="card-content">
+                <div class="category-icon">🍜</div>
+                <div class="info-area">
+                  <div class="category-name">餐饮</div>
+                  <div class="meta">
+                    <span class="note-text">早餐 · 包子豆浆</span>
+                    <span>07:45</span>
+                  </div>
+                </div>
+                <div class="amount">¥12.00</div>
+              </div>
+              <div class="exposed-delete">删除</div>
+              <span class="swipe-annot">左滑删除</span>
+            </div>
+
+            <div class="record-card">
+              <div class="card-content">
+                <div class="category-icon">🎮</div>
+                <div class="info-area">
+                  <div class="category-name">娱乐</div>
+                  <div class="meta">
+                    <span class="note-text">Steam 游戏</span>
+                    <span>21:30</span>
+                  </div>
+                </div>
+                <div class="amount">¥16.50</div>
+              </div>
+              <div class="exposed-delete">删除</div>
+              <span class="swipe-annot">左滑删除</span>
+            </div>
+
+          </div>
+
+          <!-- Load More -->
+          <div class="load-more">
+            <div class="btn-border">加载更多</div>
+            <span class="annot annot-pos">到底自动/手动加载</span>
+          </div>
+
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" id="emptyState">
+          <div class="placeholder-illustration">
+            空状态插画
+          </div>
+          <div class="empty-text">还没有记录<br>去记一笔吧</div>
+          <a href="home.html" class="empty-btn">去记账</a>
+        </div>
+
+      </div>
+
+      <!-- Tab Bar -->
+      <div class="tab-bar">
+        <a href="home.html" class="tab-item">
+          <div class="tab-icon">🏠</div>
+          <span class="tab-label">记账</span>
+        </a>
+        <a href="stats.html" class="tab-item">
+          <div class="tab-icon">📊</div>
+          <span class="tab-label">统计</span>
+        </a>
+        <a href="records.html" class="tab-item active">
+          <div class="tab-icon">📋</div>
+          <span class="tab-label">记录</span>
+        </a>
+        <span class="annot annot-pos">Tab Bar ⎯ 50px</span>
+      </div>
+
+      <!-- Safe Area -->
+      <div class="safe-area">
+        <span class="annot annot-pos">Safe Area ⎯ 34px</span>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    const stateDataBtn = document.getElementById('state-data');
+    const stateSwipeBtn = document.getElementById('state-swipe');
+    const stateEmptyBtn = document.getElementById('state-empty');
+    const dataContent = document.getElementById('dataContent');
+    const emptyState = document.getElementById('emptyState');
+    const allCards = document.querySelectorAll('.record-card');
+
+    function setState(state) {
+      stateDataBtn.classList.toggle('active', state === 'data');
+      stateSwipeBtn.classList.toggle('active', state === 'swipe');
+      stateEmptyBtn.classList.toggle('active', state === 'empty');
+
+      // Reset all cards
+      allCards.forEach(card => card.classList.remove('delete-visible'));
+
+      if (state === 'data') {
+        dataContent.style.display = 'block';
+        emptyState.classList.remove('visible');
+      } else if (state === 'swipe') {
+        dataContent.style.display = 'block';
+        emptyState.classList.remove('visible');
+        // Show delete button on all cards
+        allCards.forEach(card => card.classList.add('delete-visible'));
+      } else if (state === 'empty') {
+        dataContent.style.display = 'none';
+        emptyState.classList.add('visible');
+      }
+    }
+
+    stateDataBtn.addEventListener('click', () => setState('data'));
+    stateSwipeBtn.addEventListener('click', () => setState('swipe'));
+    stateEmptyBtn.addEventListener('click', () => setState('empty'));
+
+    // Initial state
+    setState('data');
+  </script>
+
+</body>
+</html>

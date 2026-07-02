@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>线框图 - 首页 快速记账 | 个人记账工具</title>
+  <style>
+    /* ===== Reset ===== */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #DEE1E6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
+    }
+
+    /* ===== Phone Frame ===== */
+    .phone {
+      width: 375px;
+      height: 812px;
+      background: #FFFFFF;
+      border-radius: 44px;
+      box-shadow:
+        0 0 0 6px #1C1C1E,
+        0 12px 60px rgba(0,0,0,0.25);
+      overflow: hidden;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    /* ===== Screen Content ===== */
+    .screen {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* ===== Notch ===== */
+    .notch {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 150px;
+      height: 30px;
+      background: #1C1C1E;
+      border-radius: 0 0 18px 18px;
+      z-index: 10;
+    }
+
+    /* ===== Status Bar ===== */
+    .status-bar {
+      height: 44px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 24px;
+      padding-top: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #1A1A2E;
+      border-bottom: 1px dashed #D0D3D8;
+      position: relative;
+      background: #FFFFFF;
+    }
+    .status-bar .annot {
+      position: absolute;
+      bottom: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    /* ===== Annotation ===== */
+    .annot {
+      font-size: 8px;
+      color: #9CA3AF;
+      letter-spacing: 0.3px;
+      white-space: nowrap;
+      font-weight: 400;
+      line-height: 1.2;
+    }
+    .annot-line {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 0 16px;
+    }
+    .annot-line::before,
+    .annot-line::after {
+      content: '';
+      flex: 1;
+      height: 0;
+      border-top: 1px dashed #D0D3D8;
+    }
+    .annot-line .annot {
+      flex-shrink: 0;
+    }
+
+    /* ===== Summary Header ===== */
+    .summary-header {
+      padding: var(--sp-4) var(--sp-4) var(--sp-2);
+      border-bottom: 1px dashed #E8EAED;
+      position: relative;
+    }
+    .summary-header .annot-pos {
+      position: absolute;
+      right: 4px;
+      top: 2px;
+    }
+    .today-amount {
+      font-size: 22px;
+      font-weight: 600;
+      color: #1A1A2E;
+      letter-spacing: 0.5px;
+    }
+    .today-amount .label {
+      font-size: 14px;
+      font-weight: 400;
+      color: #6B7280;
+      margin-right: 6px;
+    }
+    .yesterday-amount {
+      font-size: 12px;
+      color: #9CA3AF;
+      margin-top: 2px;
+      font-weight: 400;
+    }
+    .yesterday-amount .label {
+      margin-right: 4px;
+    }
+
+    /* ===== Main Content (flex-grow area) ===== */
+    .main-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: var(--sp-4) var(--sp-4) 0;
+      position: relative;
+      min-height: 0;
+    }
+    .main-area .annot-pos {
+      position: absolute;
+      top: 2px;
+      right: 4px;
+    }
+
+    /* ===== Amount Display ===== */
+    .amount-display {
+      font-size: 48px;
+      font-weight: 500;
+      color: #1A1A2E;
+      letter-spacing: 1px;
+      font-variant-numeric: tabular-nums;
+      height: 60px;
+      line-height: 60px;
+      text-align: center;
+      position: relative;
+    }
+    .amount-display .currency {
+      font-size: 32px;
+      font-weight: 400;
+      color: #6B7280;
+      margin-right: 2px;
+    }
+    .amount-display .annot-pos {
+      position: absolute;
+      top: -18px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    /* ===== Category Tag ===== */
+    .category-tag-area {
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: var(--sp-3);
+      position: relative;
+    }
+    .category-tag {
+      display: none;  /* hidden by default */
+      padding: 4px 14px;
+      background: #F0F0F0;
+      border: 1px dashed #C0C4C8;
+      border-radius: 999px;
+      font-size: 15px;
+      color: #1A1A2E;
+      cursor: pointer;
+      align-items: center;
+      gap: 4px;
+    }
+    .category-tag.visible {
+      display: inline-flex;
+    }
+    .category-tag .arrow {
+      font-size: 12px;
+      color: #9CA3AF;
+    }
+    .category-tag .annot-inline {
+      margin-left: 8px;
+    }
+    .category-tag .annot-pos {
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    /* ===== Note Area ===== */
+    .note-area {
+      margin-top: var(--sp-2);
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .note-placeholder {
+      font-size: 13px;
+      color: #C0C4C8;
+      border-bottom: 1px dashed #D0D3D8;
+      padding-bottom: 2px;
+      cursor: pointer;
+      display: none;
+    }
+    .note-placeholder.visible {
+      display: block;
+    }
+    .note-input-active {
+      display: none;
+      font-size: 13px;
+      color: #6B7280;
+      padding: 4px 12px;
+      border: 1px dashed #C0C4C8;
+      border-radius: 6px;
+      width: 180px;
+      text-align: center;
+    }
+    .note-input-active.visible {
+      display: block;
+    }
+    .note-area .annot-pos {
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    /* ===== Spacer ===== */
+    .bottom-spacer {
+      flex: 0.5;
+    }
+
+    /* ===== Tab Bar (compact, above numpad) ===== */
+    .tab-bar {
+      height: 50px;
+      display: flex;
+      align-items: center;
+      border-top: 1px solid #E8EAED;
+      background: #F8F9FA;
+      position: relative;
+      flex-shrink: 0;
+    }
+    .tab-bar .annot-pos {
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .tab-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      text-decoration: none;
+      color: #9CA3AF;
+      font-size: 10px;
+      padding: 4px 0;
+      transition: none;
+    }
+    .tab-item.active {
+      color: #00A86B;
+    }
+    .tab-item.active .tab-icon {
+      border-color: #00A86B;
+    }
+    .tab-icon {
+      width: 22px;
+      height: 22px;
+      border: 1.5px solid #C0C4C8;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      color: #9CA3AF;
+    }
+    .tab-item.active .tab-icon {
+      border-color: #1A1A2E;
+      color: #1A1A2E;
+    }
+    .tab-label {
+      font-size: 9px;
+      line-height: 1;
+    }
+
+    /* ===== Numpad ===== */
+    .numpad {
+      height: 220px;
+      background: #F8F9FA;
+      border-top: 1px solid #E8EAED;
+      padding: 4px 4px 8px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: repeat(4, 1fr);
+      gap: 4px;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .numpad .annot-pos {
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .numpad-key {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      font-weight: 400;
+      color: #1A1A2E;
+      background: #FFFFFF;
+      border: 1px dashed #C0C4C8;
+      border-radius: 8px;
+      cursor: pointer;
+      user-select: none;
+      position: relative;
+    }
+    .numpad-key .annot-inner {
+      position: absolute;
+      bottom: 1px;
+      right: 3px;
+    }
+    .numpad-key.confirm {
+      background: #D0D0D0;
+      border: 1px solid #B0B0B0;
+      color: #FFFFFF;
+      font-weight: 600;
+      grid-column: span 2;
+    }
+    .numpad-key.empty {
+      border: 1px dashed transparent;
+      background: transparent;
+    }
+    .numpad-key .key-annot {
+      font-size: 7px;
+      color: #C0C4C8;
+      position: absolute;
+      bottom: 1px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    /* ===== Safe Area ===== */
+    .safe-area {
+      height: 34px;
+      background: #F8F9FA;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .safe-area .annot-pos {
+      position: absolute;
+      top: 2px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    /* ===== Spacing Variables ===== */
+    :root {
+      --sp-1: 4px;
+      --sp-2: 8px;
+      --sp-3: 12px;
+      --sp-4: 16px;
+      --sp-5: 20px;
+      --sp-6: 24px;
+      --sp-8: 32px;
+      --sp-12: 48px;
+    }
+
+    /* ===== State Toggle Controls ===== */
+    .controls {
+      position: fixed;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      display: flex;
+      gap: 8px;
+      background: rgba(255,255,255,0.95);
+      padding: 8px 16px;
+      border-radius: 10px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+    }
+    .controls .title {
+      font-size: 12px;
+      font-weight: 600;
+      color: #6B7280;
+      margin-right: 8px;
+    }
+    .controls button {
+      padding: 4px 12px;
+      font-size: 11px;
+      border: 1px solid #D0D3D8;
+      border-radius: 6px;
+      background: #fff;
+      color: #6B7280;
+      cursor: pointer;
+    }
+    .controls button.active {
+      background: #1A1A2E;
+      color: #fff;
+      border-color: #1A1A2E;
+    }
+
+    /* ===== Annotation markers for dimensions ===== */
+    .dim-marker {
+      position: absolute;
+      font-size: 7px;
+      color: #B0B0B0;
+      letter-spacing: 0.2px;
+      font-weight: 400;
+    }
+
+    /* Dimension arrow annotations */
+    .dims-h {
+      position: relative;
+    }
+    .dims-h::after {
+      content: attr(data-dim);
+      position: absolute;
+      bottom: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 7px;
+      color: #B0B0B0;
+      white-space: nowrap;
+    }
+
+    /* ===== Responsive: if viewport too small ===== */
+    @media (max-height: 860px) {
+      .phone { transform: scale(0.85); }
+    }
+    @media (max-height: 740px) {
+      .phone { transform: scale(0.7); }
+    }
+    @media (max-width: 420px) {
+      .phone { transform: scale(0.9); transform-origin: center center; }
+      .controls { top: 8px; padding: 4px 10px; }
+      .controls button { padding: 3px 8px; font-size: 10px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- State Controls -->
+  <div class="controls">
+    <span class="title">状态切换</span>
+    <button id="state-empty" class="active">默认空态</button>
+    <button id="state-input">输入中</button>
+  </div>
+
+  <!-- Phone Frame -->
+  <div class="phone" id="phone">
+    <div class="screen">
+
+      <!-- Notch -->
+      <div class="notch"></div>
+
+      <!-- Status Bar -->
+      <div class="status-bar">
+        <span>9:41</span>
+        <span style="font-size:10px; opacity:0.6">🔋 📶</span>
+        <span class="annot">Status Bar ⎯ 44px</span>
+      </div>
+
+      <!-- Summary Header -->
+      <div class="summary-header">
+        <div class="today-amount">
+          <span class="label">今天</span>
+          <span>¥128.50</span>
+        </div>
+        <div class="yesterday-amount">
+          <span class="label">昨日</span>
+          <span>¥86.00</span>
+        </div>
+        <span class="annot annot-pos">padding 16px</span>
+      </div>
+
+      <!-- Annotation: summary to amount spacing -->
+      <div class="annot-line" style="margin:0 16px;">
+        <span class="annot">间距 16px</span>
+      </div>
+
+      <!-- Main Content Area -->
+      <div class="main-area">
+        <span class="annot annot-pos">居中区域（flex 1）</span>
+
+        <!-- Amount Display -->
+        <div class="amount-display" id="amountDisplay">
+          <span class="currency">￥</span>
+          <span id="amountText">0.00</span>
+        </div>
+
+        <!-- Category Tag -->
+        <div class="category-tag-area">
+          <div class="category-tag" id="categoryTag">
+            <span>🍜</span>
+            <span class="category-name">餐饮</span>
+            <span class="arrow">&gt;</span>
+            <span class="annot annot-inline">可点击</span>
+          </div>
+        </div>
+
+        <!-- Note Area -->
+        <div class="note-area">
+          <div class="note-placeholder" id="notePlaceholder">
+            写备注...
+          </div>
+          <div class="note-input-active" id="noteInputActive">
+            <span class="annot">备注输入区（点击展开）32px</span>
+          </div>
+        </div>
+
+        <div class="bottom-spacer"></div>
+      </div>
+
+      <!-- Tab Bar (compact, above numpad) -->
+      <div class="tab-bar">
+        <a href="home.html" class="tab-item active">
+          <div class="tab-icon">🏠</div>
+          <span class="tab-label">记账</span>
+        </a>
+        <a href="stats.html" class="tab-item">
+          <div class="tab-icon">📊</div>
+          <span class="tab-label">统计</span>
+        </a>
+        <a href="records.html" class="tab-item">
+          <div class="tab-icon">📋</div>
+          <span class="tab-label">记录</span>
+        </a>
+        <span class="annot annot-pos">Tab Bar ⎯ 50px</span>
+      </div>
+
+      <!-- Numpad -->
+      <div class="numpad">
+        <!-- Row 1: 7 8 9 ⌫ -->
+        <div class="numpad-key">7</div>
+        <div class="numpad-key">8</div>
+        <div class="numpad-key">9</div>
+        <div class="numpad-key">⌫</div>
+
+        <!-- Row 2: 4 5 6 + -->
+        <div class="numpad-key">4</div>
+        <div class="numpad-key">5</div>
+        <div class="numpad-key">6</div>
+        <div class="numpad-key">+</div>
+
+        <!-- Row 3: 1 2 3 (empty) -->
+        <div class="numpad-key">1</div>
+        <div class="numpad-key">2</div>
+        <div class="numpad-key">3</div>
+        <div class="numpad-key empty"></div>
+
+        <!-- Row 4: 00 0 . ✓(2col) -->
+        <div class="numpad-key">00</div>
+        <div class="numpad-key">0</div>
+        <div class="numpad-key">.</div>
+        <div class="numpad-key confirm">✓</div>
+
+        <span class="annot annot-pos">键盘区 ⎯ 220px</span>
+      </div>
+
+      <!-- Safe Area -->
+      <div class="safe-area">
+        <span class="annot annot-pos">Safe Area ⎯ 34px</span>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    const stateEmptyBtn = document.getElementById('state-empty');
+    const stateInputBtn = document.getElementById('state-input');
+    const categoryTag = document.getElementById('categoryTag');
+    const notePlaceholder = document.getElementById('notePlaceholder');
+    const noteInputActive = document.getElementById('noteInputActive');
+    const amountText = document.getElementById('amountText');
+
+    function setState(state) {
+      stateEmptyBtn.classList.toggle('active', state === 'empty');
+      stateInputBtn.classList.toggle('active', state === 'input');
+
+      if (state === 'empty') {
+        // Default empty state: no category, no note, amount shows 0.00
+        amountText.textContent = '0.00';
+        categoryTag.classList.remove('visible');
+        notePlaceholder.classList.remove('visible');
+        noteInputActive.classList.remove('visible');
+      } else if (state === 'input') {
+        // Input state: amount being typed, category tag visible, note collapsed
+        amountText.textContent = '32.00';
+        categoryTag.classList.add('visible');
+        notePlaceholder.classList.add('visible');
+        noteInputActive.classList.remove('visible');
+      }
+    }
+
+    stateEmptyBtn.addEventListener('click', () => setState('empty'));
+    stateInputBtn.addEventListener('click', () => setState('input'));
+
+    // Set initial state: empty
+    setState('empty');
+  </script>
+
+</body>
+</html>

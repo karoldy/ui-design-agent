@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>记账 - 个人记账工具</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --color-bg: #FFFFFF;
+      --color-surface: #F8F9FA;
+      --color-border: #E8EAED;
+      --color-text-primary: #1A1A2E;
+      --color-text-secondary: #6B7280;
+      --color-text-tertiary: #7B8794;
+
+      --color-accent: #00A86B;
+      --color-accent-soft: #E8F5E9;
+      --color-accent-text: #007A4D;
+
+      --color-danger: #DC2626;
+      --color-warning: #F59E0B;
+
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+      --space-12: 48px;
+
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --radius-full: 999px;
+
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+      --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
+      --shadow-lg: 0 4px 16px rgba(0,0,0,0.12);
+
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      --duration-fast: 200ms;
+      --duration-normal: 300ms;
+    }
+
+    body {
+      background: #DEE1E6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* ===== Phone Frame ===== */
+    .phone {
+      width: 375px;
+      height: 812px;
+      background: var(--color-bg);
+      border-radius: 44px;
+      box-shadow: 0 0 0 6px #1C1C1E, 0 12px 60px rgba(0,0,0,0.25);
+      overflow: hidden;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .screen {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .notch {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 150px;
+      height: 30px;
+      background: #1C1C1E;
+      border-radius: 0 0 18px 18px;
+      z-index: 10;
+    }
+
+    .status-bar {
+      height: 44px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding: 0 28px 4px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      background: var(--color-bg);
+      flex-shrink: 0;
+      margin-top: 0;
+    }
+
+    .status-bar .time {
+      font-weight: 700;
+    }
+    .status-bar .icons {
+      display: flex;
+      gap: 4px;
+      font-size: 11px;
+    }
+
+    /* ===== Native Nav Bar Placeholder ===== */
+    .nav-bar {
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--color-bg);
+      border-bottom: 0.5px solid var(--color-border);
+      flex-shrink: 0;
+    }
+    .nav-bar .nav-title {
+      font-size: 17px;
+      font-weight: 500;
+      color: var(--color-text-primary);
+    }
+
+    /* ===== Summary Header ===== */
+    .summary-header {
+      padding: var(--space-3) var(--space-5) var(--space-2);
+      flex-shrink: 0;
+    }
+    .summary-header .today-row {
+      display: flex;
+      align-items: baseline;
+      gap: var(--space-2);
+    }
+    .summary-header .today-label {
+      font-size: 15px;
+      color: var(--color-text-secondary);
+      font-weight: 400;
+    }
+    .summary-header .today-amount {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      letter-spacing: 0.3px;
+    }
+    .summary-header .yesterday-row {
+      margin-top: 2px;
+      font-size: 13px;
+      color: var(--color-text-tertiary);
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+    }
+    .summary-header .yesterday-row .label {
+      margin-right: 2px;
+    }
+
+    /* ===== Main Content Area ===== */
+    .main-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 0 var(--space-5);
+      min-height: 0;
+      position: relative;
+    }
+
+    /* ===== Amount Display ===== */
+    .amount-display {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      height: 56px;
+      line-height: 56px;
+      position: relative;
+      transition: transform var(--duration-fast) var(--ease-out);
+    }
+    .amount-display .currency-sign {
+      font-size: 28px;
+      font-weight: 400;
+      color: var(--color-text-secondary);
+      margin-right: 2px;
+    }
+    .amount-display .amount-number {
+      font-size: 40px;
+      font-weight: 500;
+      color: var(--color-text-primary);
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 1px;
+      transition: color var(--duration-normal) var(--ease-out);
+    }
+
+    /* ===== Category Tag ===== */
+    .category-tag-area {
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: var(--space-4);
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity var(--duration-fast) var(--ease-out), transform var(--duration-fast) var(--ease-out);
+      pointer-events: none;
+    }
+    .category-tag-area.visible {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+    .category-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
+      padding: var(--space-2) var(--space-3);
+      background: var(--color-accent-soft);
+      border-radius: var(--radius-full);
+      font-size: 15px;
+      color: var(--color-accent-text);
+      cursor: pointer;
+      transition: transform var(--duration-fast) var(--ease-out);
+      min-height: 36px;
+    }
+    .category-tag .mdi {
+      font-size: 18px;
+    }
+    .category-tag.unknown {
+      background: var(--color-surface);
+      color: var(--color-text-tertiary);
+    }
+    .category-tag:active {
+      transform: scale(0.95);
+    }
+    .category-tag .tag-arrow {
+      font-size: 11px;
+      margin-left: 2px;
+      color: var(--color-accent-text);
+      opacity: 0.6;
+    }
+
+    /* ===== Note Area ===== */
+    .note-area {
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: var(--space-2);
+      opacity: 0;
+      transition: opacity var(--duration-fast) var(--ease-out);
+      pointer-events: none;
+    }
+    .note-area.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .note-placeholder {
+      font-size: 13px;
+      color: var(--color-text-tertiary);
+      cursor: pointer;
+      padding: var(--space-1) var(--space-3);
+      border-radius: var(--radius-sm);
+      transition: background var(--duration-fast) var(--ease-out);
+    }
+    .note-placeholder:active {
+      background: var(--color-surface);
+    }
+
+    .bottom-spacer {
+      flex: 1;
+      min-height: 20px;
+    }
+
+    /* ===== Tab Bar ===== */
+    .tab-bar {
+      height: 50px;
+      display: flex;
+      align-items: stretch;
+      border-top: 1px solid var(--color-border);
+      background: var(--color-bg);
+      flex-shrink: 0;
+    }
+    .tab-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      text-decoration: none;
+      color: var(--color-text-tertiary);
+      font-size: 10px;
+      transition: color var(--duration-fast) var(--ease-out);
+      position: relative;
+    }
+    .tab-item.active {
+      color: var(--color-accent-text);
+    }
+    .tab-item .tab-icon {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .tab-item .tab-icon .mdi {
+      font-size: 22px;
+      color: var(--color-text-tertiary);
+      transition: color var(--duration-fast) var(--ease-out);
+    }
+    .tab-item.active .tab-icon .mdi {
+      color: var(--color-accent);
+    }
+    .tab-item .tab-label {
+      font-size: 9px;
+      line-height: 1;
+      font-weight: 400;
+    }
+    .tab-item.active .tab-label {
+      font-weight: 500;
+    }
+
+    /* ===== Numpad ===== */
+    .numpad {
+      height: 220px;
+      background: var(--color-bg);
+      border-top: 1px solid var(--color-border);
+      padding: 4px 4px var(--space-1);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      flex-shrink: 0;
+      background: var(--color-border);
+    }
+    .numpad-key {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      font-weight: 400;
+      color: var(--color-text-primary);
+      background: var(--color-bg);
+      cursor: pointer;
+      user-select: none;
+      transition: background var(--duration-fast) var(--ease-out);
+      position: relative;
+    }
+    .numpad-key:active {
+      background: var(--color-surface);
+    }
+    .numpad-key.confirm {
+      background: var(--color-accent);
+      color: var(--color-bg);
+      font-weight: 600;
+      font-size: 26px;
+      grid-column: span 2;
+    }
+    .numpad-key.confirm:active {
+      background: #008F5A;
+    }
+    .numpad-key.confirm.disabled {
+      background: var(--color-border);
+      color: var(--color-text-tertiary);
+    }
+    .numpad-key .key-sub {
+      font-size: 11px;
+      position: absolute;
+      bottom: 4px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: var(--color-text-tertiary);
+    }
+    .numpad-key.backspace {
+      font-size: 20px;
+      color: var(--color-text-secondary);
+    }
+
+    /* ===== Safe Area ===== */
+    .safe-area {
+      height: 34px;
+      background: var(--color-bg);
+      flex-shrink: 0;
+    }
+
+    /* ===== Toast ===== */
+    .toast {
+      position: absolute;
+      top: 50px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-20px);
+      background: var(--color-text-primary);
+      color: var(--color-bg);
+      font-size: 13px;
+      padding: var(--space-2) var(--space-4);
+      border-radius: var(--radius-md);
+      opacity: 0;
+      transition: opacity var(--duration-normal) var(--ease-out), transform var(--duration-normal) var(--ease-out);
+      z-index: 50;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+    .toast.visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+      pointer-events: auto;
+    }
+    .toast.success {
+      background: var(--color-accent);
+    }
+
+    /* ===== State Controls ===== */
+    .controls {
+      position: fixed;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      display: flex;
+      gap: 8px;
+      background: rgba(255,255,255,0.95);
+      padding: 8px 16px;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      backdrop-filter: blur(8px);
+    }
+    .controls .title {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--color-text-secondary);
+      margin-right: 4px;
+      line-height: 26px;
+    }
+    .controls button {
+      padding: 4px 12px;
+      font-size: 11px;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      background: var(--color-bg);
+      color: var(--color-text-secondary);
+      cursor: pointer;
+      transition: all var(--duration-fast) var(--ease-out);
+    }
+    .controls button.active {
+      background: var(--color-accent);
+      color: var(--color-bg);
+      border-color: var(--color-accent);
+    }
+    .controls button:active {
+      transform: scale(0.96);
+    }
+
+    /* ===== Flash animation ===== */
+    @keyframes flashGreen {
+      0% { color: var(--color-text-primary); }
+      30% { color: var(--color-accent); }
+      100% { color: var(--color-text-primary); }
+    }
+    .amount-number.flash {
+      animation: flashGreen var(--duration-normal) var(--ease-out);
+    }
+
+    /* ===== Responsive ===== */
+    @media (max-height: 860px) {
+      .phone { transform: scale(0.85); }
+    }
+    @media (max-height: 740px) {
+      .phone { transform: scale(0.7); }
+    }
+    @media (max-width: 420px) {
+      .phone { transform: scale(0.9); transform-origin: center center; }
+      .controls { top: 8px; padding: 4px 10px; }
+      .controls button { padding: 3px 8px; font-size: 10px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- State Controls -->
+  <div class="controls">
+    <span class="title">状态切换</span>
+    <button id="state-input" class="active">输入中 (¥32)</button>
+    <button id="state-empty">默认空态</button>
+    <button id="state-unknown">未推断分类</button>
+    <button id="state-overflow">金额过大</button>
+    <button id="state-saved">保存成功</button>
+  </div>
+
+  <!-- Phone Frame -->
+  <div class="phone" id="phone">
+    <div class="screen">
+
+      <!-- Notch -->
+      <div class="notch"></div>
+
+      <!-- Status Bar -->
+      <div class="status-bar">
+        <span class="time">9:41</span>
+        <span class="icons">
+          <svg width="15" height="11" viewBox="0 0 15 11" fill="none">
+            <rect x="0.5" y="0.5" width="14" height="10" rx="2" stroke="#1A1A2E" stroke-opacity="0.4"/>
+            <rect x="11" y="3" width="3" height="5" rx="0.5" fill="#1A1A2E" fill-opacity="0.4"/>
+          </svg>
+          <svg width="16" height="11" viewBox="0 0 16 11" fill="none">
+            <rect x="0.5" y="0.5" width="15" height="10" rx="1.5" stroke="#1A1A2E" stroke-opacity="0.6"/>
+            <rect x="2.5" y="2.5" width="11" height="6" rx="0.5" fill="#1A1A2E" fill-opacity="0.6"/>
+          </svg>
+        </span>
+      </div>
+
+      <!-- Nav Bar (WeChat Native) -->
+      <div class="nav-bar">
+        <span class="nav-title">记一笔</span>
+      </div>
+
+      <!-- Summary Header -->
+      <div class="summary-header">
+        <div class="today-row">
+          <span class="today-label">今天</span>
+          <span class="today-amount">¥128.50</span>
+        </div>
+        <div class="yesterday-row">
+          <span>昨日</span>
+          <span>¥86.00</span>
+        </div>
+      </div>
+
+      <!-- Main Content Area -->
+      <div class="main-area" id="mainArea">
+        <!-- Amount Display -->
+        <div class="amount-display" id="amountDisplay">
+          <span class="currency-sign">&yen;</span>
+          <span class="amount-number" id="amountText">32.00</span>
+        </div>
+
+        <!-- Category Tag -->
+        <div class="category-tag-area visible" id="categoryTagArea">
+          <div class="category-tag" id="categoryTag">
+            <i class="mdi mdi-food"></i>
+            <span class="tag-name" id="tagName">餐饮</span>
+            <span class="tag-arrow">&#8250;</span>
+          </div>
+        </div>
+
+        <!-- Note Area -->
+        <div class="note-area visible" id="noteArea">
+          <div class="note-placeholder" id="notePlaceholder">写备注...</div>
+        </div>
+
+        <div class="bottom-spacer"></div>
+      </div>
+
+      <!-- Toast -->
+      <div class="toast" id="toast">已保存</div>
+
+      <!-- Tab Bar -->
+      <div class="tab-bar">
+        <a href="home.html" class="tab-item active">
+          <div class="tab-icon">
+            <i class="mdi mdi-pencil"></i>
+          </div>
+          <span class="tab-label">记账</span>
+        </a>
+        <a href="stats.html" class="tab-item">
+          <div class="tab-icon">
+            <i class="mdi mdi-chart-pie"></i>
+          </div>
+          <span class="tab-label">统计</span>
+        </a>
+        <a href="records.html" class="tab-item">
+          <div class="tab-icon">
+            <i class="mdi mdi-format-list-bulleted"></i>
+          </div>
+          <span class="tab-label">记录</span>
+        </a>
+      </div>
+
+      <!-- Numpad -->
+      <div class="numpad" id="numpad">
+        <div class="numpad-key" data-value="7">7</div>
+        <div class="numpad-key" data-value="8">8</div>
+        <div class="numpad-key" data-value="9">9</div>
+        <div class="numpad-key backspace" data-value="backspace">&#9003;</div>
+
+        <div class="numpad-key" data-value="4">4</div>
+        <div class="numpad-key" data-value="5">5</div>
+        <div class="numpad-key" data-value="6">6</div>
+        <div class="numpad-key" data-value="" style="background:transparent;pointer-events:none;"></div>
+
+        <div class="numpad-key" data-value="1">1</div>
+        <div class="numpad-key" data-value="2">2</div>
+        <div class="numpad-key" data-value="3">3</div>
+        <div class="numpad-key" data-value="" style="background:transparent;pointer-events:none;"></div>
+
+        <div class="numpad-key" data-value="00">00</div>
+        <div class="numpad-key" data-value="0">0</div>
+        <div class="numpad-key" data-value=".">.</div>
+        <div class="numpad-key confirm" data-value="confirm">&#10003;</div>
+      </div>
+
+      <!-- Safe Area -->
+      <div class="safe-area"></div>
+
+    </div>
+  </div>
+
+  <script>
+    // State management
+    const stateInputBtn = document.getElementById('state-input');
+    const stateEmptyBtn = document.getElementById('state-empty');
+    const stateUnknownBtn = document.getElementById('state-unknown');
+    const stateOverflowBtn = document.getElementById('state-overflow');
+    const stateSavedBtn = document.getElementById('state-saved');
+    const amountText = document.getElementById('amountText');
+    const categoryTagArea = document.getElementById('categoryTagArea');
+    const noteArea = document.getElementById('noteArea');
+    const toast = document.getElementById('toast');
+    const tagName = document.getElementById('tagName');
+
+    // Numpad keys
+    const keys = document.querySelectorAll('.numpad-key');
+    const confirmKey = document.querySelector('.numpad-key.confirm');
+
+    let currentState = 'input';
+    let currentAmount = '32.00';
+
+    function formatAmount(numStr) {
+      if (numStr === '' || numStr === '0') return '0.00';
+      let parts = numStr.split('.');
+      if (parts.length === 1) return numStr + '.00';
+      if (parts[1].length === 1) return numStr + '0';
+      if (parts[1].length > 2) return parts[0] + '.' + parts[1].substring(0, 2);
+      return numStr;
+    }
+
+    function setAmount(value) {
+      currentAmount = value;
+      amountText.textContent = value;
+      const isNonZero = parseFloat(value) > 0;
+      confirmKey.classList.toggle('disabled', !isNonZero);
+    }
+
+    function handleKey(value) {
+      if (currentState !== 'input') return;
+
+      if (value === 'backspace') {
+        let cleaned = currentAmount.replace('.', '');
+        cleaned = cleaned.slice(0, -1);
+        if (cleaned.length === 0) cleaned = '0';
+        let formatted;
+        if (cleaned.length <= 2) {
+          formatted = '0.' + cleaned.padStart(2, '0');
+        } else {
+          let int = cleaned.slice(0, -2);
+          let dec = cleaned.slice(-2);
+          formatted = parseInt(int) + '.' + dec;
+        }
+        setAmount(formatted);
+        return;
+      }
+
+      if (value === '.') {
+        if (currentAmount.includes('.')) return;
+        setAmount(currentAmount + '.');
+        return;
+      }
+
+      if (value === 'confirm') {
+        if (parseFloat(currentAmount) <= 0) return;
+        showToast('已保存', 'success');
+        amountText.classList.add('flash');
+        setTimeout(() => {
+          amountText.classList.remove('flash');
+        }, 300);
+        return;
+      }
+
+      if (value === '+') return;
+
+      // Number input
+      let cleaned = currentAmount.replace('.', '');
+      if (cleaned === '0') cleaned = '';
+      cleaned += value;
+      if (cleaned.length > 8) return;
+
+      let formatted;
+      if (cleaned.length <= 2) {
+        formatted = '0.' + cleaned.padStart(2, '0');
+      } else {
+        let intPart = cleaned.slice(0, -2);
+        let decPart = cleaned.slice(-2);
+        formatted = parseInt(intPart) + '.' + decPart;
+      }
+      setAmount(formatted);
+    }
+
+    keys.forEach(key => {
+      key.addEventListener('click', () => {
+        if (key.dataset.value !== undefined && key.dataset.value !== '') {
+          handleKey(key.dataset.value);
+        }
+      });
+      key.addEventListener('touchstart', (e) => {
+        // Prevent double-firing on mobile
+      });
+    });
+
+    function showToast(msg, type) {
+      toast.textContent = msg;
+      toast.className = 'toast ' + (type || '');
+      toast.classList.add('visible');
+      setTimeout(() => {
+        toast.classList.remove('visible');
+      }, 1500);
+    }
+
+    function setState(state) {
+      currentState = state;
+      stateInputBtn.classList.toggle('active', state === 'input');
+      stateEmptyBtn.classList.toggle('active', state === 'empty');
+      stateUnknownBtn.classList.toggle('active', state === 'unknown');
+      stateOverflowBtn.classList.toggle('active', state === 'overflow');
+      stateSavedBtn.classList.toggle('active', state === 'saved');
+
+      const tag = document.getElementById('categoryTag');
+
+      if (state === 'empty') {
+        setAmount('0.00');
+        categoryTagArea.classList.remove('visible');
+        noteArea.classList.remove('visible');
+        confirmKey.classList.add('disabled');
+      } else if (state === 'input') {
+        setAmount('32.00');
+        categoryTagArea.classList.add('visible');
+        noteArea.classList.add('visible');
+        tag.classList.remove('unknown');
+        tagName.textContent = '餐饮';
+        confirmKey.classList.remove('disabled');
+      } else if (state === 'unknown') {
+        setAmount('156.00');
+        categoryTagArea.classList.add('visible');
+        noteArea.classList.add('visible');
+        tag.classList.add('unknown');
+        tagName.textContent = '选择分类';
+        confirmKey.classList.remove('disabled');
+      } else if (state === 'overflow') {
+        setAmount('99999.99');
+        categoryTagArea.classList.add('visible');
+        noteArea.classList.add('visible');
+        tag.classList.remove('unknown');
+        tagName.textContent = '购物';
+        confirmKey.classList.remove('disabled');
+        showToast('单笔上限 ¥99,999.99', '');
+      } else if (state === 'saved') {
+        setAmount('0.00');
+        categoryTagArea.classList.remove('visible');
+        noteArea.classList.remove('visible');
+        confirmKey.classList.add('disabled');
+        amountText.classList.add('flash');
+        showToast('已保存', 'success');
+        setTimeout(() => {
+          amountText.classList.remove('flash');
+        }, 300);
+      }
+    }
+
+    stateInputBtn.addEventListener('click', () => setState('input'));
+    stateEmptyBtn.addEventListener('click', () => setState('empty'));
+    stateUnknownBtn.addEventListener('click', () => setState('unknown'));
+    stateOverflowBtn.addEventListener('click', () => setState('overflow'));
+    stateSavedBtn.addEventListener('click', () => setState('saved'));
+
+    // Initial state
+    setState('input');
+  </script>
+
+</body>
+</html>

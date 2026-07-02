@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Loading 加载状态 | MindFlow 组件</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-bg-primary: #FAFAFA; --color-bg-secondary: #F5F5F5; --color-bg-tertiary: #EEEEEE;
+      --color-text-primary: #1A1A1A; --color-text-secondary: #6B6B6B; --color-text-tertiary: #9E9E9E;
+      --color-text-link: #3B82F6; --color-text-on-accent: #FFFFFF;
+      --color-accent: #3B82F6; --color-accent-hover: #2563EB; --color-accent-soft: #E8F0FE;
+      --color-success: #10B981; --color-warning: #F59E0B; --color-error: #EF4444;
+      --font-family-ui: 'Inter', system-ui, -apple-system, sans-serif;
+      --font-family-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-size-xs: 11px; --font-size-sm: 13px; --font-size-base: 15px;
+      --font-size-lg: 18px; --font-size-xl: 22px; --font-size-2xl: 28px; --font-size-3xl: 36px;
+      --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 20px; --space-6: 24px;
+      --space-8: 32px; --space-10: 40px; --space-12: 48px; --space-16: 64px;
+      --radius-sm: 4px; --radius-md: 8px; --radius-lg: 12px; --radius-xl: 16px; --radius-full: 9999px;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05); --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
+      --shadow-lg: 0 8px 24px rgba(0,0,0,0.12); --shadow-xl: 0 16px 48px rgba(0,0,0,0.16);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: var(--font-family-body); background: var(--color-bg-primary); color: var(--color-text-primary); padding: var(--space-6); -webkit-font-smoothing: antialiased; }
+    .page-header { margin-bottom: var(--space-8); display: flex; align-items: flex-start; gap: var(--space-4); }
+    .page-header a { color: var(--color-accent); text-decoration: none; font-size: var(--font-size-sm); font-family: var(--font-family-ui); display: flex; align-items: center; gap: 4px; padding: 6px 12px; border-radius: var(--radius-sm); transition: background 0.15s; flex-shrink: 0; }
+    .page-header a:hover { background: var(--color-accent-soft); }
+    .page-header h1 { font-family: var(--font-family-ui); font-size: var(--font-size-2xl); font-weight: 700; }
+    .page-header p { color: var(--color-text-secondary); font-size: var(--font-size-sm); margin-top: var(--space-1); }
+    .section { margin-bottom: var(--space-10); }
+    .section-title { font-family: var(--font-family-ui); font-size: var(--font-size-base); font-weight: 600; padding-bottom: var(--space-2); margin-bottom: var(--space-4); border-bottom: 1px solid #E8E8E8; display: flex; align-items: center; gap: var(--space-2); }
+    .section-title code { font-size: var(--font-size-xs); background: var(--color-bg-secondary); padding: 2px 8px; border-radius: var(--radius-sm); color: var(--color-text-secondary); }
+    .demo-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4); padding: var(--space-4); background: #fff; border: 1px solid #E8E8E8; border-radius: var(--radius-md); margin-bottom: var(--space-3); }
+    .demo-row-label { width: 100%; font-size: var(--font-size-xs); color: var(--color-text-secondary); font-family: var(--font-family-ui); font-weight: 500; margin-bottom: -4px; }
+
+    /* ===== SPINNER ===== */
+    .spinner {
+      border: 3px solid #E0E0E0; border-top-color: var(--color-accent);
+      border-radius: 50%; animation: spin 0.6s linear infinite;
+    }
+    .spinner-sm { width: 16px; height: 16px; border-width: 2px; }
+    .spinner-md { width: 24px; height: 24px; border-width: 3px; }
+    .spinner-lg { width: 36px; height: 36px; border-width: 3px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .spinner-loading-text {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: var(--font-family-ui); font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+    }
+
+    /* ===== SKELETON ===== */
+    .skeleton {
+      background: linear-gradient(90deg, #EEEEEE 25%, #F5F5F5 50%, #EEEEEE 75%);
+      background-size: 200% 100%; animation: shimmer 1.5s infinite;
+      border-radius: var(--radius-sm);
+    }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+    .skeleton-line { height: 12px; margin-bottom: 8px; width: 100%; }
+    .skeleton-line:last-child { width: 60%; }
+
+    .skeleton-card {
+      width: 240px; padding: var(--space-4); background: #fff;
+      border: 1px solid #E8E8E8; border-radius: var(--radius-md);
+    }
+    .skeleton-card-img { height: 120px; border-radius: var(--radius-sm); margin-bottom: var(--space-3); }
+
+    .skeleton-avatar-row { display: flex; align-items: center; gap: var(--space-3); }
+    .skeleton-avatar { width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0; }
+    .skeleton-avatar-text { flex: 1; }
+    .skeleton-avatar-text .skeleton-line:first-child { width: 40%; }
+    .skeleton-avatar-text .skeleton-line:last-child { width: 70%; }
+
+    .skeleton-list-item {
+      display: flex; gap: var(--space-3); padding: var(--space-3) 0;
+      border-bottom: 1px solid #F0F0F0; align-items: center;
+    }
+    .skeleton-list-item:last-child { border-bottom: none; }
+    .skeleton-list-icon { width: 24px; height: 24px; border-radius: var(--radius-sm); flex-shrink: 0; }
+
+    .skeleton-full-page { padding: var(--space-4); }
+    .skeleton-full-page .skeleton-line { height: 14px; }
+
+    /* ===== PROGRESS BAR ===== */
+    .progress {
+      width: 240px; height: 6px; background: #E0E0E0; border-radius: var(--radius-full);
+      overflow: hidden; position: relative;
+    }
+    .progress-bar {
+      height: 100%; background: var(--color-accent); border-radius: var(--radius-full);
+      transition: width 0.3s ease;
+    }
+    .progress-indeterminate { position: relative; overflow: hidden; }
+    .progress-indeterminate .progress-bar {
+      width: 40%; position: absolute;
+      animation: progress-indeterminate 1.5s ease-in-out infinite;
+    }
+    @keyframes progress-indeterminate {
+      0% { left: -40%; }
+      100% { left: 100%; }
+    }
+    .progress-label {
+      display: flex; justify-content: space-between; width: 240px;
+      font-family: var(--font-family-ui); font-size: var(--font-size-xs);
+      color: var(--color-text-secondary); margin-bottom: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="page-header">
+    <a href="index.html"><i class="mdi mdi-arrow-left"></i> 返回</a>
+    <div>
+      <h1>Loading 加载状态</h1>
+      <p>Spinner 3 尺寸，Skeleton 多场景展示，Progress bar 确定/不确定进度。</p>
+    </div>
+  </div>
+
+  <!-- Spinner -->
+  <div class="section">
+    <div class="section-title">Spinner <code>旋转加载</code></div>
+    <div class="demo-row">
+      <div class="demo-row-label">尺寸：Small (16px) / Default (24px) / Large (36px)</div>
+      <div class="spinner spinner-sm"></div>
+      <div class="spinner spinner-md"></div>
+      <div class="spinner spinner-lg"></div>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">加载 + 文字</div>
+      <span class="spinner-loading-text"><span class="spinner spinner-sm"></span> 保存中…</span>
+      <span class="spinner-loading-text"><span class="spinner spinner-md"></span> 加载笔记列表…</span>
+      <span class="spinner-loading-text"><span class="spinner spinner-sm"></span> 同步中</span>
+    </div>
+  </div>
+
+  <!-- Skeleton -->
+  <div class="section">
+    <div class="section-title">Skeleton <code>骨架屏</code></div>
+    <div class="demo-row">
+      <div class="demo-row-label">Text Line（文字行）</div>
+      <div style="width:300px">
+        <div class="skeleton skeleton-line"></div>
+        <div class="skeleton skeleton-line"></div>
+        <div class="skeleton skeleton-line"></div>
+      </div>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">Card（卡片）</div>
+      <div class="skeleton-card">
+        <div class="skeleton skeleton-card-img"></div>
+        <div class="skeleton skeleton-line" style="width:70%"></div>
+        <div class="skeleton skeleton-line"></div>
+        <div class="skeleton skeleton-line" style="width:50%"></div>
+      </div>
+      <div class="skeleton-card">
+        <div class="skeleton skeleton-card-img"></div>
+        <div class="skeleton skeleton-line" style="width:60%"></div>
+        <div class="skeleton skeleton-line" style="width:80%"></div>
+      </div>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">Avatar + Text（头像 + 文字）</div>
+      <div class="skeleton-avatar-row" style="width:360px">
+        <div class="skeleton skeleton-avatar"></div>
+        <div class="skeleton-avatar-text">
+          <div class="skeleton skeleton-line"></div>
+          <div class="skeleton skeleton-line"></div>
+        </div>
+      </div>
+      <div class="skeleton-avatar-row" style="width:360px">
+        <div class="skeleton skeleton-avatar"></div>
+        <div class="skeleton-avatar-text">
+          <div class="skeleton skeleton-line"></div>
+          <div class="skeleton skeleton-line"></div>
+        </div>
+      </div>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">List Item（列表项）</div>
+      <div style="width:400px">
+        <div class="skeleton-list-item">
+          <div class="skeleton skeleton-list-icon"></div>
+          <div style="flex:1"><div class="skeleton skeleton-line" style="width:50%"></div><div class="skeleton skeleton-line" style="width:80%"></div></div>
+        </div>
+        <div class="skeleton-list-item">
+          <div class="skeleton skeleton-list-icon"></div>
+          <div style="flex:1"><div class="skeleton skeleton-line" style="width:60%"></div><div class="skeleton skeleton-line" style="width:70%"></div></div>
+        </div>
+        <div class="skeleton-list-item">
+          <div class="skeleton skeleton-list-icon"></div>
+          <div style="flex:1"><div class="skeleton skeleton-line" style="width:40%"></div><div class="skeleton skeleton-line" style="width:90%"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">Full Page（全页骨架屏）</div>
+      <div style="width:100%;max-width:600px;background:#fff;border:1px solid #E8E8E8;border-radius:var(--radius-md);padding:var(--space-5)">
+        <div style="display:flex;justify-content:space-between;margin-bottom:var(--space-4)">
+          <div class="skeleton" style="width:120px;height:16px;border-radius:var(--radius-sm)"></div>
+          <div class="skeleton" style="width:80px;height:16px;border-radius:var(--radius-sm)"></div>
+        </div>
+        <div class="skeleton" style="width:80%;height:24px;border-radius:var(--radius-sm);margin-bottom:var(--space-4)"></div>
+        <div style="margin-bottom:var(--space-4)">
+          <div class="skeleton skeleton-line"></div>
+          <div class="skeleton skeleton-line"></div>
+          <div class="skeleton skeleton-line" style="width:55%"></div>
+          <div class="skeleton skeleton-line"></div>
+          <div class="skeleton skeleton-line" style="width:40%"></div>
+          <div class="skeleton skeleton-line"></div>
+          <div class="skeleton skeleton-line" style="width:65%"></div>
+        </div>
+        <div style="display:flex;gap:var(--space-2)">
+          <div class="skeleton" style="width:80px;height:32px;border-radius:var(--radius-sm)"></div>
+          <div class="skeleton" style="width:80px;height:32px;border-radius:var(--radius-sm)"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Progress Bar -->
+  <div class="section">
+    <div class="section-title">Progress Bar <code>进度条</code></div>
+    <div class="demo-row">
+      <div class="demo-row-label">Determinate（确定进度）</div>
+      <div>
+        <div class="progress-label"><span>上传进度</span><span>45%</span></div>
+        <div class="progress"><div class="progress-bar" style="width:45%"></div></div>
+      </div>
+      <div>
+        <div class="progress-label"><span>同步状态</span><span>72%</span></div>
+        <div class="progress"><div class="progress-bar" style="width:72%"></div></div>
+      </div>
+      <div>
+        <div class="progress-label"><span>完成</span><span>100%</span></div>
+        <div class="progress"><div class="progress-bar" style="width:100%;background:var(--color-success)"></div></div>
+      </div>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">Indeterminate（不确定进度 — 持续动画）</div>
+      <div>
+        <div class="progress-label"><span>加载中…</span></div>
+        <div class="progress progress-indeterminate"><div class="progress-bar"></div></div>
+      </div>
+      <div>
+        <div class="progress-label"><span>同步中…</span></div>
+        <div class="progress progress-indeterminate"><div class="progress-bar"></div></div>
+      </div>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">带额外信息的进度条</div>
+      <div>
+        <div class="progress-label"><span>正在优化索引</span><span>132 / 250</span></div>
+        <div class="progress"><div class="progress-bar" style="width:53%"></div></div>
+      </div>
+      <div style="margin-top:var(--space-2)">
+        <div class="progress-label"><span>正在上传图片</span><span>3.2 MB / 12.8 MB</span></div>
+        <div class="progress"><div class="progress-bar" style="width:25%"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 使用场景 -->
+  <div class="section">
+    <div class="section-title">使用场景</div>
+    <div class="demo-row" style="flex-direction:column;align-items:flex-start;gap:var(--space-4)">
+      <div style="width:100%">
+        <span style="font-family:var(--font-family-ui);font-size:var(--font-size-sm);font-weight:600">按钮加载</span>
+        <div style="display:flex;gap:var(--space-2);margin-top:var(--space-2)">
+          <button style="display:inline-flex;align-items:center;gap:6px;font-family:var(--font-family-ui);font-weight:500;border-radius:var(--radius-sm);border:none;height:36px;padding:0 16px;font-size:13px;background:var(--color-accent);color:#fff;cursor:default">
+            <div class="spinner spinner-sm" style="border-top-color:#fff;border-color:rgba(255,255,255,0.3)"></div> 保存中
+          </button>
+          <button style="display:inline-flex;align-items:center;gap:6px;font-family:var(--font-family-ui);font-weight:500;border-radius:var(--radius-sm);border:1px solid #D0D0D0;height:36px;padding:0 16px;font-size:13px;background:#fff;color:var(--color-text-primary);cursor:default">
+            <div class="spinner spinner-sm" style="width:14px;height:14px;border-width:2px"></div> 加载中
+          </button>
+        </div>
+      </div>
+      <div style="width:100%">
+        <span style="font-family:var(--font-family-ui);font-size:var(--font-size-sm);font-weight:600">内容加载</span>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:var(--space-3);padding:var(--space-6);width:100%;background:var(--color-bg-secondary);border-radius:var(--radius-md);margin-top:var(--space-2)">
+          <div class="spinner spinner-md"></div>
+          <span style="font-size:var(--font-size-sm);color:var(--color-text-secondary);font-family:var(--font-family-ui)">正在加载笔记列表…</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

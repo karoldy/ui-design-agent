@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MindFlow — 笔记列表 | 线框图</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+  <style>
+    /* ===== Design Tokens ===== */
+    :root {
+      --color-bg-primary: #FAFAFA;
+      --color-bg-secondary: #F5F5F5;
+      --color-bg-tertiary: #EEEEEE;
+      --color-text-primary: #1A1A1A;
+      --color-text-secondary: #6B6B6B;
+      --color-text-tertiary: #9E9E9E;
+      --color-text-link: #3B82F6;
+      --color-text-on-accent: #FFFFFF;
+      --color-accent: #3B82F6;
+      --color-accent-hover: #2563EB;
+      --color-accent-soft: #E8F0FE;
+      --color-success: #10B981;
+      --color-warning: #F59E0B;
+      --color-error: #EF4444;
+      --tag-red: #FEE2E2;
+      --tag-orange: #FFEDD5;
+      --tag-yellow: #FEF3C7;
+      --tag-green: #D1FAE5;
+      --tag-teal: #CCFBF1;
+      --tag-blue: #DBEAFE;
+      --tag-purple: #EDE9FE;
+      --tag-pink: #FCE7F3;
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-full: 9999px;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+      --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
+      --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+      --space-10: 40px;
+      --space-12: 48px;
+      --space-16: 64px;
+      --font-size-xs: 11px;
+      --font-size-sm: 13px;
+      --font-size-base: 15px;
+      --font-size-lg: 18px;
+      --font-size-xl: 22px;
+      --font-size-2xl: 28px;
+      --font-size-3xl: 36px;
+      --sidebar-width: 240px;
+      --topnav-height: 48px;
+      --statusbar-height: 28px;
+    }
+
+    /* ===== Reset & Base ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--color-bg-primary); color: var(--color-text-primary); font-size: var(--font-size-base); line-height: 1.5; -webkit-font-smoothing: antialiased; }
+    .ui-font { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+
+    /* ===== Layout ===== */
+    .app-layout { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+    .main-area { display: flex; flex: 1; overflow: hidden; }
+
+    /* ===== Top Nav ===== */
+    .top-nav { height: var(--topnav-height); min-height: var(--topnav-height); background: var(--color-bg-primary); border-bottom: 1px solid #E8E8E8; display: flex; align-items: center; padding: 0 var(--space-4); gap: var(--space-4); z-index: 200; }
+    .top-nav .logo { display: flex; align-items: center; gap: var(--space-2); font-family: 'Inter', system-ui, sans-serif; font-weight: 600; font-size: var(--font-size-lg); color: var(--color-text-primary); width: var(--sidebar-width); padding-left: var(--space-1); flex-shrink: 0; }
+    .top-nav .logo i { color: var(--color-accent); font-size: 22px; }
+    .top-nav .search-bar { flex: 1; max-width: 440px; position: relative; margin: 0 auto; }
+    .top-nav .search-bar input { width: 100%; height: 32px; border: 1px solid #E0E0E0; border-radius: var(--radius-sm); background: var(--color-bg-secondary); padding: 0 var(--space-8) 0 32px; font-size: var(--font-size-sm); font-family: inherit; color: var(--color-text-primary); outline: none; transition: border-color 150ms ease, box-shadow 150ms ease; }
+    .top-nav .search-bar input::placeholder { color: var(--color-text-tertiary); }
+    .top-nav .search-bar input:focus { border-color: var(--color-accent); box-shadow: 0 0 0 2px var(--color-accent-soft); background: var(--color-bg-primary); }
+    .top-nav .search-bar .search-icon { position: absolute; left: 8px; top: 50%; transform: translateY(-50%); color: var(--color-text-tertiary); font-size: 16px; pointer-events: none; }
+    .top-nav .search-bar .kbd-hint { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); font-size: var(--font-size-xs); color: var(--color-text-tertiary); background: var(--color-bg-tertiary); padding: 1px 5px; border-radius: 3px; font-family: 'Inter', system-ui, sans-serif; pointer-events: none; }
+    .top-nav .actions { display: flex; align-items: center; gap: var(--space-2); margin-left: auto; }
+    .top-nav .actions .btn-primary { display: flex; align-items: center; gap: var(--space-1); height: 32px; padding: 0 var(--space-3); background: var(--color-accent); color: var(--color-text-on-accent); border: none; border-radius: var(--radius-sm); font-size: var(--font-size-sm); font-family: 'Inter', system-ui, sans-serif; font-weight: 500; cursor: pointer; transition: background 150ms ease; }
+    .top-nav .actions .btn-primary:hover { background: var(--color-accent-hover); }
+    .top-nav .actions .btn-primary i { font-size: 16px; }
+    .top-nav .actions .icon-btn { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border: none; background: transparent; border-radius: var(--radius-sm); color: var(--color-text-secondary); cursor: pointer; font-size: 20px; transition: background 150ms ease, color 150ms ease; }
+    .top-nav .actions .icon-btn:hover { background: var(--color-bg-tertiary); color: var(--color-text-primary); }
+    .top-nav .actions .avatar { width: 28px; height: 28px; border-radius: var(--radius-full); background: var(--color-accent-soft); display: flex; align-items: center; justify-content: center; font-size: var(--font-size-xs); font-weight: 600; color: var(--color-accent); cursor: pointer; }
+
+    /* ===== Sidebar ===== */
+    .sidebar { width: var(--sidebar-width); min-width: var(--sidebar-width); background: var(--color-bg-secondary); border-right: 1px solid #E8E8E8; display: flex; flex-direction: column; overflow-y: auto; padding: var(--space-3) 0; flex-shrink: 0; }
+    .sidebar::-webkit-scrollbar { width: 4px; }
+    .sidebar::-webkit-scrollbar-thumb { background: #D0D0D0; border-radius: 2px; }
+
+    .sidebar-section { padding: 0 var(--space-3); margin-bottom: var(--space-2); }
+    .sidebar-section-title { display: flex; align-items: center; justify-content: space-between; font-family: 'Inter', system-ui, sans-serif; font-size: var(--font-size-xs); font-weight: 600; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.5px; padding: var(--space-2) var(--space-1); margin-top: var(--space-1); }
+    .sidebar-section-title .add-icon { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; border-radius: var(--radius-sm); cursor: pointer; font-size: 14px; color: var(--color-text-tertiary); transition: background 150ms ease, color 150ms ease; }
+    .sidebar-section-title .add-icon:hover { background: var(--color-bg-tertiary); color: var(--color-text-primary); }
+
+    .sidebar-item { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-1) var(--space-2); border-radius: var(--radius-sm); cursor: pointer; font-size: var(--font-size-sm); color: var(--color-text-primary); transition: background 150ms ease; position: relative; height: 30px; }
+    .sidebar-item:hover { background: var(--color-bg-tertiary); }
+    .sidebar-item.active { background: var(--color-accent-soft); color: var(--color-accent); }
+    .sidebar-item i { font-size: 16px; color: var(--color-text-secondary); flex-shrink: 0; }
+    .sidebar-item.active i { color: var(--color-accent); }
+    .sidebar-item .item-label { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .sidebar-item .item-count { font-size: var(--font-size-xs); color: var(--color-text-tertiary); background: var(--color-bg-tertiary); padding: 0 6px; border-radius: 8px; min-width: 18px; text-align: center; line-height: 16px; }
+    .sidebar-item .expand-icon { font-size: 14px; color: var(--color-text-tertiary); transition: transform 150ms ease; }
+    .sidebar-item .expand-icon.expanded { transform: rotate(90deg); }
+    .sidebar-item.nested-1 { padding-left: 28px; }
+    .sidebar-item.nested-2 { padding-left: 44px; }
+
+    .sidebar-divider { height: 1px; background: #E8E8E8; margin: var(--space-2) var(--space-3); }
+
+    /* Space usage at bottom of sidebar */
+    .sidebar-spacer { flex: 1; }
+    .space-usage { padding: var(--space-3); border-top: 1px solid #E8E8E8; }
+    .space-usage .usage-bar { height: 4px; background: var(--color-bg-tertiary); border-radius: 2px; overflow: hidden; margin-bottom: var(--space-1); }
+    .space-usage .usage-bar .fill { height: 100%; width: 35%; background: var(--color-accent); border-radius: 2px; }
+    .space-usage .usage-text { font-size: var(--font-size-xs); color: var(--color-text-tertiary); font-family: 'Inter', system-ui, sans-serif; }
+
+    /* ===== Content Area ===== */
+    .content { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: var(--color-bg-primary); }
+    .note-list-header { display: flex; align-items: center; justify-content: space-between; padding: var(--space-4) var(--space-5) 0; flex-shrink: 0; }
+    .note-list-header h2 { font-family: 'Inter', system-ui, sans-serif; font-size: var(--font-size-xl); font-weight: 600; color: var(--color-text-primary); }
+    .note-list-header .filters { display: flex; align-items: center; gap: var(--space-2); }
+    .note-list-header .filters select { height: 28px; border: 1px solid #E0E0E0; border-radius: var(--radius-sm); background: var(--color-bg-primary); padding: 0 var(--space-2); font-size: var(--font-size-sm); font-family: 'Inter', system-ui, sans-serif; color: var(--color-text-secondary); outline: none; cursor: pointer; }
+    .note-list-header .filters .view-toggle { display: flex; gap: 2px; }
+    .note-list-header .filters .view-toggle button { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border: 1px solid #E0E0E0; background: var(--color-bg-primary); color: var(--color-text-tertiary); border-radius: var(--radius-sm); cursor: pointer; font-size: 16px; transition: all 150ms ease; }
+    .note-list-header .filters .view-toggle button.active { background: var(--color-accent-soft); color: var(--color-accent); border-color: var(--color-accent); }
+    .note-list-header .filters .view-toggle button:hover { background: var(--color-bg-tertiary); }
+
+    .note-list { flex: 1; overflow-y: auto; padding: var(--space-3) var(--space-5) var(--space-5); }
+    .note-list::-webkit-scrollbar { width: 6px; }
+    .note-list::-webkit-scrollbar-thumb { background: #D0D0D0; border-radius: 3px; }
+
+    .date-group { margin-bottom: var(--space-6); }
+    .date-group:last-child { margin-bottom: 0; }
+    .date-group-header { font-family: 'Inter', system-ui, sans-serif; font-size: var(--font-size-sm); font-weight: 500; color: var(--color-text-secondary); padding: var(--space-2) 0; border-bottom: 1px solid #E8E8E8; margin-bottom: var(--space-1); }
+
+    .note-item { display: flex; align-items: flex-start; padding: var(--space-4) var(--space-4); border-radius: var(--radius-md); cursor: pointer; transition: background 150ms ease, box-shadow 150ms ease; position: relative; gap: var(--space-3); }
+    .note-item:hover { background: var(--color-bg-secondary); }
+    .note-item:hover .note-more { opacity: 1; }
+    .note-item.active { background: var(--color-accent-soft); }
+    .note-item .note-content { flex: 1; min-width: 0; }
+    .note-item .note-title { font-size: var(--font-size-base); font-weight: 500; color: var(--color-text-primary); margin-bottom: 2px; line-height: 1.4; font-family: 'Inter', system-ui, sans-serif; }
+    .note-item .note-title .unsaved-badge { display: inline-flex; align-items: center; gap: 3px; font-size: var(--font-size-xs); color: var(--color-warning); font-weight: 400; margin-left: var(--space-2); vertical-align: middle; }
+    .note-item .note-title .unsaved-badge i { font-size: 12px; }
+    .note-item .note-summary { font-size: var(--font-size-sm); color: var(--color-text-secondary); line-height: 1.5; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; margin-bottom: var(--space-2); }
+    .note-item .note-meta { display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; }
+    .note-item .note-meta .tag { display: inline-flex; align-items: center; gap: 3px; font-size: var(--font-size-xs); padding: 1px 8px; border-radius: var(--radius-sm); font-family: 'Inter', system-ui, sans-serif; color: var(--color-text-secondary); font-weight: 400; }
+    .note-item .note-meta .tag i { font-size: 8px; margin-right: 2px; }
+    .note-item .note-meta .tag.tag-red { background: var(--tag-red); }
+    .note-item .note-meta .tag.tag-blue { background: var(--tag-blue); }
+    .note-item .note-meta .tag.tag-green { background: var(--tag-green); }
+    .note-item .note-meta .tag.tag-purple { background: var(--tag-purple); }
+    .note-item .note-meta .tag.tag-orange { background: var(--tag-orange); }
+    .note-item .note-meta .tag.tag-yellow { background: var(--tag-yellow); }
+    .note-item .note-meta .tag.tag-teal { background: var(--tag-teal); }
+    .note-item .note-meta .tag.tag-pink { background: var(--tag-pink); }
+    .note-item .note-meta .tag.tag-overflow { background: var(--color-bg-tertiary); color: var(--color-text-tertiary); }
+    .note-item .note-meta .time { font-size: var(--font-size-xs); color: var(--color-text-tertiary); font-family: 'Inter', system-ui, sans-serif; white-space: nowrap; }
+    .note-item .note-meta .backlink-count { display: inline-flex; align-items: center; gap: 2px; font-size: var(--font-size-xs); color: var(--color-text-link); }
+    .note-item .note-meta .backlink-count i { font-size: 12px; }
+    .note-item .note-right { display: flex; flex-direction: column; align-items: flex-end; gap: var(--space-1); flex-shrink: 0; }
+    .note-item .note-right .pin-btn { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; border: none; background: transparent; color: var(--color-text-tertiary); cursor: pointer; font-size: 14px; opacity: 0; transition: opacity 150ms ease, color 150ms ease; border-radius: var(--radius-sm); }
+    .note-item:hover .note-right .pin-btn { opacity: 1; }
+    .note-item .note-right .pin-btn:hover { color: var(--color-warning); }
+    .note-item .note-right .pin-btn.pinned { opacity: 1; color: var(--color-warning); }
+    .note-item .note-more { position: absolute; right: var(--space-3); top: var(--space-4); width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border: none; background: transparent; color: var(--color-text-tertiary); cursor: pointer; border-radius: var(--radius-sm); font-size: 16px; opacity: 0; transition: opacity 150ms ease, background 150ms ease; }
+    .note-item .note-more:hover { background: var(--color-bg-tertiary); color: var(--color-text-primary); }
+
+    /* ===== Bottom Status Bar ===== */
+    .bottom-status { height: var(--statusbar-height); min-height: var(--statusbar-height); background: var(--color-bg-secondary); border-top: 1px solid #E8E8E8; display: flex; align-items: center; justify-content: space-between; padding: 0 var(--space-4); font-size: var(--font-size-xs); color: var(--color-text-tertiary); }
+    .bottom-status .status-left { display: flex; align-items: center; gap: var(--space-3); }
+    .bottom-status .status-left .sync-indicator { display: flex; align-items: center; gap: var(--space-1); }
+    .bottom-status .status-left .sync-indicator .sync-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--color-success); display: inline-block; }
+    .bottom-status .status-left .sync-indicator.syncing .sync-dot { background: var(--color-warning); animation: pulse 1s ease-in-out infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+    .bottom-status .status-right { display: flex; align-items: center; gap: var(--space-3); }
+
+    /* ===== End of Note List Styles ===== */
+
+    /* Context menu (shown on hover of more button in items) */
+    .context-menu { position: absolute; right: 24px; top: 40px; background: var(--color-bg-primary); border: 1px solid #E0E0E0; border-radius: var(--radius-md); box-shadow: var(--shadow-md); padding: var(--space-1) 0; min-width: 180px; z-index: 300; display: none; }
+    .context-menu.visible { display: block; }
+    .context-menu-item { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-1) var(--space-3); font-size: var(--font-size-sm); color: var(--color-text-primary); cursor: pointer; transition: background 100ms ease; }
+    .context-menu-item:hover { background: var(--color-bg-tertiary); }
+    .context-menu-item i { font-size: 16px; color: var(--color-text-secondary); }
+    .context-menu-item.danger { color: var(--color-error); }
+    .context-menu-item.danger i { color: var(--color-error); }
+    .context-menu-divider { height: 1px; background: #E8E8E8; margin: var(--space-1) 0; }
+
+    /* Transitions */
+    .transition-fade { transition: all 200ms ease-out; }
+  </style>
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Top Navigation -->
+    <header class="top-nav">
+      <div class="logo">
+        <i class="mdi mdi-brain"></i>
+        <span>MindFlow</span>
+      </div>
+      <div class="search-bar">
+        <i class="mdi mdi-magnify search-icon"></i>
+        <input type="text" placeholder="&#25628;&#32034;&#31508;&#35760;… (&#8984;K)" />
+        <span class="kbd-hint">&#8984;K</span>
+      </div>
+      <div class="actions">
+        <button class="btn-primary"><i class="mdi mdi-plus"></i> &#26032;&#24314;&#31508;&#35760;</button>
+        <button class="icon-btn" title="&#35774;&#32622;"><i class="mdi mdi-cog-outline"></i></button>
+        <div class="avatar">T</div>
+      </div>
+    </header>
+
+    <!-- Main Area -->
+    <div class="main-area">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <!-- Shortcuts -->
+        <div class="sidebar-section">
+          <div class="sidebar-item active">
+            <i class="mdi mdi-note-text-outline"></i>
+            <span class="item-label">&#25152;&#26377;&#31508;&#35760;</span>
+            <span class="item-count">23</span>
+          </div>
+          <div class="sidebar-item">
+            <i class="mdi mdi-calendar-text-outline"></i>
+            <span class="item-label">&#27599;&#26085;&#31508;&#35760;</span>
+          </div>
+          <div class="sidebar-item">
+            <i class="mdi mdi-delete-outline"></i>
+            <span class="item-label">&#22238;&#25910;&#31449;</span>
+          </div>
+        </div>
+
+        <div class="sidebar-divider"></div>
+
+        <!-- Notebook tree -->
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">
+            <span>&#31508;&#35760;&#26412;</span>
+            <i class="mdi mdi-plus add-icon"></i>
+          </div>
+          <div class="sidebar-item">
+            <i class="mdi mdi-chevron-right expand-icon expanded"></i>
+            <i class="mdi mdi-folder-open-outline"></i>
+            <span class="item-label">&#24037;&#20316;</span>
+            <span class="item-count">8</span>
+          </div>
+          <div class="sidebar-item nested-1">
+            <i class="mdi mdi-file-document-outline"></i>
+            <span class="item-label">&#20135;&#21697;&#35774;&#35745;</span>
+            <span class="item-count">5</span>
+          </div>
+          <div class="sidebar-item nested-1">
+            <i class="mdi mdi-file-document-outline"></i>
+            <span class="item-label">&#20250;&#35758;&#35760;&#24405;</span>
+            <span class="item-count">3</span>
+          </div>
+          <div class="sidebar-item">
+            <i class="mdi mdi-chevron-right expand-icon expanded"></i>
+            <i class="mdi mdi-folder-open-outline"></i>
+            <span class="item-label">&#20010;&#20154;</span>
+            <span class="item-count">12</span>
+          </div>
+          <div class="sidebar-item nested-1">
+            <i class="mdi mdi-file-document-outline"></i>
+            <span class="item-label">&#38405;&#35835;</span>
+            <span class="item-count">7</span>
+          </div>
+          <div class="sidebar-item nested-1">
+            <i class="mdi mdi-file-document-outline"></i>
+            <span class="item-label">&#26085;&#35760;</span>
+            <span class="item-count">5</span>
+          </div>
+          <div class="sidebar-item">
+            <i class="mdi mdi-chevron-right expand-icon"></i>
+            <i class="mdi mdi-folder-outline"></i>
+            <span class="item-label">&#23398;&#20064;</span>
+            <span class="item-count">3</span>
+          </div>
+        </div>
+
+        <div class="sidebar-divider"></div>
+
+        <!-- Tag tree -->
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">
+            <span>&#26631;&#31614;</span>
+            <i class="mdi mdi-plus add-icon"></i>
+          </div>
+          <div class="sidebar-item">
+            <i class="mdi mdi-chevron-right expand-icon expanded"></i>
+            <i class="mdi mdi-tag-outline" style="color: var(--color-accent);"></i>
+            <span class="item-label">&#31185;&#25216;/AI</span>
+            <span class="item-count">6</span>
+          </div>
+          <div class="sidebar-item nested-1">
+            <i class="mdi mdi-pound" style="font-size: 14px;"></i>
+            <span class="item-label">LLM</span>
+            <span class="item-count">3</span>
+          </div>
+          <div class="sidebar-item nested-1">
+            <i class="mdi mdi-pound" style="font-size: 14px;"></i>
+            <span class="item-label">Agent</span>
+            <span class="item-count">3</span>
+          </div>
+          <div class="sidebar-item">
+            <i class="mdi mdi-tag-outline" style="color: var(--tag-purple);"></i>
+            <span class="item-label">&#38405;&#35835;</span>
+            <span class="item-count">5</span>
+          </div>
+          <div class="sidebar-item">
+            <i class="mdi mdi-tag-outline" style="color: var(--tag-green);"></i>
+            <span class="item-label">&#35774;&#35745;</span>
+            <span class="item-count">4</span>
+          </div>
+        </div>
+
+        <div class="sidebar-spacer"></div>
+
+        <!-- Space usage -->
+        <div class="space-usage">
+          <div class="usage-bar"><div class="fill"></div></div>
+          <div class="usage-text">&#20351;&#29992; 35% &#183; 1.2 GB / 5 GB</div>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="content">
+        <div class="note-list-header">
+          <h2>&#25152;&#26377;&#31508;&#35760;</h2>
+          <div class="filters">
+            <select>
+              <option>&#26368;&#36817;&#20462;&#25913;</option>
+              <option>&#21019;&#24314;&#26102;&#38388;</option>
+              <option>&#26631;&#39064; A-Z</option>
+            </select>
+            <div class="view-toggle">
+              <button class="active"><i class="mdi mdi-format-list-bulleted"></i></button>
+              <button><i class="mdi mdi-view-grid-outline"></i></button>
+            </div>
+          </div>
+        </div>
+
+        <div class="note-list">
+          <!-- Today -->
+          <div class="date-group">
+            <div class="date-group-header">&#20170;&#22825;</div>
+
+            <div class="note-item active">
+              <div class="note-content">
+                <div class="note-title">AI Agent &#22312;&#20114;&#32852;&#32593;&#34892;&#19994;&#30340;&#24212;&#29992;&#21033;&#29992;&#27969;&#31243;&#30340;&#27719;&#24635;&#27010;&#36848;</div>
+                <div class="note-summary">&#26412;&#25991;&#23545; AI Agent &#22312;&#20114;&#32852;&#32593;&#34892;&#19994;&#30340;&#24212;&#29992;&#36827;&#34892;&#20102;&#31995;&#32479;&#24615;&#27719;&#24635;&#65292;&#28041;&#21450;&#25512;&#33616;&#31995;&#32479;&#12289;&#23458;&#26381;&#26234;&#33021;&#20307;&#12289;&#20869;&#23481;&#29983;&#25104;&#31561;&#22810;&#20010;&#26041;&#21521;&#12290;&#37325;&#28857;&#20998;&#26512;&#20102;&#22914;&#20309;&#23558; Agent &#25972;&#21512;&#21040;&#29616;&#26377;&#30340;&#19994;&#21153;&#27969;&#31243;&#20013;&#12290;</div>
+                <div class="note-meta">
+                  <span class="tag tag-blue"><i class="mdi mdi-record"></i>&#31185;&#25216;/AI</span>
+                  <span class="tag tag-purple"><i class="mdi mdi-record"></i>Agent</span>
+                  <span class="backlink-count"><i class="mdi mdi-link-variant"></i>3</span>
+                  <span class="time">2 &#20998;&#38047;&#21069;</span>
+                </div>
+              </div>
+              <div class="note-right">
+                <button class="pin-btn pinned"><i class="mdi mdi-pin"></i></button>
+              </div>
+            </div>
+
+            <div class="note-item">
+              <div class="note-content">
+                <div class="note-title">MindFlow &#20135;&#21697;&#35774;&#35745;&#26041;&#26696; v0.1</div>
+                <div class="note-summary">&#33258;&#23450;&#20041; MindFlow &#30340;&#20135;&#21697;&#23450;&#20301;&#21644;&#26680;&#24515;&#21830;&#19994;&#20215;&#20540;&#20570;&#20102;&#20998;&#26512;&#65292;&#24182;&#21021;&#27493;&#35774;&#35745;&#20102;&#26680;&#24515;&#21151;&#33021;&#27169;&#22359;&#65292;&#21253;&#25324;&#31508;&#35760;&#32534;&#36753;&#22120;&#12289;&#30693;&#35782;&#22270;&#35889;&#12289;&#20840;&#23616;&#25628;&#32034;&#31561;&#12290;</div>
+                <div class="note-meta">
+                  <span class="tag tag-orange"><i class="mdi mdi-record"></i>&#35774;&#35745;</span>
+                  <span class="backlink-count"><i class="mdi mdi-link-variant"></i>5</span>
+                  <span class="time">15 &#20998;&#38047;&#21069;</span>
+                </div>
+              </div>
+              <div class="note-right">
+                <button class="pin-btn"><i class="mdi mdi-pin-outline"></i></button>
+              </div>
+            </div>
+
+            <div class="note-item">
+              <div class="note-content">
+                <div class="note-title">&#12298;&#28145;&#24230;&#23398;&#20064;&#12299;&#31508;&#35760; — Chapter 5: &#21367;&#31215;&#31070;&#32463;&#32593;&#32476;</div>
+                <div class="note-summary">&#21367;&#31215;&#31070;&#32463;&#32593;&#32476;&#30340;&#26680;&#24515;&#27010;&#24565;&#21253;&#25324;&#21367;&#31215;&#25805;&#20316;&#12289;&#27745;&#26391;&#23618;&#12289;&#20840;&#36830;&#25509;&#23618;&#21644;&#28145;&#24230;&#20998;&#31163;&#21367;&#31215;&#12290;&#26412;&#31456;&#35760;&#24405;&#20102;&#20851;&#20110; CNN &#32593;&#32476;&#32467;&#26500;&#30340;&#29702;&#35299;&#21644;&#23454;&#38469;&#24212;&#29992;&#20013;&#30340;&#27880;&#24847;&#20107;&#39033;&#12290;</div>
+                <div class="note-meta">
+                  <span class="tag tag-blue"><i class="mdi mdi-record"></i>&#31185;&#25216;/AI</span>
+                  <span class="tag tag-green"><i class="mdi mdi-record"></i>&#38405;&#35835;</span>
+                  <span class="time">1 &#23567;&#26102;&#21069;</span>
+                </div>
+              </div>
+              <div class="note-right">
+                <button class="pin-btn"><i class="mdi mdi-pin-outline"></i></button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Yesterday -->
+          <div class="date-group">
+            <div class="date-group-header">&#26152;&#22825;</div>
+
+            <div class="note-item">
+              <div class="note-content">
+                <div class="note-title">&#20135;&#21697;&#35774;&#35745;&#21608;&#20250; 2026-07-01 &#20250;&#35758;&#32426;&#35201;</div>
+                <div class="note-summary">&#20250;&#35758;&#37325;&#28857;&#35752;&#35770;&#20102; Q3 &#30340;&#20135;&#21697;&#36335;&#32447;&#22270;&#65292;&#30830;&#23450;&#20102; MindFlow &#30340;&#24320;&#21457;&#20248;&#20808;&#32423;&#21644;&#26102;&#38388;&#34920;&#12290;&#20915;&#23450;&#23558;&#22522;&#30784;&#31508;&#35760;&#21151;&#33021;&#20316;&#20026; P0 &#20808;&#21457;&#24067;&#65292;&#30693;&#35782;&#22270;&#35889;&#20316;&#20026; P1&#12290;</div>
+                <div class="note-meta">
+                  <span class="tag tag-orange"><i class="mdi mdi-record"></i>&#24037;&#20316;</span>
+                  <span class="tag tag-orange"><i class="mdi mdi-record"></i>&#35774;&#35745;</span>
+                  <span class="time">&#26152;&#22825;</span>
+                </div>
+              </div>
+              <div class="note-right">
+                <button class="pin-btn"><i class="mdi mdi-pin-outline"></i></button>
+              </div>
+            </div>
+
+            <div class="note-item">
+              <div class="note-content">
+                <div class="note-title">&#20171;&#32461; LangChain Agent &#26550;&#26500;<span class="unsaved-badge"><i class="mdi mdi-alert-circle-outline"></i>&#26410;&#20445;&#23384;</span></div>
+                <div class="note-summary">LangChain Agent &#30340;&#26550;&#26500;&#35774;&#35745;&#20998;&#20026;&#20004;&#22823;&#37096;&#20998;&#65306;Planning &#21644; Execution&#12290;Planning &#38454;&#27573;&#65292;Agent &#20250;&#26681;&#25454;&#29992;&#25143;&#36755;&#20837;&#29983;&#25104;&#34892;&#21160;&#35745;&#21010;&#65292;&#28982;&#21518; Execution &#38454;&#27573;&#25191;&#34892;&#20855;&#20307;&#27493;&#39588;&#24182;&#35775;&#38382;&#22806;&#37096;&#24037;&#20855;&#12290;</div>
+                <div class="note-meta">
+                  <span class="tag tag-blue"><i class="mdi mdi-record"></i>&#31185;&#25216;/AI</span>
+                  <span class="tag tag-purple"><i class="mdi mdi-record"></i>Agent</span>
+                  <span class="tag tag-purple"><i class="mdi mdi-record"></i>LLM</span>
+                  <span class="tag tag-overflow">+1</span>
+                  <span class="time">&#26152;&#22825;</span>
+                </div>
+              </div>
+              <div class="note-right">
+                <button class="pin-btn"><i class="mdi mdi-pin-outline"></i></button>
+              </div>
+            </div>
+          </div>
+
+          <!-- This week -->
+          <div class="date-group">
+            <div class="date-group-header">&#26412;&#21608;</div>
+
+            <div class="note-item">
+              <div class="note-content">
+                <div class="note-title">&#12298;&#35774;&#35745;&#20043;&#36947;&#12299;&#35835;&#21518;&#24863; — &#20004;&#31080;&#25237;&#35768;&#20848;&#33713;&#30340;&#35774;&#35745;&#21746;&#23398;</div>
+                <div class="note-summary">&#35768;&#20848;&#33713;&#30340;&#35774;&#35745;&#21746;&#23398;&#24378;&#35843;&#35774;&#35745;&#24212;&#35813;&#19981;&#26159;&#20874;&#39128;&#30340;&#65292;&#32780;&#26159;&#28145;&#20837;&#29702;&#35299;&#29992;&#25143;&#30340;&#38656;&#27714;&#21644;&#19994;&#21153;&#30446;&#26631;&#12290;&#24182;&#19988;&#25552;&#20986;&#20102;&#35774;&#35745;&#24072;&#24212;&#35813;&#19981;&#26029;&#23547;&#25214;&#26368;&#20248;&#35299;&#30340;&#29702;&#24565;&#12290;</div>
+                <div class="note-meta">
+                  <span class="tag tag-green"><i class="mdi mdi-record"></i>&#38405;&#35835;</span>
+                  <span class="tag tag-orange"><i class="mdi mdi-record"></i>&#35774;&#35745;</span>
+                  <span class="time">&#21608;&#20108;</span>
+                </div>
+              </div>
+              <div class="note-right">
+                <button class="pin-btn"><i class="mdi mdi-pin-outline"></i></button>
+              </div>
+            </div>
+
+            <div class="note-item">
+              <div class="note-content">
+                <div class="note-title">RAG &#25216;&#26415;&#26041;&#26696;&#30740;&#31350; — Embedding &#27169;&#22411;&#36873;&#22411;</div>
+                <div class="note-summary">&#23545;&#27604;&#20102; OpenAI text-embedding-3-small/large&#12289;Cohere embed-v3&#12289; bge-large-zh &#31561;&#27169;&#22411;&#22312;&#20013;&#25991;&#22330;&#26223;&#19979;&#30340;&#26144;&#23556;&#34920;&#29616;&#12290; bge-large-zh &#22312;&#20013;&#25991;&#25991;&#26723;&#26816;&#32034;&#19978;&#34920;&#29616;&#26368;&#20248;&#65292;text-embedding-3-small &#22312;&#36895;&#24230;&#19978;&#21344;&#20248;&#21183;&#12290;</div>
+                <div class="note-meta">
+                  <span class="tag tag-blue"><i class="mdi mdi-record"></i>&#31185;&#25216;/AI</span>
+                  <span class="tag tag-purple"><i class="mdi mdi-record"></i>LLM</span>
+                  <span class="time">&#21608;&#19968;</span>
+                </div>
+              </div>
+              <div class="note-right">
+                <button class="pin-btn"><i class="mdi mdi-pin-outline"></i></button>
+              </div>
+            </div>
+
+            <div class="note-item">
+              <div class="note-content">
+                <div class="note-title">2026 &#24180;&#24230;&#30446;&#26631;&#36827;&#24230;&#22238;&#39038; — Q2 &#24635;&#32467;</div>
+                <div class="note-summary">Q2 &#30446;&#26631;&#23436;&#25104;&#24773;&#20917;&#24635;&#32467;&#65292;&#21253;&#25324;&#32844;&#19994;&#21457;&#23637;&#12289;&#25216;&#26415;&#23398;&#20064;&#12289;&#38405;&#35835;&#35745;&#21010;&#31561;&#22810;&#20010;&#32500;&#24230;&#12290;&#24635;&#20307;&#23436;&#25104;&#29575;&#32422; 78%&#65292;&#19979;&#23395;&#24230;&#38656;&#35201;&#35843;&#25972; OKR &#30340;&#21487;&#37327;&#21270;&#26631;&#20934;&#12290;</div>
+                <div class="note-meta">
+                  <span class="tag tag-purple"><i class="mdi mdi-record"></i>&#38405;&#35835;</span>
+                  <span class="time">&#21608;&#19968;</span>
+                </div>
+              </div>
+              <div class="note-right">
+                <button class="pin-btn"><i class="mdi mdi-pin-outline"></i></button>
+              </div>
+            </div>
+
+            <div class="note-item">
+              <div class="note-content">
+                <div class="note-title">Figma &#23454;&#29992;&#25216;&#24039;&#25972;&#29702; — Auto Layout &#36827;&#38454;&#29992;&#27861;</div>
+                <div class="note-summary">&#25972;&#29702;&#20102; Figma Auto Layout &#30340;&#36827;&#38454;&#29992;&#27861;&#65292;&#21253;&#25324;&#23376;&#20803;&#32032;&#23545;&#40784;&#12289;&#22797;&#26434;&#23884;&#22871;&#12289;&#21644;&#21709;&#24212;&#24335;&#35774;&#35745;&#20013;&#30340;&#20855;&#20307;&#24212;&#29992;&#12290;&#22914;&#26524;&#29992;&#22909; Auto Layout&#65292;&#33021;&#22823;&#24133;&#25552;&#21319;&#35774;&#35745;&#30340;&#25928;&#29575;&#21644;&#19968;&#33268;&#24615;&#12290;</div>
+                <div class="note-meta">
+                  <span class="tag tag-orange"><i class="mdi mdi-record"></i>&#35774;&#35745;</span>
+                  <span class="tag tag-orange"><i class="mdi mdi-record"></i>&#24037;&#20316;</span>
+                  <span class="time">&#21608;&#26085;</span>
+                </div>
+              </div>
+              <div class="note-right">
+                <button class="pin-btn"><i class="mdi mdi-pin-outline"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Bottom Status Bar -->
+    <footer class="bottom-status">
+      <div class="status-left">
+        <div class="sync-indicator">
+          <span class="sync-dot"></span>
+          <span>&#24050;&#21516;&#27493;</span>
+        </div>
+        <span>&#183;</span>
+        <span>2 &#31186;&#21069;</span>
+      </div>
+      <div class="status-right">
+        <span>23 &#31508;&#35760;</span>
+        <span>&#183;</span>
+        <span>0 &#22833;&#36133;</span>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Minimal interactivity for wireframe demonstration
+    document.querySelectorAll('.note-item').forEach(item => {
+      item.addEventListener('click', function(e) {
+        if (e.target.closest('.pin-btn') || e.target.closest('.note-more')) return;
+        document.querySelectorAll('.note-item').forEach(el => el.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    document.querySelectorAll('.pin-btn').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        this.classList.toggle('pinned');
+        const icon = this.querySelector('i');
+        if (this.classList.contains('pinned')) {
+          icon.className = 'mdi mdi-pin';
+        } else {
+          icon.className = 'mdi mdi-pin-outline';
+        }
+      });
+    });
+
+    document.querySelectorAll('.sidebar-item').forEach(item => {
+      item.addEventListener('click', function() {
+        document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    document.querySelectorAll('.view-toggle button').forEach(btn => {
+      btn.addEventListener('click', function() {
+        this.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>记录 - 个人记账工具</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --color-bg: #FFFFFF;
+      --color-surface: #F8F9FA;
+      --color-border: #E8EAED;
+      --color-text-primary: #1A1A2E;
+      --color-text-secondary: #6B7280;
+      --color-text-tertiary: #7B8794;
+
+      --color-accent: #00A86B;
+      --color-accent-soft: #E8F5E9;
+      --color-accent-text: #007A4D;
+
+      --color-danger: #DC2626;
+
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+      --space-12: 48px;
+
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --radius-full: 999px;
+
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+      --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
+
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      --duration-fast: 200ms;
+      --duration-normal: 300ms;
+    }
+
+    body {
+      background: #DEE1E6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .phone {
+      width: 375px;
+      height: 812px;
+      background: var(--color-bg);
+      border-radius: 44px;
+      box-shadow: 0 0 0 6px #1C1C1E, 0 12px 60px rgba(0,0,0,0.25);
+      overflow: hidden;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .screen {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .notch {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 150px;
+      height: 30px;
+      background: #1C1C1E;
+      border-radius: 0 0 18px 18px;
+      z-index: 10;
+    }
+
+    .status-bar {
+      height: 44px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding: 0 28px 4px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      background: var(--color-bg);
+      flex-shrink: 0;
+    }
+    .status-bar .time { font-weight: 700; }
+    .status-bar .icons { display: flex; gap: 4px; font-size: 11px; }
+
+    /* ===== Native Nav Bar Placeholder ===== */
+    .nav-bar {
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--color-bg);
+      border-bottom: 0.5px solid var(--color-border);
+      flex-shrink: 0;
+    }
+    .nav-bar .nav-title {
+      font-size: 17px;
+      font-weight: 500;
+      color: var(--color-text-primary);
+    }
+
+    /* ===== Filter Tags ===== */
+    .filter-tags {
+      padding: var(--space-2) var(--space-5) var(--space-3);
+      display: flex;
+      gap: var(--space-2);
+      overflow-x: auto;
+      overflow-y: hidden;
+      flex-shrink: 0;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    .filter-tags::-webkit-scrollbar { display: none; }
+    .filter-tag {
+      padding: 12px 16px;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-full);
+      font-size: 13px;
+      color: var(--color-text-secondary);
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+      background: var(--color-bg);
+      transition: all var(--duration-fast) var(--ease-out);
+      user-select: none;
+    }
+    .filter-tag.active {
+      background: var(--color-accent);
+      border-color: var(--color-accent);
+      color: var(--color-bg);
+      font-weight: 500;
+    }
+    .filter-tag .mdi {
+      font-size: 15px;
+      vertical-align: -2px;
+    }
+    .filter-tag:active {
+      transform: scale(0.95);
+    }
+
+    /* ===== Scrollable Content ===== */
+    .scroll-content {
+      flex: 1;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .scroll-content::-webkit-scrollbar { width: 0; }
+
+    /* ===== Date Group ===== */
+    .date-group { padding: 0; }
+    .date-group-header {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      padding: var(--space-3) var(--space-5) var(--space-2);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--color-text-secondary);
+      background: var(--color-bg);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+    .date-group-header .total {
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--color-text-tertiary);
+      margin-left: auto;
+    }
+    .date-group-header .dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--color-border);
+      margin-right: var(--space-1);
+    }
+
+    /* ===== Record Card ===== */
+    .record-card-wrapper {
+      position: relative;
+      overflow: hidden;
+    }
+    .record-card {
+      display: flex;
+      align-items: center;
+      padding: var(--space-2) var(--space-5);
+      min-height: 54px;
+      position: relative;
+      cursor: pointer;
+      transition: transform 0.2s var(--ease-out), background var(--duration-fast) var(--ease-out);
+      background: var(--color-bg);
+      z-index: 2;
+    }
+    .record-card.swiped {
+      transform: translateX(-80px);
+    }
+    .record-card:active {
+      background: var(--color-surface);
+    }
+    .record-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 72px;
+      right: var(--space-5);
+      height: 1px;
+      background: var(--color-border);
+    }
+    .record-card-wrapper:last-child .record-card::after {
+      display: none;
+    }
+    .delete-action {
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 80px;
+      background: var(--color-danger);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      z-index: 1;
+      user-select: none;
+    }
+
+    .card-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-right: var(--space-3);
+      background: var(--color-surface);
+    }
+    .card-icon .mdi {
+      font-size: 20px;
+    }
+    .card-icon.dining { background: #FFF0F0; }
+    .card-icon.dining .mdi { color: #FF6B6B; }
+    .card-icon.transport { background: #F0FFFE; }
+    .card-icon.transport .mdi { color: #4ECDC4; }
+    .card-icon.shopping { background: #F0FFF6; }
+    .card-icon.shopping .mdi { color: #A8E6CF; }
+    .card-icon.housing { background: #FFFDF0; }
+    .card-icon.housing .mdi { color: #FFD93D; }
+    .card-icon.entertainment { background: #F5F0FF; }
+    .card-icon.entertainment .mdi { color: #6C5CE7; }
+
+    .card-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .card-info .category-row {
+      display: flex;
+      align-items: baseline;
+      gap: var(--space-2);
+    }
+    .card-info .cat-name {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--color-text-primary);
+    }
+    .card-info .note-text {
+      font-size: 13px;
+      color: var(--color-text-tertiary);
+      max-width: 120px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .card-info .time-text {
+      font-size: 12px;
+      color: var(--color-text-tertiary);
+      margin-top: 2px;
+    }
+
+    .card-amount {
+      font-size: 17px;
+      font-weight: 500;
+      color: var(--color-text-primary);
+      font-variant-numeric: tabular-nums;
+      flex-shrink: 0;
+      margin-left: var(--space-2);
+    }
+
+    /* ===== Load More ===== */
+    .load-more-area {
+      padding: var(--space-5) var(--space-5) var(--space-8);
+      text-align: center;
+    }
+    .load-more-btn {
+      display: inline-block;
+      padding: var(--space-2) var(--space-8);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-full);
+      font-size: 13px;
+      color: var(--color-text-secondary);
+      cursor: pointer;
+      transition: all var(--duration-fast) var(--ease-out);
+      user-select: none;
+    }
+    .load-more-btn:active {
+      background: var(--color-surface);
+      border-color: var(--color-text-tertiary);
+    }
+
+    /* ===== Empty State ===== */
+    .empty-state {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-12) var(--space-4);
+      gap: var(--space-4);
+      flex: 1;
+    }
+    .empty-state.visible { display: flex; }
+    .empty-state .empty-illustration {
+      width: 120px;
+      height: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0.2;
+    }
+    .empty-state .empty-illustration .mdi {
+      font-size: 60px;
+    }
+    .empty-state .empty-text {
+      font-size: 15px;
+      color: var(--color-text-tertiary);
+      text-align: center;
+      line-height: 1.6;
+    }
+    .empty-state .empty-btn {
+      display: inline-block;
+      padding: var(--space-2) var(--space-6);
+      background: var(--color-accent);
+      color: var(--color-bg);
+      border-radius: var(--radius-full);
+      font-size: 14px;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .empty-state .empty-btn:active { background: #008F5A; }
+
+    /* ===== Filter Empty State ===== */
+    .filter-empty {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-8) var(--space-4);
+      gap: var(--space-2);
+    }
+    .filter-empty.visible { display: flex; }
+    .filter-empty .filter-empty-text {
+      font-size: 13px;
+      color: var(--color-text-tertiary);
+      text-align: center;
+    }
+
+
+    /* ===== Tab Bar ===== */
+    .tab-bar {
+      height: 50px;
+      display: flex;
+      align-items: stretch;
+      border-top: 1px solid var(--color-border);
+      background: var(--color-bg);
+      flex-shrink: 0;
+    }
+    .tab-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      text-decoration: none;
+      color: var(--color-text-tertiary);
+      font-size: 10px;
+      transition: color var(--duration-fast) var(--ease-out);
+    }
+    .tab-item.active { color: var(--color-accent-text); }
+    .tab-item .tab-icon { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; }
+    .tab-item .tab-icon .mdi { font-size: 22px; color: var(--color-text-tertiary); transition: color var(--duration-fast) var(--ease-out); }
+    .tab-item.active .tab-icon .mdi { color: var(--color-accent); }
+    .tab-item .tab-label { font-size: 9px; line-height: 1; font-weight: 400; }
+    .tab-item.active .tab-label { font-weight: 500; }
+
+    .safe-area {
+      height: 34px;
+      background: var(--color-bg);
+      flex-shrink: 0;
+    }
+
+    /* ===== State Controls ===== */
+    .controls {
+      position: fixed;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      display: flex;
+      gap: 8px;
+      background: rgba(255,255,255,0.95);
+      padding: 8px 16px;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      backdrop-filter: blur(8px);
+    }
+    .controls .title {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--color-text-secondary);
+      margin-right: 4px;
+      line-height: 26px;
+    }
+    .controls button {
+      padding: 4px 12px;
+      font-size: 11px;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      background: var(--color-bg);
+      color: var(--color-text-secondary);
+      cursor: pointer;
+      transition: all var(--duration-fast) var(--ease-out);
+    }
+    .controls button.active {
+      background: var(--color-accent);
+      color: var(--color-bg);
+      border-color: var(--color-accent);
+    }
+
+    @media (max-height: 860px) { .phone { transform: scale(0.85); } }
+    @media (max-height: 740px) { .phone { transform: scale(0.7); } }
+    @media (max-width: 420px) {
+      .phone { transform: scale(0.9); transform-origin: center center; }
+      .controls { top: 8px; padding: 4px 10px; }
+      .controls button { padding: 3px 8px; font-size: 10px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- State Controls -->
+  <div class="controls">
+    <span class="title">状态切换</span>
+    <button id="state-data" class="active">默认列表</button>
+    <button id="state-swipe">左滑删除</button>
+    <button id="state-filter-empty">筛选无结果</button>
+    <button id="state-empty">空状态</button>
+  </div>
+
+  <!-- Phone Frame -->
+  <div class="phone">
+    <div class="screen">
+
+      <!-- Notch -->
+      <div class="notch"></div>
+
+      <!-- Status Bar -->
+      <div class="status-bar">
+        <span class="time">9:41</span>
+        <span class="icons">
+          <svg width="15" height="11" viewBox="0 0 15 11" fill="none">
+            <rect x="0.5" y="0.5" width="14" height="10" rx="2" stroke="#1A1A2E" stroke-opacity="0.4"/>
+            <rect x="11" y="3" width="3" height="5" rx="0.5" fill="#1A1A2E" fill-opacity="0.4"/>
+          </svg>
+          <svg width="16" height="11" viewBox="0 0 16 11" fill="none">
+            <rect x="0.5" y="0.5" width="15" height="10" rx="1.5" stroke="#1A1A2E" stroke-opacity="0.6"/>
+            <rect x="2.5" y="2.5" width="11" height="6" rx="0.5" fill="#1A1A2E" fill-opacity="0.6"/>
+          </svg>
+        </span>
+      </div>
+
+      <!-- Nav Bar (WeChat Native) -->
+      <div class="nav-bar">
+        <span class="nav-title">记录</span>
+      </div>
+
+      <!-- Filter Tags -->
+      <div class="filter-tags" id="filterTags">
+        <span class="filter-tag active" data-category="all">全部</span>
+        <span class="filter-tag" data-category="dining"><i class="mdi mdi-food"></i> 餐饮</span>
+        <span class="filter-tag" data-category="transport"><i class="mdi mdi-bus"></i> 交通</span>
+        <span class="filter-tag" data-category="shopping"><i class="mdi mdi-shopping"></i> 购物</span>
+        <span class="filter-tag" data-category="housing"><i class="mdi mdi-home"></i> 居住</span>
+        <span class="filter-tag" data-category="entertainment"><i class="mdi mdi-gamepad-variant"></i> 娱乐</span>
+      </div>
+
+      <!-- Scrollable Content -->
+      <div class="scroll-content" id="scrollContent">
+
+        <!-- Data Content -->
+        <div id="dataContent">
+
+          <!-- ===== Today ===== -->
+          <div class="date-group" data-date="today">
+            <div class="date-group-header">
+              <span class="dot"></span>
+              今天
+              <span class="total">&#165;98.00</span>
+            </div>
+
+            <div class="record-card-wrapper">
+              <div class="record-card" data-category="dining">
+                <div class="card-icon dining"><i class="mdi mdi-food"></i></div>
+                <div class="card-info">
+                  <div class="category-row">
+                    <span class="cat-name">餐饮</span>
+                    <span class="note-text">午餐</span>
+                  </div>
+                  <div class="time-text">12:30</div>
+                </div>
+                <div class="card-amount">&#165;32.00</div>
+              </div>
+            </div>
+
+            <div class="record-card-wrapper">
+              <div class="record-card" data-category="transport">
+                <div class="card-icon transport"><i class="mdi mdi-bus"></i></div>
+                <div class="card-info">
+                  <div class="category-row">
+                    <span class="cat-name">交通</span>
+                    <span class="note-text">公交</span>
+                  </div>
+                  <div class="time-text">08:15</div>
+                </div>
+                <div class="card-amount">&#165;4.00</div>
+              </div>
+            </div>
+
+            <div class="record-card-wrapper">
+              <div class="record-card" data-category="dining">
+                <div class="card-icon dining"><i class="mdi mdi-food"></i></div>
+                <div class="card-info">
+                  <div class="category-row">
+                    <span class="cat-name">餐饮</span>
+                    <span class="note-text">和朋友吃饭</span>
+                  </div>
+                  <div class="time-text">19:30</div>
+                </div>
+                <div class="card-amount">&#165;62.00</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ===== Yesterday ===== -->
+          <div class="date-group" data-date="yesterday">
+            <div class="date-group-header">
+              <span class="dot"></span>
+              昨天
+              <span class="total">&#165;345.00</span>
+            </div>
+
+            <div class="record-card-wrapper">
+              <div class="record-card" data-category="shopping">
+                <div class="card-icon shopping"><i class="mdi mdi-shopping"></i></div>
+                <div class="card-info">
+                  <div class="category-row">
+                    <span class="cat-name">购物</span>
+                    <span class="note-text">超市日用品</span>
+                  </div>
+                  <div class="time-text">19:20</div>
+                </div>
+                <div class="card-amount">&#165;289.00</div>
+              </div>
+            </div>
+
+            <div class="record-card-wrapper">
+              <div class="record-card" data-category="dining">
+                <div class="card-icon dining"><i class="mdi mdi-food"></i></div>
+                <div class="card-info">
+                  <div class="category-row">
+                    <span class="cat-name">餐饮</span>
+                    <span class="note-text">晚餐</span>
+                  </div>
+                  <div class="time-text">18:30</div>
+                </div>
+                <div class="card-amount">&#165;56.00</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ===== July 1 ===== -->
+          <div class="date-group" data-date="2026-07-01">
+            <div class="date-group-header">
+              <span class="dot"></span>
+              7月1日
+              <span class="total">&#165;2,200.00</span>
+            </div>
+
+            <div class="record-card-wrapper">
+              <div class="record-card" data-category="housing">
+                <div class="card-icon housing"><i class="mdi mdi-home"></i></div>
+                <div class="card-info">
+                  <div class="category-row">
+                    <span class="cat-name">居住</span>
+                    <span class="note-text">房租</span>
+                  </div>
+                  <div class="time-text">09:00</div>
+                </div>
+                <div class="card-amount">&#165;2,100.00</div>
+              </div>
+            </div>
+
+            <div class="record-card-wrapper">
+              <div class="record-card" data-category="transport">
+                <div class="card-icon transport"><i class="mdi mdi-bus"></i></div>
+                <div class="card-info">
+                  <div class="category-row">
+                    <span class="cat-name">交通</span>
+                    <span class="note-text">公交卡充值</span>
+                  </div>
+                  <div class="time-text">08:30</div>
+                </div>
+                <div class="card-amount">&#165;100.00</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Filter Empty -->
+          <div class="filter-empty" id="filterEmpty">
+            <i class="mdi mdi-magnify" style="font-size:40px;opacity:0.3;margin-bottom:8px;"></i>
+            <span class="filter-empty-text">该分类暂无记录</span>
+          </div>
+
+          <!-- Load More -->
+          <div class="load-more-area" id="loadMoreArea">
+            <div class="load-more-btn" id="loadMoreBtn">加载更多</div>
+          </div>
+
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" id="emptyState">
+          <div class="empty-illustration"><i class="mdi mdi-notebook-edit"></i></div>
+          <div class="empty-text">还没有记账记录<br>开始记下你的第一笔支出吧</div>
+          <a href="home.html" class="empty-btn">去记账</a>
+        </div>
+
+      </div>
+
+      <!-- Tab Bar -->
+      <div class="tab-bar">
+        <a href="home.html" class="tab-item">
+          <div class="tab-icon">
+            <i class="mdi mdi-pencil"></i>
+          </div>
+          <span class="tab-label">记账</span>
+        </a>
+        <a href="stats.html" class="tab-item">
+          <div class="tab-icon">
+            <i class="mdi mdi-chart-pie"></i>
+          </div>
+          <span class="tab-label">统计</span>
+        </a>
+        <a href="records.html" class="tab-item active">
+          <div class="tab-icon">
+            <i class="mdi mdi-format-list-bulleted"></i>
+          </div>
+          <span class="tab-label">记录</span>
+        </a>
+      </div>
+
+      <!-- Safe Area -->
+      <div class="safe-area"></div>
+
+    </div>
+  </div>
+
+  <script>
+    const stateDataBtn = document.getElementById('state-data');
+    const stateSwipeBtn = document.getElementById('state-swipe');
+    const stateFilterEmptyBtn = document.getElementById('state-filter-empty');
+    const stateEmptyBtn = document.getElementById('state-empty');
+    const dataContent = document.getElementById('dataContent');
+    const filterEmpty = document.getElementById('filterEmpty');
+    const loadMoreArea = document.getElementById('loadMoreArea');
+    const emptyState = document.getElementById('emptyState');
+    const filterTags = document.querySelectorAll('.filter-tag');
+    const recordCards = document.querySelectorAll('.record-card');
+    const dateGroups = document.querySelectorAll('.date-group');
+    const loadMoreBtn = document.getElementById('loadMoreBtn');
+
+    let currentRecordsState = 'data';
+
+    function setState(state) {
+      currentRecordsState = state;
+      stateDataBtn.classList.toggle('active', state === 'data');
+      stateSwipeBtn.classList.toggle('active', state === 'swipe');
+      stateFilterEmptyBtn.classList.toggle('active', state === 'filter-empty');
+      stateEmptyBtn.classList.toggle('active', state === 'empty');
+
+      // Reset all
+      dataContent.style.display = 'none';
+      emptyState.classList.remove('visible');
+      filterEmpty.classList.remove('visible');
+      loadMoreArea.style.display = 'block';
+      recordCards.forEach(c => c.classList.remove('swiped'));
+      dateGroups.forEach(g => g.style.display = 'block');
+      document.querySelectorAll('.delete-action').forEach(el => el.remove());
+
+      if (state === 'data') {
+        dataContent.style.display = 'block';
+      } else if (state === 'swipe') {
+        dataContent.style.display = 'block';
+        // Add delete buttons and swipe effect
+        recordCards.forEach(card => {
+          card.classList.add('swiped');
+          const wrapper = card.parentElement;
+          if (!wrapper.querySelector('.delete-action')) {
+            const delBtn = document.createElement('div');
+            delBtn.className = 'delete-action';
+            delBtn.textContent = '删除';
+            wrapper.appendChild(delBtn);
+          }
+        });
+      } else if (state === 'filter-empty') {
+        dataContent.style.display = 'block';
+        dateGroups.forEach(g => g.style.display = 'none');
+        filterEmpty.classList.add('visible');
+        loadMoreArea.style.display = 'none';
+      } else {
+        emptyState.classList.add('visible');
+      }
+    }
+
+    stateDataBtn.addEventListener('click', () => setState('data'));
+    stateSwipeBtn.addEventListener('click', () => setState('swipe'));
+    stateFilterEmptyBtn.addEventListener('click', () => setState('filter-empty'));
+    stateEmptyBtn.addEventListener('click', () => setState('empty'));
+
+    // Filter tags
+    filterTags.forEach(tag => {
+      tag.addEventListener('click', function() {
+        filterTags.forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+
+        const category = this.dataset.category;
+
+        recordCards.forEach(card => {
+          if (category === 'all') {
+            card.style.display = 'flex';
+          } else {
+            card.style.display = card.dataset.category === category ? 'flex' : 'none';
+          }
+        });
+      });
+    });
+
+    // Load more
+    loadMoreBtn.addEventListener('click', function() {
+      this.textContent = '加载中...';
+      setTimeout(() => {
+        this.textContent = '没有更多了';
+        this.style.opacity = '0.5';
+        this.style.pointerEvents = 'none';
+      }, 600);
+    });
+
+    // Initial state
+    setState('data');
+  </script>
+
+</body>
+</html>

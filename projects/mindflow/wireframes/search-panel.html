@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MindFlow — &#20840;&#23616;&#25628;&#32034;&#38754;&#26495; | &#32447;&#27147;&#22270;</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+  <style>
+    :root {
+      --color-bg-primary: #FAFAFA;
+      --color-bg-secondary: #F5F5F5;
+      --color-bg-tertiary: #EEEEEE;
+      --color-text-primary: #1A1A1A;
+      --color-text-secondary: #6B6B6B;
+      --color-text-tertiary: #9E9E9E;
+      --color-text-link: #3B82F6;
+      --color-text-on-accent: #FFFFFF;
+      --color-accent: #3B82F6;
+      --color-accent-hover: #2563EB;
+      --color-accent-soft: #E8F0FE;
+      --color-success: #10B981;
+      --color-warning: #F59E0B;
+      --color-error: #EF4444;
+      --tag-red: #FEE2E2;
+      --tag-orange: #FFEDD5;
+      --tag-yellow: #FEF3C7;
+      --tag-green: #D1FAE5;
+      --tag-teal: #CCFBF1;
+      --tag-blue: #DBEAFE;
+      --tag-purple: #EDE9FE;
+      --tag-pink: #FCE7F3;
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-full: 9999px;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+      --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
+      --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+      --space-10: 40px;
+      --space-12: 48px;
+      --font-size-xs: 11px;
+      --font-size-sm: 13px;
+      --font-size-base: 15px;
+      --font-size-lg: 18px;
+      --font-size-xl: 22px;
+      --font-size-2xl: 28px;
+      --sidebar-width: 240px;
+      --topnav-height: 48px;
+      --statusbar-height: 28px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--color-bg-primary); color: var(--color-text-primary); font-size: var(--font-size-base); line-height: 1.5; -webkit-font-smoothing: antialiased; }
+    .ui-font { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+
+    .app-layout { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+    .main-area { display: flex; flex: 1; overflow: hidden; }
+
+    /* Top Nav — search is focused */
+    .top-nav { height: var(--topnav-height); min-height: var(--topnav-height); background: var(--color-bg-primary); border-bottom: 1px solid #E8E8E8; display: flex; align-items: center; padding: 0 var(--space-4); gap: var(--space-4); z-index: 200; position: relative; }
+    .top-nav .logo { display: flex; align-items: center; gap: var(--space-2); font-family: 'Inter', system-ui, sans-serif; font-weight: 600; font-size: var(--font-size-lg); color: var(--color-text-primary); width: var(--sidebar-width); padding-left: var(--space-1); flex-shrink: 0; }
+    .top-nav .logo i { color: var(--color-accent); font-size: 22px; }
+    .top-nav .search-wrapper { flex: 1; max-width: 480px; margin: 0 auto; position: relative; z-index: 250; }
+    .top-nav .search-wrapper .search-bar { position: relative; }
+    .top-nav .search-wrapper .search-bar input { width: 100%; height: 36px; border: 1px solid var(--color-accent); border-radius: var(--radius-sm); background: var(--color-bg-primary); padding: 0 var(--space-8) 0 36px; font-size: var(--font-size-base); font-family: inherit; color: var(--color-text-primary); outline: none; box-shadow: 0 0 0 3px var(--color-accent-soft); }
+    .top-nav .search-wrapper .search-bar input::placeholder { color: var(--color-text-tertiary); }
+    .top-nav .search-wrapper .search-bar .search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--color-text-secondary); font-size: 18px; pointer-events: none; }
+    .top-nav .search-wrapper .search-bar .clear-btn { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; border: none; background: var(--color-bg-tertiary); border-radius: 50%; color: var(--color-text-secondary); cursor: pointer; font-size: 12px; }
+    .top-nav .actions { display: flex; align-items: center; gap: var(--space-2); margin-left: auto; }
+    .top-nav .actions .btn-primary { display: flex; align-items: center; gap: var(--space-1); height: 32px; padding: 0 var(--space-3); background: var(--color-accent); color: var(--color-text-on-accent); border: none; border-radius: var(--radius-sm); font-size: var(--font-size-sm); font-family: 'Inter', system-ui, sans-serif; font-weight: 500; cursor: pointer; }
+    .top-nav .actions .btn-primary i { font-size: 16px; }
+    .top-nav .actions .icon-btn { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border: none; background: transparent; border-radius: var(--radius-sm); color: var(--color-text-secondary); cursor: pointer; font-size: 20px; }
+    .top-nav .actions .icon-btn:hover { background: var(--color-bg-tertiary); }
+    .top-nav .actions .avatar { width: 28px; height: 28px; border-radius: var(--radius-full); background: var(--color-accent-soft); display: flex; align-items: center; justify-content: center; font-size: var(--font-size-xs); font-weight: 600; color: var(--color-accent); cursor: pointer; }
+
+    /* Sidebar dimmed */
+    .sidebar { width: var(--sidebar-width); min-width: var(--sidebar-width); background: var(--color-bg-secondary); border-right: 1px solid #E8E8E8; display: flex; flex-direction: column; overflow-y: auto; padding: var(--space-3) 0; flex-shrink: 0; opacity: 0.5; transition: opacity 200ms ease; pointer-events: none; }
+    .sidebar-section { padding: 0 var(--space-3); margin-bottom: var(--space-2); }
+    .sidebar-item { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-1) var(--space-2); border-radius: var(--radius-sm); font-size: var(--font-size-sm); color: var(--color-text-primary); height: 30px; }
+    .sidebar-item i { font-size: 16px; color: var(--color-text-secondary); flex-shrink: 0; }
+    .sidebar-item .item-label { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .sidebar-item .item-count { font-size: var(--font-size-xs); color: var(--color-text-tertiary); background: var(--color-bg-tertiary); padding: 0 6px; border-radius: 8px; }
+    .sidebar-divider { height: 1px; background: #E8E8E8; margin: var(--space-2) var(--space-3); }
+    .sidebar-spacer { flex: 1; }
+    .space-usage { padding: var(--space-3); border-top: 1px solid #E8E8E8; }
+    .space-usage .usage-bar { height: 4px; background: var(--color-bg-tertiary); border-radius: 2px; overflow: hidden; margin-bottom: var(--space-1); }
+    .space-usage .usage-bar .fill { height: 100%; width: 35%; background: var(--color-accent); border-radius: 2px; }
+    .space-usage .usage-text { font-size: var(--font-size-xs); color: var(--color-text-tertiary); }
+
+    /* Content dimmed */
+    .content { flex: 1; display: flex; flex-direction: column; overflow: hidden; opacity: 0.3; transition: opacity 200ms ease; }
+    .content-placeholder { display: flex; align-items: center; justify-content: center; height: 100%; font-size: var(--font-size-sm); color: var(--color-text-tertiary); }
+
+    /* ===== Search Panel (Overlay) ===== */
+    .search-overlay { position: fixed; top: var(--topnav-height); left: var(--sidebar-width); right: 0; bottom: var(--statusbar-height); background: rgba(250, 250, 250, 0.85); backdrop-filter: blur(2px); z-index: 150; }
+    .search-panel { position: absolute; top: 4px; left: 50%; transform: translateX(-50%); width: 480px; max-height: 480px; background: var(--color-bg-primary); border: 1px solid #E0E0E0; border-radius: var(--radius-md); box-shadow: var(--shadow-lg); display: flex; flex-direction: column; overflow: hidden; animation: slideDown 150ms ease-out; }
+    @keyframes slideDown { from { opacity: 0; transform: translateX(-50%) translateY(-8px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+
+    .search-panel-header { display: flex; align-items: center; justify-content: space-between; padding: var(--space-2) var(--space-4); border-bottom: 1px solid #E8E8E8; font-size: var(--font-size-xs); color: var(--color-text-tertiary); font-family: 'Inter', system-ui, sans-serif; }
+    .search-panel-header .kbd-tips { display: flex; align-items: center; gap: var(--space-3); }
+    .search-panel-header .kbd-tips span { display: flex; align-items: center; gap: var(--space-1); }
+    .search-panel-header .kbd-tips kbd { background: var(--color-bg-tertiary); padding: 1px 5px; border-radius: 3px; font-size: 10px; font-family: 'Inter', system-ui, sans-serif; }
+
+    .search-results { flex: 1; overflow-y: auto; padding: var(--space-1) 0; }
+    .search-results::-webkit-scrollbar { width: 4px; }
+    .search-results::-webkit-scrollbar-thumb { background: #D0D0D0; border-radius: 2px; }
+
+    .search-group { margin-bottom: var(--space-1); }
+    .search-group-header { padding: var(--space-2) var(--space-4); font-size: var(--font-size-xs); font-weight: 600; color: var(--color-text-secondary); font-family: 'Inter', system-ui, sans-serif; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: var(--space-2); }
+    .search-group-header i { font-size: 14px; }
+
+    .search-result-item { display: flex; align-items: flex-start; gap: var(--space-3); padding: var(--space-2) var(--space-4); cursor: pointer; transition: background 100ms ease; }
+    .search-result-item:hover, .search-result-item.active { background: var(--color-bg-tertiary); }
+    .search-result-item .result-icon { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: var(--color-accent-soft); border-radius: var(--radius-sm); color: var(--color-accent); font-size: 16px; flex-shrink: 0; }
+    .search-result-item .result-content { flex: 1; min-width: 0; }
+    .search-result-item .result-title { font-size: var(--font-size-sm); font-weight: 500; color: var(--color-text-primary); margin-bottom: 2px; }
+    .search-result-item .result-title .highlight { background: #FEF3C7; padding: 0 2px; border-radius: 2px; }
+    .search-result-item .result-summary { font-size: var(--font-size-xs); color: var(--color-text-secondary); line-height: 1.5; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+    .search-result-item .result-summary .highlight { background: #FEF3C7; padding: 0 2px; border-radius: 2px; }
+    .search-result-item .result-meta { display: flex; align-items: center; gap: var(--space-2); margin-top: var(--space-1); }
+    .search-result-item .result-meta .path { font-size: 10px; color: var(--color-text-tertiary); display: flex; align-items: center; gap: 2px; }
+    .search-result-item .result-meta .path i { font-size: 12px; }
+    .search-result-item .result-meta .tag { font-size: 10px; padding: 1px 6px; border-radius: var(--radius-sm); }
+    .search-result-item .result-meta .tag.tag-blue { background: var(--tag-blue); color: #1e40af; }
+    .search-result-item .result-meta .tag.tag-orange { background: var(--tag-orange); color: #92400e; }
+    .search-result-item .result-meta .tag.tag-green { background: var(--tag-green); color: #065f46; }
+    .search-result-item .result-meta .tag.tag-purple { background: var(--tag-purple); color: #5b21b6; }
+    .search-result-item .result-type { font-size: 10px; color: var(--color-text-tertiary); font-family: 'Inter', system-ui, sans-serif; white-space: nowrap; }
+
+    .search-footer { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-2) var(--space-4); border-top: 1px solid #E8E8E8; font-size: var(--font-size-xs); color: var(--color-text-tertiary); }
+    .search-footer .btn-create { display: flex; align-items: center; gap: var(--space-1); padding: var(--space-1) var(--space-2); border: none; background: var(--color-accent-soft); color: var(--color-accent); border-radius: var(--radius-sm); cursor: pointer; font-size: var(--font-size-xs); font-family: 'Inter', system-ui, sans-serif; transition: background 150ms ease; }
+    .search-footer .btn-create:hover { background: #D0E2FF; }
+    .search-footer .btn-create i { font-size: 14px; }
+
+    /* Bottom Status Bar */
+    .bottom-status { height: var(--statusbar-height); min-height: var(--statusbar-height); background: var(--color-bg-secondary); border-top: 1px solid #E8E8E8; display: flex; align-items: center; justify-content: space-between; padding: 0 var(--space-4); font-size: var(--font-size-xs); color: var(--color-text-tertiary); }
+    .bottom-status .status-left { display: flex; align-items: center; gap: var(--space-3); }
+    .bottom-status .status-left .sync-indicator { display: flex; align-items: center; gap: var(--space-1); }
+    .bottom-status .status-left .sync-indicator .sync-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--color-success); display: inline-block; }
+  </style>
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Top Navigation — search focused -->
+    <header class="top-nav">
+      <div class="logo">
+        <i class="mdi mdi-brain"></i>
+        <span>MindFlow</span>
+      </div>
+      <div class="search-wrapper">
+        <div class="search-bar">
+          <i class="mdi mdi-magnify search-icon"></i>
+          <input type="text" placeholder="&#25628;&#32034;&#31508;&#35760;… (&#8984;K)" value="Agent" autofocus />
+          <button class="clear-btn"><i class="mdi mdi-close"></i></button>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn-primary"><i class="mdi mdi-plus"></i> &#26032;&#24314;&#31508;&#35760;</button>
+        <button class="icon-btn"><i class="mdi mdi-cog-outline"></i></button>
+        <div class="avatar">T</div>
+      </div>
+    </header>
+
+    <!-- Main Area (dimmed) -->
+    <div class="main-area">
+      <aside class="sidebar">
+        <div class="sidebar-section">
+          <div class="sidebar-item"><i class="mdi mdi-note-text-outline"></i><span class="item-label">&#25152;&#26377;&#31508;&#35760;</span><span class="item-count">23</span></div>
+          <div class="sidebar-item"><i class="mdi mdi-calendar-text-outline"></i><span class="item-label">&#27599;&#26085;&#31508;&#35760;</span></div>
+          <div class="sidebar-item"><i class="mdi mdi-delete-outline"></i><span class="item-label">&#22238;&#25910;&#31449;</span></div>
+        </div>
+        <div class="sidebar-divider"></div>
+        <div class="sidebar-section">
+          <div class="sidebar-item"><i class="mdi mdi-folder-open-outline"></i><span class="item-label">&#24037;&#20316;</span><span class="item-count">8</span></div>
+          <div class="sidebar-item"><i class="mdi mdi-folder-outline"></i><span class="item-label">&#20010;&#20154;</span><span class="item-count">12</span></div>
+        </div>
+        <div class="sidebar-divider"></div>
+        <div class="sidebar-section">
+          <div class="sidebar-item"><i class="mdi mdi-tag-outline"></i><span class="item-label">&#31185;&#25216;/AI</span><span class="item-count">6</span></div>
+          <div class="sidebar-item"><i class="mdi mdi-tag-outline"></i><span class="item-label">&#38405;&#35835;</span><span class="item-count">5</span></div>
+        </div>
+        <div class="sidebar-spacer"></div>
+        <div class="space-usage"><div class="usage-bar"><div class="fill"></div></div><div class="usage-text">&#20351;&#29992; 35%</div></div>
+      </aside>
+
+      <main class="content">
+        <div class="content-placeholder">
+          <div style="text-align:center;">
+            <i class="mdi mdi-magnify" style="font-size:48px;color:var(--color-text-tertiary);display:block;margin-bottom:var(--space-4);"></i>
+            <p>&#25628;&#32034;&#32467;&#26524;&#23558;&#22312;&#19979;&#25289;&#38754;&#26495;&#20013;&#26174;&#31034;</p>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Search Overlay & Panel -->
+    <div class="search-overlay">
+      <div class="search-panel">
+        <div class="search-panel-header">
+          <span>6 &#20010;&#32467;&#26524;</span>
+          <div class="kbd-tips">
+            <span><kbd>&uarr;</kbd> <kbd>&darr;</kbd> &#23548;&#33322;</span>
+            <span><kbd>&crarr;</kbd> &#25171;&#24320;</span>
+            <span><kbd>Esc</kbd> &#20851;&#38381;</span>
+          </div>
+        </div>
+
+        <div class="search-results">
+          <!-- Group 1: Title exact match -->
+          <div class="search-group">
+            <div class="search-group-header"><i class="mdi mdi-format-title"></i> &#26631;&#39064;&#31934;&#30830;&#21305;&#37197;</div>
+
+            <div class="search-result-item active">
+              <div class="result-icon"><i class="mdi mdi-note-text"></i></div>
+              <div class="result-content">
+                <div class="result-title">AI <span class="highlight">Agent</span> &#22312;&#20114;&#32852;&#32593;&#34892;&#19994;&#30340;&#24212;&#29992;&#21033;&#29992;&#27969;&#31243;&#30340;&#27719;&#24635;&#27010;&#36848;</div>
+                <div class="result-summary">&#26412;&#25991;&#23545; AI <span class="highlight">Agent</span> &#22312;&#20114;&#32852;&#32593;&#34892;&#19994;&#30340;&#24212;&#29992;&#36827;&#34892;&#20102;&#31995;&#32479;&#24615;&#27719;&#24635;&#65292;&#28041;&#21450;&#25512;&#33616;&#31995;&#32479;&#12289;&#23458;&#26381;&#26234;&#33021;&#20307;&#12289;&#20869;&#23481;&#29983;&#25104;&#31561;&#22810;&#20010;&#26041;&#21521;&#12290;</div>
+                <div class="result-meta">
+                  <span class="path"><i class="mdi mdi-folder-outline"></i> &#24037;&#20316;/&#20135;&#21697;&#35774;&#35745;</span>
+                  <span class="tag tag-blue">&#31185;&#25216;/AI</span>
+                  <span class="tag tag-purple">Agent</span>
+                </div>
+              </div>
+              <span class="result-type">2 &#20998;&#38047;&#21069;</span>
+            </div>
+
+            <div class="search-result-item">
+              <div class="result-icon"><i class="mdi mdi-note-text"></i></div>
+              <div class="result-content">
+                <div class="result-title">&#20171;&#32461; LangChain <span class="highlight">Agent</span> &#26550;&#26500;</div>
+                <div class="result-summary">LangChain <span class="highlight">Agent</span> &#30340;&#26550;&#26500;&#35774;&#35745;&#20998;&#20026;&#20004;&#22823;&#37096;&#20998;&#65306;Planning &#21644; Execution&#12290;&#24182;&#19988;&#25552;&#21040;&#20102;&#22914;&#20309;&#32452;&#32455;&#22810;&#27493;&#39588;&#25512;&#29702;&#27969;&#31243;&#12290;</div>
+                <div class="result-meta">
+                  <span class="path"><i class="mdi mdi-folder-outline"></i> &#24037;&#20316;/&#20135;&#21697;&#35774;&#35745;</span>
+                  <span class="tag tag-blue">&#31185;&#25216;/AI</span>
+                  <span class="tag tag-purple">Agent</span>
+                </div>
+              </div>
+              <span class="result-type">&#26152;&#22825;</span>
+            </div>
+          </div>
+
+          <!-- Group 2: Fuzzy title match -->
+          <div class="search-group">
+            <div class="search-group-header"><i class="mdi mdi-text-search"></i> &#27169;&#31946;&#21305;&#37197;</div>
+
+            <div class="search-result-item">
+              <div class="result-icon"><i class="mdi mdi-note-text"></i></div>
+              <div class="result-content">
+                <div class="result-title">AI &#22312;&#20114;&#32852;&#32593;&#34892;&#19994;&#30340;&#24212;&#29992;&#21033;&#29992;&#27969;&#31243;&#27010;&#35272;</div>
+                <div class="result-summary">&#38543;&#30528; AI &#25216;&#26415;&#30340;&#26085;&#36235;&#25104;&#29087;&#65292;&#36234;&#26469;&#36234;&#22810;&#30340;&#20114;&#32852;&#32593;&#20844;&#21496;&#24320;&#22987;&#23558; AI <span class="highlight">Agent</span> &#25972;&#21512;&#21040;&#20135;&#21697;&#27969;&#31243;&#20013;&#12290;</div>
+                <div class="result-meta">
+                  <span class="path"><i class="mdi mdi-folder-outline"></i> &#24037;&#20316;/&#20250;&#35758;&#35760;&#24405;</span>
+                  <span class="tag tag-blue">&#31185;&#25216;/AI</span>
+                </div>
+              </div>
+              <span class="result-type">&#21608;&#20108;</span>
+            </div>
+          </div>
+
+          <!-- Group 3: Full-text match -->
+          <div class="search-group">
+            <div class="search-group-header"><i class="mdi mdi-file-find-outline"></i> &#20840;&#25991;&#21305;&#37197;</div>
+
+            <div class="search-result-item">
+              <div class="result-icon"><i class="mdi mdi-note-text"></i></div>
+              <div class="result-content">
+                <div class="result-title">RAG &#25216;&#26415;&#26041;&#26696;&#30740;&#31350; &#8212; Embedding &#27169;&#22411;&#36873;&#22411;</div>
+                <div class="result-summary">&#23545;&#27604;&#20102;&#22810;&#31181;&#27169;&#22411;&#22312;&#20013;&#25991;&#22330;&#26223;&#19979;&#30340;&#26144;&#23556;&#34920;&#29616;&#65292;&#24182;&#25552;&#21450;&#20102; <span class="highlight">Agent</span> &#22312;&#26816;&#32034;&#22686;&#24378;&#29983;&#25104;&#20013;&#30340;&#37197;&#21512;&#20351;&#29992;&#12290;</div>
+                <div class="result-meta">
+                  <span class="path"><i class="mdi mdi-folder-outline"></i> &#24037;&#20316;/&#20135;&#21697;&#35774;&#35745;</span>
+                  <span class="tag tag-blue">&#31185;&#25216;/AI</span>
+                  <span class="tag tag-purple">LLM</span>
+                </div>
+              </div>
+              <span class="result-type">&#21608;&#19968;</span>
+            </div>
+
+            <div class="search-result-item">
+              <div class="result-icon"><i class="mdi mdi-note-text"></i></div>
+              <div class="result-content">
+                <div class="result-title">&#12298;&#28145;&#24230;&#23398;&#20064;&#12299;&#31508;&#35760; &#8212; Chapter 5: &#21367;&#31215;&#31070;&#32463;&#32593;&#32476;</div>
+                <div class="result-summary">&#21367;&#31215;&#31070;&#32463;&#32593;&#32476;&#30340;&#26680;&#24515;&#27010;&#24565;&#21253;&#25324;&#21367;&#31215;&#25805;&#20316;&#12289;&#27745;&#26391;&#23618;&#12289;&#20840;&#36830;&#25509;&#23618;&#12290; CNN &#22312;&#35270;&#35273;&#35782;&#21035;&#20013;&#30340;&#24212;&#29992;&#24050;&#32463;&#25104;&#20026; AI <span class="highlight">Agent</span> &#30340;&#37325;&#35201;&#32452;&#25104;&#37096;&#20998;&#12290;</div>
+                <div class="result-meta">
+                  <span class="path"><i class="mdi mdi-folder-outline"></i> &#20010;&#20154;/&#23398;&#20064;</span>
+                  <span class="tag tag-green">&#38405;&#35835;</span>
+                  <span class="tag tag-blue">&#31185;&#25216;/AI</span>
+                </div>
+              </div>
+              <span class="result-type">1 &#23567;&#26102;&#21069;</span>
+            </div>
+
+            <div class="search-result-item">
+              <div class="result-icon"><i class="mdi mdi-note-text"></i></div>
+              <div class="result-content">
+                <div class="result-title">&#20135;&#21697;&#35774;&#35745;&#21608;&#20250; 2026-07-01 &#20250;&#35758;&#32426;&#35201;</div>
+                <div class="result-summary">&#20250;&#35758;&#35752;&#35770;&#20102; Q3 &#30340;&#20135;&#21697;&#36335;&#32447;&#22270;&#65292;&#30830;&#23450;&#20102;&#23558;&#22522;&#30784;&#31508;&#35760;&#21151;&#33021;&#20316;&#20026; P0&#65292; AI <span class="highlight">Agent</span> &#30456;&#20851;&#21151;&#33021;&#20316;&#20026; P1&#12290;</div>
+                <div class="result-meta">
+                  <span class="path"><i class="mdi mdi-folder-outline"></i> &#24037;&#20316;/&#20250;&#35758;&#35760;&#24405;</span>
+                  <span class="tag tag-orange">&#24037;&#20316;</span>
+                </div>
+              </div>
+              <span class="result-type">&#26152;&#22825;</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="search-footer">
+          <button class="btn-create"><i class="mdi mdi-plus"></i> &#26032;&#24314;&#21547;&#26377;&#8220;Agent&#8221;&#30340;&#31508;&#35760;</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Status Bar -->
+    <footer class="bottom-status">
+      <div class="status-left">
+        <div class="sync-indicator"><span class="sync-dot"></span><span>&#24050;&#21516;&#27493;</span></div>
+        <span>&#183;</span><span>2 &#31186;&#21069;</span>
+      </div>
+      <div class="status-right">
+        <span>23 &#31508;&#35760;</span><span>&#183;</span><span>0 &#22833;&#36133;</span>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Search result item interaction
+    document.querySelectorAll('.search-result-item').forEach(item => {
+      item.addEventListener('click', function() {
+        document.querySelectorAll('.search-result-item').forEach(el => el.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    // Clear button
+    document.querySelector('.clear-btn')?.addEventListener('click', function() {
+      const input = this.closest('.search-bar').querySelector('input');
+      input.value = '';
+      input.focus();
+    });
+  </script>
+</body>
+</html>

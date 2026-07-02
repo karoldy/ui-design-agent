@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MindFlow — 欢迎 | 高保真 Mockup</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+  <style>
+    :root {
+      --color-bg-primary: #FAFAFA;
+      --color-bg-secondary: #F5F5F5;
+      --color-bg-tertiary: #EEEEEE;
+      --color-text-primary: #1A1A1A;
+      --color-text-secondary: #6B6B6B;
+      --color-text-tertiary: #9E9E9E;
+      --color-accent: #3B82F6;
+      --color-accent-hover: #2563EB;
+      --color-accent-soft: #E8F0FE;
+      --color-success: #10B981;
+      --color-warning: #F59E0B;
+      --color-error: #EF4444;
+      --color-border: #E8E8E8;
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-xl: 16px;
+      --radius-full: 9999px;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+      --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
+      --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+      --shadow-xl: 0 16px 48px rgba(0,0,0,0.16);
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+      --space-10: 40px;
+      --space-12: 48px;
+      --space-16: 64px;
+      --font-size-xs: 11px;
+      --font-size-sm: 13px;
+      --font-size-base: 15px;
+      --font-size-lg: 18px;
+      --font-size-xl: 22px;
+      --font-size-2xl: 28px;
+      --font-size-3xl: 36px;
+      --sidebar-width: 240px;
+      --topnav-height: 48px;
+      --statusbar-height: 28px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      height: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-size: var(--font-size-base);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .ui-font { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+
+    body { background: var(--color-bg-primary); color: var(--color-text-primary); }
+
+    /* App Layout */
+    .app-layout { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+    .main-area { display: flex; flex: 1; overflow: hidden; }
+
+    /* Top Nav */
+    .top-nav {
+      height: var(--topnav-height); min-height: var(--topnav-height);
+      background: var(--color-bg-primary);
+      border-bottom: 1px solid var(--color-border);
+      display: flex; align-items: center;
+      padding: 0 var(--space-4); gap: var(--space-4);
+      z-index: 200;
+    }
+    .top-nav .logo {
+      display: flex; align-items: center; gap: var(--space-2);
+      font-family: 'Inter', system-ui, sans-serif; font-weight: 600;
+      font-size: var(--font-size-lg); color: var(--color-text-primary);
+      width: var(--sidebar-width); padding-left: var(--space-1); flex-shrink: 0;
+    }
+    .top-nav .logo i { color: var(--color-accent); font-size: 22px; }
+    .top-nav .search-bar { flex: 1; max-width: 440px; position: relative; margin: 0 auto; }
+    .top-nav .search-bar input {
+      width: 100%; height: 32px; border: 1px solid #E0E0E0; border-radius: var(--radius-sm);
+      background: var(--color-bg-secondary); padding: 0 var(--space-8) 0 32px;
+      font-size: var(--font-size-sm); font-family: inherit; color: var(--color-text-primary);
+      outline: none;
+    }
+    .top-nav .search-bar input::placeholder { color: var(--color-text-tertiary); }
+    .top-nav .search-bar .search-icon {
+      position: absolute; left: 8px; top: 50%; transform: translateY(-50%);
+      color: var(--color-text-tertiary); font-size: 16px; pointer-events: none;
+    }
+    .top-nav .search-bar .kbd-hint {
+      position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+      font-size: var(--font-size-xs); color: var(--color-text-tertiary);
+      background: var(--color-bg-tertiary); padding: 1px 5px; border-radius: 3px;
+      font-family: 'Inter', system-ui, sans-serif; pointer-events: none;
+    }
+    .top-nav .actions { display: flex; align-items: center; gap: var(--space-2); margin-left: auto; }
+    .top-nav .actions .icon-btn {
+      width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+      border: none; background: transparent; border-radius: var(--radius-sm);
+      color: var(--color-text-secondary); cursor: pointer; font-size: 20px;
+      transition: background 150ms ease;
+    }
+    .top-nav .actions .icon-btn:hover { background: var(--color-bg-tertiary); }
+    .top-nav .actions .icon-btn.active { color: var(--color-accent); background: var(--color-accent-soft); }
+    .top-nav .actions .avatar {
+      width: 28px; height: 28px; border-radius: var(--radius-full);
+      background: linear-gradient(135deg, #3B82F6, #6366F1); display: flex; align-items: center;
+      position: relative;
+      justify-content: center; font-size: var(--font-size-xs); font-weight: 600;
+      color: var(--color-accent); cursor: pointer;
+    }
+    .top-nav .actions .avatar .status-dot {
+      position: absolute; bottom: 0; right: 0;
+      width: 6px; height: 6px; background: var(--color-success);
+      border: 2px solid white; border-radius: var(--radius-full);
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: var(--sidebar-width); min-width: var(--sidebar-width);
+      background: var(--color-bg-secondary); border-right: 1px solid var(--color-border);
+      display: flex; flex-direction: column; overflow-y: auto;
+      padding: var(--space-3) 0; flex-shrink: 0;
+    }
+    .sidebar-section { padding: 0 var(--space-3); margin-bottom: var(--space-2); }
+    .sidebar-section-title {
+      display: flex; align-items: center; justify-content: space-between;
+      font-family: 'Inter', system-ui, sans-serif; font-size: var(--font-size-xs);
+      font-weight: 600; color: var(--color-text-secondary);
+      text-transform: uppercase; letter-spacing: 0.5px;
+      padding: var(--space-2) var(--space-1);
+    }
+    .sidebar-item {
+      display: flex; align-items: center; gap: var(--space-2);
+      padding: var(--space-1) var(--space-2); border-radius: var(--radius-sm);
+      cursor: pointer; font-size: var(--font-size-sm); color: var(--color-text-primary);
+      transition: background 150ms ease; height: 30px;
+    }
+    .sidebar-item:hover { background: var(--color-bg-tertiary); }
+    .sidebar-item.active { background: var(--color-accent-soft); color: var(--color-accent); }
+    .sidebar-item i { font-size: 16px; color: var(--color-text-secondary); flex-shrink: 0; }
+    .sidebar-item.active i { color: var(--color-accent); }
+    .sidebar-item .item-label { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .sidebar-item .item-count {
+      font-size: var(--font-size-xs); color: var(--color-text-tertiary);
+      background: var(--color-bg-tertiary); padding: 0 5px; border-radius: 8px;
+    }
+    .sidebar-divider { height: 1px; background: var(--color-border); margin: var(--space-2) var(--space-3); }
+    .sidebar-spacer { flex: 1; }
+    .space-usage { padding: var(--space-3); border-top: 1px solid var(--color-border); }
+    .space-usage .usage-bar { height: 4px; background: var(--color-bg-tertiary); border-radius: 2px; overflow: hidden; margin-bottom: var(--space-1); }
+    .space-usage .usage-bar .fill { height: 100%; width: 0%; background: var(--color-accent); border-radius: 2px; }
+    .space-usage .usage-text { font-size: var(--font-size-xs); color: var(--color-text-tertiary); font-family: 'Inter', system-ui, sans-serif; }
+
+    /* Content - Welcome */
+    .content {
+      flex: 1; display: flex; flex-direction: column; overflow: hidden;
+      background: var(--color-bg-primary);
+    }
+
+    .welcome-container {
+      flex: 1; display: flex; align-items: center; justify-content: center;
+      padding: var(--space-10);
+    }
+    .welcome-card {
+      text-align: center; max-width: 500px;
+    }
+
+    /* ===== SVG Illustration ===== */
+    .welcome-illustration {
+      width: 220px; height: 200px;
+      margin: 0 auto var(--space-8);
+      position: relative;
+      animation: float-up 3s ease-in-out infinite;
+    }
+    @keyframes float-up {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .welcome-illustration svg { width: 100%; height: 100%; overflow: visible; }
+
+    .welcome-illustration .node-pulse {
+      animation: pulse-node 2.5s ease-in-out infinite;
+      transform-origin: center;
+    }
+    @keyframes pulse-node {
+      0%, 100% { opacity: 0.6; r: 3; }
+      50% { opacity: 1; r: 4.5; }
+    }
+
+    .welcome-illustration .line-dash {
+      animation: dash-flow 3s linear infinite;
+    }
+    @keyframes dash-flow {
+      to { stroke-dashoffset: -60; }
+    }
+
+    .welcome-illustration .note-card-float {
+      animation: card-float 3.5s ease-in-out infinite;
+    }
+    .welcome-illustration .note-card-float:nth-child(2) { animation-delay: 0.5s; }
+    .welcome-illustration .note-card-float:nth-child(3) { animation-delay: 1s; }
+    @keyframes card-float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-4px) rotate(1deg); }
+    }
+
+    /* Text */
+    .welcome-card h1 {
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: var(--font-size-2xl);
+      font-weight: 600;
+      color: var(--color-text-primary);
+      margin-bottom: var(--space-3);
+      line-height: 1.3;
+    }
+    .welcome-card .welcome-sub {
+      font-size: var(--font-size-base);
+      color: var(--color-text-secondary);
+      line-height: 1.7;
+      margin-bottom: var(--space-2);
+      max-width: 380px;
+      margin-left: auto; margin-right: auto;
+    }
+    .welcome-card .welcome-sub + .welcome-sub {
+      margin-top: 0;
+    }
+
+    /* CTA */
+    .welcome-card .cta-btn {
+      display: inline-flex; align-items: center; gap: var(--space-3);
+      height: 48px; padding: 0 var(--space-8);
+      background: var(--color-accent);
+      color: #FFFFFF;
+      border: none; border-radius: var(--radius-md);
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: var(--font-size-base);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 200ms ease;
+      box-shadow: var(--shadow-sm);
+      margin-top: var(--space-6);
+    }
+    .welcome-card .cta-btn:hover {
+      background: var(--color-accent-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(59,130,246,0.3);
+    }
+    .welcome-card .cta-btn:active {
+      transform: translateY(0);
+      box-shadow: var(--shadow-sm);
+    }
+    .welcome-card .cta-btn i { font-size: 20px; }
+    .welcome-card .cta-btn .spinner {
+      width: 20px; height: 20px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      display: none;
+    }
+    .welcome-card .cta-btn.loading .spinner { display: block; }
+    .welcome-card .cta-btn.loading .btn-text { display: none; }
+    .welcome-card .cta-btn.loading i { display: none; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Import link */
+    .welcome-card .import-link {
+      display: inline-flex; align-items: center; gap: var(--space-1);
+      margin-top: var(--space-5);
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: var(--font-size-sm);
+      color: var(--color-accent);
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 150ms ease;
+    }
+    .welcome-card .import-link:hover {
+      color: var(--color-accent-hover);
+      text-decoration: underline;
+    }
+    .welcome-card .import-link i { font-size: 16px; }
+
+    /* Divider */
+    .welcome-divider {
+      width: 260px; height: 1px;
+      background: var(--color-border);
+      margin: var(--space-8) auto;
+    }
+
+    /* Quick Tips */
+    .quick-tips {
+      display: flex; justify-content: center;
+      gap: var(--space-4); flex-wrap: wrap;
+    }
+    .quick-tip-card {
+      display: flex; align-items: center; gap: var(--space-3);
+      background: var(--color-bg-secondary);
+      border-radius: var(--radius-md);
+      padding: var(--space-2) var(--space-4);
+      transition: background 150ms ease;
+    }
+    .quick-tip-card:hover { background: var(--color-bg-tertiary); }
+    .quick-tip-card .kbd-badge {
+      display: inline-flex; align-items: center;
+      height: 22px; padding: 0 6px;
+      background: #FFFFFF;
+      border: 1px solid #E0E0E0;
+      border-radius: var(--radius-sm);
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: var(--font-size-xs);
+      font-weight: 600;
+      color: var(--color-text-primary);
+      box-shadow: var(--shadow-sm);
+      white-space: nowrap;
+    }
+    .quick-tip-card .tip-label {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+      white-space: nowrap;
+    }
+
+    /* Bottom Status Bar */
+    .bottom-status {
+      height: var(--statusbar-height); min-height: var(--statusbar-height);
+      background: var(--color-bg-secondary);
+      border-top: 1px solid var(--color-border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 var(--space-4);
+      font-size: var(--font-size-xs); color: var(--color-text-tertiary);
+    }
+    .bottom-status .status-left { display: flex; align-items: center; gap: var(--space-3); }
+    .bottom-status .status-left .sync-indicator { display: flex; align-items: center; gap: var(--space-1); }
+    .bottom-status .status-left .sync-indicator .sync-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--color-success); display: inline-block;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed; top: 60px; right: var(--space-6);
+      background: var(--color-text-primary); color: #fff;
+      padding: var(--space-3) var(--space-5);
+      border-radius: var(--radius-md);
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: var(--font-size-sm);
+      box-shadow: var(--shadow-lg);
+      opacity: 0; pointer-events: none;
+      transform: translateY(-10px);
+      transition: opacity 250ms ease, transform 250ms ease;
+      z-index: 1000;
+      display: flex; align-items: center; gap: var(--space-2);
+    }
+    .toast.visible {
+      opacity: 1; transform: translateY(0);
+      pointer-events: auto;
+    }
+    .toast i { font-size: 18px; }
+    .toast.success i { color: var(--color-success); }
+
+    @media (max-width: 768px) {
+      .welcome-illustration { width: 160px; height: 150px; margin-bottom: var(--space-6); }
+      .welcome-card h1 { font-size: var(--font-size-xl); }
+      .welcome-card .welcome-sub { font-size: var(--font-size-sm); max-width: 300px; }
+      .quick-tips { flex-direction: column; align-items: center; }
+      .welcome-container { padding: var(--space-6); }
+    }
+    @media (max-width: 480px) {
+      .welcome-illustration { width: 120px; height: 110px; }
+      .welcome-card h1 { font-size: var(--font-size-lg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Top Nav -->
+    <header class="top-nav">
+      <div class="logo">
+        <i class="mdi mdi-graph-outline"></i>
+        <span>MindFlow</span>
+      </div>
+      <div class="search-bar">
+        <i class="mdi mdi-magnify search-icon"></i>
+        <input type="text" placeholder="搜索笔记… (⌘K)" />
+        <span class="kbd-hint">⌘K</span>
+      </div>
+      <div class="actions">
+        <button class="icon-btn" title="设置"><i class="mdi mdi-cog-outline"></i></button>
+        <div class="avatar">T<span class="status-dot"></span></div>
+      </div>
+    </header>
+
+    <!-- Main Area -->
+    <div class="main-area">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="sidebar-section">
+          <div class="sidebar-item active">
+            <i class="mdi mdi-note-text-outline"></i>
+            <span class="item-label">所有笔记</span>
+            <span class="item-count">0</span>
+          </div>
+          <div class="sidebar-item" style="opacity:0.5;pointer-events:none;">
+            <i class="mdi mdi-calendar-text-outline"></i>
+            <span class="item-label">每日笔记</span>
+          </div>
+          <div class="sidebar-item" style="opacity:0.5;pointer-events:none;">
+            <i class="mdi mdi-delete-outline"></i>
+            <span class="item-label">回收站</span>
+          </div>
+        </div>
+        <div class="sidebar-divider"></div>
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">
+            <span>笔记本</span>
+            <i class="mdi mdi-plus" style="font-size:14px;color:var(--color-text-tertiary);cursor:pointer;"></i>
+          </div>
+          <div style="padding: var(--space-4) var(--space-2); text-align: center;">
+            <div style="font-size: var(--font-size-xs); color: var(--color-text-tertiary); line-height: 1.5;">
+              还没有笔记本<br>
+              <span style="font-size: 10px;">点击 + 开始创建</span>
+            </div>
+          </div>
+        </div>
+        <div class="sidebar-spacer"></div>
+        <div class="space-usage">
+          <div class="usage-bar"><div class="fill" style="width:0%;"></div></div>
+          <div class="usage-text">使用 0% · 0 B / 5 GB</div>
+        </div>
+      </aside>
+
+      <!-- Content -->
+      <main class="content">
+        <div class="welcome-container">
+          <div class="welcome-card">
+
+            <!-- SVG Illustration: brain + nodes + floating note cards -->
+            <div class="welcome-illustration">
+              <svg viewBox="0 0 220 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id="brain-grad" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#3B82F6" stop-opacity="0.15"/>
+                    <stop offset="100%" stop-color="#3B82F6" stop-opacity="0.05"/>
+                  </linearGradient>
+                  <linearGradient id="node-grad" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#3B82F6" stop-opacity="0.8"/>
+                    <stop offset="100%" stop-color="#60A5FA" stop-opacity="0.6"/>
+                  </linearGradient>
+                </defs>
+
+                <!-- Background glow -->
+                <ellipse cx="110" cy="105" rx="90" ry="80" fill="url(#brain-grad)"/>
+
+                <!-- Brain outline -->
+                <path d="M110 175C138 175 160 153 160 125C160 108.5 152 94 140 85.5C138 71 127 60 114 57C109 48 100 42 91 42C80 42 72 49 68 58C56 62 48 75 48 88C48 101 56 112 66 116C68 122 72 126 78 128C80 132 83 135 87 136C88 140 92 143 97 143H110Z" stroke="#3B82F6" stroke-width="2" fill="url(#brain-grad)" opacity="0.7">
+                  <animate attributeName="opacity" values="0.7;0.85;0.7" dur="4s" repeatCount="indefinite"/>
+                </path>
+
+                <!-- Brain inner network lines -->
+                <g stroke="#A0C4FF" stroke-width="1.2" stroke-dasharray="5 4" class="line-dash">
+                  <path d="M85 80L95 72L100 82"/>
+                  <path d="M100 82L110 76L120 84"/>
+                  <path d="M120 84L128 78L135 86"/>
+                  <path d="M90 95L100 88L108 96"/>
+                  <path d="M85 110L96 102L104 112"/>
+                  <path d="M115 100L124 92L132 100"/>
+                  <path d="M105 120L112 114L120 122"/>
+                </g>
+
+                <!-- Neural nodes inside brain -->
+                <circle cx="95" cy="80" r="3" fill="#3B82F6" opacity="0.5"/>
+                <circle cx="110" cy="76" r="2.5" fill="#3B82F6" opacity="0.4"/>
+                <circle cx="125" cy="82" r="3" fill="#3B82F6" opacity="0.5"/>
+                <circle cx="100" cy="88" r="2.5" fill="#3B82F6" opacity="0.4"/>
+                <circle cx="115" cy="92" r="3" fill="#3B82F6" opacity="0.5"/>
+                <circle cx="103" cy="108" r="2.5" fill="#3B82F6" opacity="0.4"/>
+
+                <!-- Pulsing central node -->
+                <circle cx="110" cy="95" r="4" fill="url(#node-grad)" class="node-pulse"/>
+
+                <!-- Connection lines from brain to outer nodes -->
+                <g stroke="#A0C4FF" stroke-width="1" stroke-dasharray="4 3" opacity="0.5">
+                  <line x1="135" y1="86" x2="160" y2="60"/>
+                  <line x1="85" y1="110" x2="55" y2="130"/>
+                  <line x1="120" y1="122" x2="145" y2="150"/>
+                  <line x1="78" y1="80" x2="45" y2="55"/>
+                </g>
+
+                <!-- Outer floating notes (note card icons) -->
+                <g class="note-card-float">
+                  <rect x="155" y="32" width="48" height="36" rx="5" fill="white" stroke="#D0DDFF" stroke-width="1.2" filter="url(#drop-shadow)"/>
+                  <rect x="160" y="40" width="38" height="3" rx="1.5" fill="#E8F0FE"/>
+                  <rect x="160" y="47" width="28" height="2" rx="1" fill="#E8F0FE" opacity="0.6"/>
+                  <circle cx="170" cy="58" r="3.5" fill="#3B82F6" opacity="0.3"/>
+                </g>
+
+                <g class="note-card-float" style="animation-delay: 0.8s;">
+                  <rect x="20" y="50" width="46" height="34" rx="5" fill="white" stroke="#D0DDFF" stroke-width="1.2"/>
+                  <rect x="26" y="58" width="34" height="3" rx="1.5" fill="#E8F0FE"/>
+                  <rect x="26" y="65" width="24" height="2" rx="1" fill="#E8F0FE" opacity="0.6"/>
+                  <circle cx="38" cy="75" r="3" fill="#3B82F6" opacity="0.3"/>
+                </g>
+
+                <g class="note-card-float" style="animation-delay: 1.6s;">
+                  <rect x="140" y="140" width="50" height="36" rx="5" fill="white" stroke="#D0DDFF" stroke-width="1.2"/>
+                  <rect x="146" y="148" width="38" height="3" rx="1.5" fill="#E8F0FE"/>
+                  <rect x="146" y="155" width="28" height="2" rx="1" fill="#E8F0FE" opacity="0.6"/>
+                  <circle cx="158" cy="166" r="3.5" fill="#3B82F6" opacity="0.3"/>
+                </g>
+
+                <g class="note-card-float" style="animation-delay: 0.4s;">
+                  <rect x="30" y="130" width="44" height="32" rx="5" fill="white" stroke="#D0DDFF" stroke-width="1.2"/>
+                  <rect x="36" y="138" width="32" height="3" rx="1.5" fill="#E8F0FE"/>
+                  <rect x="36" y="145" width="22" height="2" rx="1" fill="#E8F0FE" opacity="0.6"/>
+                  <circle cx="48" cy="155" r="3" fill="#3B82F6" opacity="0.3"/>
+                </g>
+
+                <!-- Sparkles decoration -->
+                <g fill="#3B82F6" opacity="0.25">
+                  <path d="M170 95 L172 90 L174 95 L179 97 L174 99 L172 104 L170 99 L165 97 Z"/>
+                  <path d="M50 28 L51.5 25 L53 28 L56 29.5 L53 31 L51.5 34 L50 31 L47 29.5 Z"/>
+                  <path d="M180 40 L181.5 37 L183 40 L186 41.5 L183 43 L181.5 46 L180 43 L177 41.5 Z"/>
+                </g>
+              </svg>
+            </div>
+
+            <!-- Text -->
+            <h1>欢迎来到 MindFlow</h1>
+            <p class="welcome-sub">开始记录你的思考，让知识连接起来。</p>
+            <p class="welcome-sub">点击下方按钮开始你的第一篇笔记。</p>
+
+            <!-- CTA -->
+            <button class="cta-btn" id="createFirstNote">
+              <i class="mdi mdi-plus-circle-outline"></i>
+              <span class="btn-text">新建第一篇笔记</span>
+              <div class="spinner"></div>
+            </button>
+
+            <!-- Import -->
+            <a class="import-link" id="importData">
+              <i class="mdi mdi-import"></i>
+              从其他工具导入数据 →
+            </a>
+
+            <!-- Divider -->
+            <div class="welcome-divider"></div>
+
+            <!-- Quick Tips -->
+            <div class="quick-tips">
+              <div class="quick-tip-card">
+                <span class="kbd-badge">⌘N</span>
+                <span class="tip-label">快速新建</span>
+              </div>
+              <div class="quick-tip-card">
+                <span class="kbd-badge">[[</span>
+                <span class="tip-label">链接笔记</span>
+              </div>
+              <div class="quick-tip-card">
+                <span class="kbd-badge">#</span>
+                <span class="tip-label">添加标签</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Bottom Status Bar -->
+    <footer class="bottom-status">
+      <div class="status-left">
+        <div class="sync-indicator">
+          <span class="sync-dot"></span>
+          <span>准备就绪</span>
+        </div>
+        <span>·</span>
+        <span>离线模式</span>
+      </div>
+      <div class="status-right">
+        <span>0 笔记</span>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast">
+    <i class="mdi"></i>
+    <span class="toast-msg"></span>
+  </div>
+
+  <script>
+    (function() {
+      let toastTimer = null;
+      function showToast(msg) {
+        const t = document.getElementById('toast');
+        t.querySelector('i').className = 'mdi mdi-check-circle';
+        t.className = 'toast success';
+        t.querySelector('.toast-msg').textContent = msg;
+        t.classList.add('visible');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(function() { t.classList.remove('visible'); }, 2500);
+      }
+
+      // CTA button
+      document.getElementById('createFirstNote').addEventListener('click', function() {
+        const btn = this;
+        btn.classList.add('loading');
+        btn.disabled = true;
+        setTimeout(function() {
+          btn.classList.remove('loading');
+          btn.disabled = false;
+          showToast('已创建新笔记「无标题笔记」');
+          // Update sidebar item count
+          const countEl = document.querySelector('.sidebar-item .item-count');
+          if (countEl) countEl.textContent = '1';
+        }, 1500);
+      });
+
+      // Import link
+      document.getElementById('importData').addEventListener('click', function(e) {
+        e.preventDefault();
+        showToast('正在准备导入向导…');
+      });
+    })();
+  </script>
+</body>
+</html>

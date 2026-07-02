@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MindFlow iOS — 笔记列表</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+  <style>
+    /* ===== Reset & Base ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      height: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif;
+      background: #C8C8CC;
+      color: #000000;
+      font-size: 17px;
+      line-height: 1.47059;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    /* ===== iOS Design Tokens ===== */
+    :root {
+      --ios-bg: #F2F2F7;
+      --ios-bg-elevated: #FFFFFF;
+      --ios-text: #000000;
+      --ios-text-secondary: #8E8E93;
+      --ios-accent: #3B82F6;
+      --ios-separator: #C6C6C8;
+      --ios-separator-light: #E5E5EA;
+      --ios-red: #FF3B30;
+      --ios-green: #34C759;
+      --ios-orange: #FF9500;
+      --ios-radius: 10px;
+      --iphone-w: 393px;
+      --iphone-h: 852px;
+    }
+
+    /* ===== iPhone Frame ===== */
+    .iphone-frame {
+      width: var(--iphone-w);
+      height: var(--iphone-h);
+      background: var(--ios-bg);
+      border-radius: 54px;
+      overflow: hidden;
+      position: relative;
+      box-shadow:
+        0 0 0 1px rgba(0,0,0,0.1),
+        0 8px 40px rgba(0,0,0,0.18),
+        0 24px 80px rgba(0,0,0,0.12);
+    }
+
+    .iphone-screen {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ===== Dynamic Island ===== */
+    .dynamic-island {
+      position: absolute;
+      top: 11px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 126px;
+      height: 36px;
+      background: #000;
+      border-radius: 20px;
+      z-index: 100;
+    }
+
+    /* ===== Status Bar ===== */
+    .status-bar {
+      height: 54px;
+      padding: 14px 30px 0 30px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      background: transparent;
+      position: relative;
+      z-index: 50;
+      flex-shrink: 0;
+    }
+    .status-bar .time {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      color: #000;
+      line-height: 1;
+      padding-top: 1px;
+    }
+    .status-bar .status-icons {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 14px;
+      color: #000;
+      padding-top: 2px;
+    }
+    .status-bar .status-icons i {
+      font-size: 15px;
+      line-height: 1;
+    }
+    .status-bar .status-icons .battery-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .status-bar .status-icons .battery-wrap .battery-body {
+      width: 25px;
+      height: 11.5px;
+      border: 1.5px solid #000;
+      border-radius: 2px;
+      position: relative;
+    }
+    .status-bar .status-icons .battery-wrap .battery-body .battery-fill {
+      position: absolute;
+      top: 1.5px;
+      left: 1.5px;
+      width: 16px;
+      height: 5.5px;
+      background: #34C759;
+      border-radius: 1px;
+    }
+    .status-bar .status-icons .battery-wrap .battery-tip {
+      width: 1.5px;
+      height: 4.5px;
+      background: #000;
+      border-radius: 0 1px 1px 0;
+      margin-left: 1px;
+    }
+
+    /* ===== Navigation Bar ===== */
+    .nav-bar {
+      flex-shrink: 0;
+      padding: 8px 16px 0 16px;
+      background: transparent;
+      position: relative;
+      z-index: 10;
+    }
+    .nav-bar .nav-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+    .nav-bar .nav-actions .nav-left {
+      font-size: 17px;
+      color: var(--ios-accent);
+      font-weight: 400;
+      cursor: default;
+      padding: 4px 0;
+    }
+    .nav-bar .nav-actions .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .nav-bar .nav-actions .nav-right button {
+      background: none;
+      border: none;
+      font-size: 17px;
+      color: var(--ios-accent);
+      font-family: inherit;
+      cursor: pointer;
+      padding: 4px 0;
+    }
+    .nav-bar .nav-actions .nav-right button:active {
+      opacity: 0.4;
+    }
+    .nav-bar .nav-actions .nav-right .new-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--ios-accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+    }
+    .nav-bar .nav-actions .nav-right .new-btn i {
+      color: #fff;
+      font-size: 18px;
+      line-height: 1;
+    }
+    .nav-bar .nav-actions .nav-right .new-btn:active {
+      opacity: 0.8;
+    }
+    .nav-bar .large-title {
+      font-size: 34px;
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: 0.3px;
+      color: var(--ios-text);
+      margin-bottom: 6px;
+    }
+
+    /* ===== Search Bar ===== */
+    .search-section {
+      flex-shrink: 0;
+      padding: 8px 16px 0 16px;
+      background: transparent;
+    }
+    .search-bar {
+      display: flex;
+      align-items: center;
+      height: 36px;
+      background: rgba(118, 118, 128, 0.12);
+      border-radius: 10px;
+      padding: 0 8px;
+      gap: 4px;
+    }
+    .search-bar i {
+      font-size: 16px;
+      color: var(--ios-text-secondary);
+      flex-shrink: 0;
+      margin-left: 2px;
+    }
+    .search-bar input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      font-size: 17px;
+      font-family: inherit;
+      color: var(--ios-text);
+      outline: none;
+      line-height: 1.2;
+    }
+    .search-bar input::placeholder {
+      color: var(--ios-text-secondary);
+    }
+
+    /* ===== List Content ===== */
+    .list-content {
+      flex: 1;
+      overflow-y: auto;
+      padding-top: 4px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .list-content::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* ===== Section Header ===== */
+    .section-header {
+      padding: 10px 16px 6px 16px;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--ios-text);
+      letter-spacing: 0.2px;
+      background: transparent;
+    }
+
+    /* ===== Note List Item ===== */
+    .note-item {
+      display: flex;
+      align-items: flex-start;
+      padding: 11px 16px 11px 16px;
+      background: var(--ios-bg-elevated);
+      border-bottom: 0.5px solid var(--ios-separator-light);
+      cursor: default;
+      transition: background 0.15s;
+      position: relative;
+    }
+    .note-item:active {
+      background: #D9D9D9;
+    }
+    .note-item:last-child {
+      border-bottom: none;
+    }
+    .note-item .item-content {
+      flex: 1;
+      min-width: 0;
+    }
+    .note-item .item-title-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 2px;
+    }
+    .note-item .item-title-row .pin {
+      font-size: 12px;
+      color: var(--ios-orange);
+      flex-shrink: 0;
+    }
+    .note-item .item-title-row .pin i {
+      font-size: 12px;
+    }
+    .note-item .item-title-row .title {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--ios-text);
+      line-height: 1.3;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .note-item .item-excerpt {
+      font-size: 15px;
+      color: var(--ios-text-secondary);
+      line-height: 1.3;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 4px;
+    }
+    .note-item .item-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .note-item .item-meta .timestamp {
+      font-size: 13px;
+      color: var(--ios-text-secondary);
+    }
+    .note-item .item-meta .tag {
+      display: inline-block;
+      font-size: 12px;
+      color: #555;
+      background: #F0F0F5;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-weight: 500;
+      line-height: 1.4;
+    }
+    .note-item .item-meta .tag.tag-blue {
+      background: #DBEAFE;
+      color: #1E40AF;
+    }
+    .note-item .item-meta .tag.tag-green {
+      background: #D1FAE5;
+      color: #065F46;
+    }
+    .note-item .item-meta .tag.tag-purple {
+      background: #EDE9FE;
+      color: #5B21B6;
+    }
+    .note-item .item-meta .tag.tag-orange {
+      background: #FFEDD5;
+      color: #9A3412;
+    }
+    .note-item .item-meta .tag.tag-pink {
+      background: #FCE7F3;
+      color: #9D174D;
+    }
+    .note-item .item-meta .tag.tag-teal {
+      background: #CCFBF1;
+      color: #115E59;
+    }
+    .note-item .item-chevron {
+      color: #C7C7CC;
+      font-size: 14px;
+      margin-left: 8px;
+      flex-shrink: 0;
+      padding-top: 4px;
+    }
+    .note-item .item-chevron i {
+      font-size: 14px;
+    }
+
+    /* ===== Swipe Hint ===== */
+    .swipe-hint {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      color: var(--ios-text-secondary);
+      padding: 2px 0 8px 16px;
+      background: transparent;
+    }
+    .swipe-hint i {
+      font-size: 12px;
+    }
+
+    /* ===== Tab Bar ===== */
+    .tab-bar {
+      flex-shrink: 0;
+      height: 50px;
+      background: rgba(249, 249, 249, 0.94);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-top: 0.5px solid rgba(0, 0, 0, 0.15);
+      display: flex;
+      align-items: stretch;
+      padding-bottom: 0;
+      position: relative;
+      z-index: 20;
+    }
+    .tab-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-family: inherit;
+      padding: 0;
+      color: var(--ios-text-secondary);
+      -webkit-tap-highlight-color: transparent;
+      transition: color 0.15s;
+    }
+    .tab-item i {
+      font-size: 24px;
+      line-height: 1;
+    }
+    .tab-item .tab-label {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.2px;
+      line-height: 1.2;
+    }
+    .tab-item.active {
+      color: var(--ios-accent);
+    }
+    .tab-item:active {
+      opacity: 0.5;
+    }
+
+    /* ===== Home Indicator ===== */
+    .home-indicator {
+      flex-shrink: 0;
+      height: 21px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      position: relative;
+      z-index: 20;
+    }
+    .home-indicator .bar {
+      width: 134px;
+      height: 5px;
+      background: #000;
+      border-radius: 2.5px;
+      opacity: 0.2;
+    }
+
+    /* ===== List card wrapper ===== */
+    .list-card {
+      background: var(--ios-bg-elevated);
+      border-radius: 10px;
+      margin: 0 16px 20px 16px;
+      overflow: hidden;
+      box-shadow: 0 0 0 0.5px rgba(0,0,0,0.04);
+    }
+    .list-card .note-item:first-child {
+      padding-top: 12px;
+    }
+    .list-card .note-item:last-child {
+      padding-bottom: 12px;
+    }
+
+    /* ===== Side swipe visual hint ===== */
+    .note-item.swipe-delete {
+      position: relative;
+      overflow: hidden;
+    }
+    .note-item.swipe-delete::after {
+      content: '删除';
+      position: absolute;
+      right: -60px;
+      top: 0;
+      bottom: 0;
+      width: 60px;
+      background: var(--ios-red);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      font-weight: 500;
+      transition: right 0.3s ease;
+    }
+    .note-item.swipe-delete:hover::after {
+      right: 0;
+    }
+  </style>
+</head>
+<body>
+
+<div class="iphone-frame">
+  <div class="iphone-screen">
+
+    <!-- Dynamic Island -->
+    <div class="dynamic-island"></div>
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span class="time">9:41</span>
+      <div class="status-icons">
+        <i class="mdi mdi-signal-cellular-3" style="font-size: 14px;"></i>
+        <i class="mdi mdi-wifi" style="font-size: 15px;"></i>
+        <div class="battery-wrap">
+          <div class="battery-body">
+            <div class="battery-fill"></div>
+          </div>
+          <div class="battery-tip"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Nav Bar -->
+    <div class="nav-bar">
+      <div class="nav-actions">
+        <div class="nav-left">编辑</div>
+        <div class="nav-right">
+          <button><i class="mdi mdi-magnify"></i></button>
+          <button class="new-btn" title="新建笔记"><i class="mdi mdi-plus"></i></button>
+        </div>
+      </div>
+      <div class="large-title">笔记</div>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="search-section">
+      <div class="search-bar">
+        <i class="mdi mdi-magnify"></i>
+        <input type="text" placeholder="搜索" readonly>
+      </div>
+    </div>
+
+    <!-- List Content -->
+    <div class="list-content">
+
+      <!-- 今天 -->
+      <div class="section-header">今天</div>
+      <div class="list-card">
+        <div class="note-item" onclick="void(0)">
+          <div class="item-content">
+            <div class="item-title-row">
+              <span class="pin"><i class="mdi mdi-pin"></i></span>
+              <span class="title">产品设计方案 v3</span>
+            </div>
+            <div class="item-excerpt">首页导航的信息架构优化，增加快捷入口区域，调整搜索位置至顶部…</div>
+            <div class="item-meta">
+              <span class="timestamp">3分钟前</span>
+              <span class="tag tag-blue">设计</span>
+              <span class="tag tag-green">产品</span>
+            </div>
+          </div>
+          <div class="item-chevron"><i class="mdi mdi-chevron-right"></i></div>
+        </div>
+
+        <div class="note-item" onclick="void(0)">
+          <div class="item-content">
+            <div class="item-title-row">
+              <span class="title">AI Agent 应用场景分析</span>
+            </div>
+            <div class="item-excerpt">梳理当前主流 AI Agent 的应用场景，包括客服、代码生成、数据分析、个人助理等方向…</div>
+            <div class="item-meta">
+              <span class="timestamp">12分钟前</span>
+              <span class="tag tag-purple">AI</span>
+              <span class="tag tag-teal">技术</span>
+            </div>
+          </div>
+          <div class="item-chevron"><i class="mdi mdi-chevron-right"></i></div>
+        </div>
+
+        <div class="note-item" onclick="void(0)">
+          <div class="item-content">
+            <div class="item-title-row">
+              <span class="title">Weekly Team Sync — 第27周</span>
+            </div>
+            <div class="item-excerpt">本周主要推进搜索功能的 QAT 验收，修复 5 个 P0 问题，确定下周一上线计划…</div>
+            <div class="item-meta">
+              <span class="timestamp">1小时前</span>
+              <span class="tag tag-blue">会议</span>
+            </div>
+          </div>
+          <div class="item-chevron"><i class="mdi mdi-chevron-right"></i></div>
+        </div>
+      </div>
+
+      <!-- 昨天 -->
+      <div class="section-header">昨天</div>
+      <div class="list-card">
+        <div class="note-item" onclick="void(0)">
+          <div class="item-content">
+            <div class="item-title-row">
+              <span class="title">RAG 技术方案研究</span>
+            </div>
+            <div class="item-excerpt">对比 LangChain、LlamaIndex、Haystack 三种 RAG 框架的架构差异和适用场景…</div>
+            <div class="item-meta">
+              <span class="timestamp">昨天</span>
+              <span class="tag tag-purple">AI</span>
+              <span class="tag tag-teal">技术</span>
+              <span class="tag tag-orange">研究</span>
+            </div>
+          </div>
+          <div class="item-chevron"><i class="mdi mdi-chevron-right"></i></div>
+        </div>
+
+        <div class="note-item" onclick="void(0)">
+          <div class="item-content">
+            <div class="item-title-row">
+              <span class="title">用户访谈纪要 — 搜索功能</span>
+            </div>
+            <div class="item-excerpt">5 名用户参与了搜索功能可用性测试，主要发现：搜索入口不够显眼、结果相关度需提升…</div>
+            <div class="item-meta">
+              <span class="timestamp">昨天</span>
+              <span class="tag tag-pink">用户研究</span>
+              <span class="tag tag-blue">产品</span>
+            </div>
+          </div>
+          <div class="item-chevron"><i class="mdi mdi-chevron-right"></i></div>
+        </div>
+
+        <div class="note-item" onclick="void(0)">
+          <div class="item-content">
+            <div class="item-title-row">
+              <span class="title">组件库规范更新 — Button</span>
+            </div>
+            <div class="item-excerpt">更新 Button 组件的状态规范：新增 loading 态，adjust 悬停态的阴影深度和过渡时长…</div>
+            <div class="item-meta">
+              <span class="timestamp">昨天</span>
+              <span class="tag tag-green">设计系统</span>
+            </div>
+          </div>
+          <div class="item-chevron"><i class="mdi mdi-chevron-right"></i></div>
+        </div>
+
+        <div class="note-item" onclick="void(0)">
+          <div class="item-content">
+            <div class="item-title-row">
+              <span class="pin"><i class="mdi mdi-pin"></i></span>
+              <span class="title">MindFlow 产品路线图 Q3</span>
+            </div>
+            <div class="item-excerpt">Q3 规划：iOS App MVP (7-8月)、知识图谱 P1 (8-9月)、协作编辑 (9月)…</div>
+            <div class="item-meta">
+              <span class="timestamp">昨天</span>
+              <span class="tag tag-blue">产品</span>
+              <span class="tag tag-orange">规划</span>
+            </div>
+          </div>
+          <div class="item-chevron"><i class="mdi mdi-chevron-right"></i></div>
+        </div>
+      </div>
+
+      <!-- 更早 -->
+      <div class="section-header">更早</div>
+      <div class="list-card">
+        <div class="note-item" onclick="void(0)">
+          <div class="item-content">
+            <div class="item-title-row">
+              <span class="title">Flutter vs React Native 对比</span>
+            </div>
+            <div class="item-excerpt">从性能、开发效率、社区生态、跨平台一致性四个维度对比两大跨平台框架…</div>
+            <div class="item-meta">
+              <span class="timestamp">7月1日</span>
+              <span class="tag tag-teal">技术</span>
+            </div>
+          </div>
+          <div class="item-chevron"><i class="mdi mdi-chevron-right"></i></div>
+        </div>
+      </div>
+
+      <div style="height: 8px;"></div>
+    </div>
+
+    <!-- Tab Bar -->
+    <div class="tab-bar">
+      <button class="tab-item active">
+        <i class="mdi mdi-note-text-outline"></i>
+        <span class="tab-label">笔记</span>
+      </button>
+      <button class="tab-item" onclick="void(0)">
+        <i class="mdi mdi-magnify"></i>
+        <span class="tab-label">搜索</span>
+      </button>
+      <button class="tab-item" onclick="void(0)">
+        <i class="mdi mdi-graph-outline"></i>
+        <span class="tab-label">图谱</span>
+      </button>
+      <button class="tab-item" onclick="void(0)">
+        <i class="mdi mdi-cog-outline"></i>
+        <span class="tab-label">设置</span>
+      </button>
+    </div>
+
+    <!-- Home Indicator -->
+    <div class="home-indicator">
+      <div class="bar"></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // Simple tab bar interactivity
+  document.querySelectorAll('.tab-item').forEach(tab => {
+    tab.addEventListener('click', function() {
+      document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
+</script>
+
+</body>
+</html>

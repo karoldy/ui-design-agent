@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MindFlow 基础组件库</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-bg-primary: #FAFAFA;
+      --color-bg-secondary: #F5F5F5;
+      --color-bg-tertiary: #EEEEEE;
+      --color-text-primary: #1A1A1A;
+      --color-text-secondary: #6B6B6B;
+      --color-text-tertiary: #9E9E9E;
+      --color-text-link: #3B82F6;
+      --color-text-on-accent: #FFFFFF;
+      --color-accent: #3B82F6;
+      --color-accent-hover: #2563EB;
+      --color-accent-soft: #E8F0FE;
+      --color-success: #10B981;
+      --color-warning: #F59E0B;
+      --color-error: #EF4444;
+      --font-family-ui: 'Inter', system-ui, -apple-system, sans-serif;
+      --font-family-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-size-xs: 11px;
+      --font-size-sm: 13px;
+      --font-size-base: 15px;
+      --font-size-lg: 18px;
+      --font-size-xl: 22px;
+      --font-size-2xl: 28px;
+      --font-size-3xl: 36px;
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+      --space-10: 40px;
+      --space-12: 48px;
+      --space-16: 64px;
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-xl: 16px;
+      --radius-full: 9999px;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+      --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
+      --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+      --shadow-xl: 0 16px 48px rgba(0,0,0,0.16);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: var(--font-family-body);
+      background: var(--color-bg-primary);
+      color: var(--color-text-primary);
+      -webkit-font-smoothing: antialiased;
+    }
+    /* Header */
+    .header {
+      background: #fff;
+      border-bottom: 1px solid #E8E8E8;
+      padding: 0 var(--space-10);
+      height: 64px;
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .header-logo {
+      font-family: var(--font-family-ui);
+      font-weight: 700;
+      font-size: var(--font-size-xl);
+      color: var(--color-text-primary);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+    .header-logo .mdi { color: var(--color-accent); font-size: 28px; }
+    .header-subtitle {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+      margin-left: auto;
+      font-family: var(--font-family-ui);
+    }
+    .header-count {
+      background: var(--color-accent-soft);
+      color: var(--color-accent);
+      padding: 2px 10px;
+      border-radius: var(--radius-full);
+      font-size: var(--font-size-xs);
+      font-weight: 600;
+      font-family: var(--font-family-ui);
+    }
+    /* Hero */
+    .hero {
+      text-align: center;
+      padding: var(--space-16) var(--space-6) var(--space-10);
+      max-width: 640px;
+      margin: 0 auto;
+    }
+    .hero h1 {
+      font-family: var(--font-family-ui);
+      font-size: var(--font-size-3xl);
+      font-weight: 700;
+      margin-bottom: var(--space-3);
+    }
+    .hero p {
+      font-size: var(--font-size-base);
+      color: var(--color-text-secondary);
+      line-height: 1.6;
+    }
+    .hero .mdi {
+      font-size: 48px;
+      color: var(--color-accent);
+      margin-bottom: var(--space-4);
+    }
+    /* Grid */
+    .grid {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 var(--space-6) var(--space-16);
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: var(--space-4);
+    }
+    .card {
+      background: #fff;
+      border: 1px solid #E8E8E8;
+      border-radius: var(--radius-md);
+      padding: var(--space-5);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+    }
+    .card:hover {
+      border-color: var(--color-accent);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+    .card:active {
+      transform: translateY(0);
+    }
+    .card-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-sm);
+      background: var(--color-accent-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: var(--space-3);
+    }
+    .card-icon .mdi {
+      font-size: 22px;
+      color: var(--color-accent);
+    }
+    .card h3 {
+      font-family: var(--font-family-ui);
+      font-size: var(--font-size-base);
+      font-weight: 600;
+      margin-bottom: var(--space-1);
+    }
+    .card p {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+      line-height: 1.5;
+      flex: 1;
+    }
+    .card-meta {
+      margin-top: var(--space-3);
+      padding-top: var(--space-3);
+      border-top: 1px solid #F0F0F0;
+      font-size: var(--font-size-xs);
+      color: var(--color-text-tertiary);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+    .card-tags {
+      display: flex;
+      gap: var(--space-1);
+      flex-wrap: wrap;
+      margin-top: var(--space-2);
+    }
+    .card-tag {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: var(--radius-sm);
+      background: var(--color-bg-secondary);
+      color: var(--color-text-secondary);
+      font-family: var(--font-family-ui);
+    }
+    /* Section label */
+    .section-label {
+      max-width: 1200px;
+      margin: var(--space-10) auto var(--space-4);
+      padding: 0 var(--space-6);
+      font-family: var(--font-family-ui);
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .footer {
+      text-align: center;
+      padding: var(--space-10) var(--space-6);
+      font-size: var(--font-size-sm);
+      color: var(--color-text-tertiary);
+      border-top: 1px solid #E8E8E8);
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-logo">
+      <i class="mdi mdi-brain"></i>
+      MindFlow
+    </div>
+    <span class="header-count">13 组件</span>
+    <span class="header-subtitle">基础组件库</span>
+  </div>
+
+  <div class="hero">
+    <i class="mdi mdi-package-variant-closed"></i>
+    <h1>基础组件库</h1>
+    <p>MindFlow 设计系统的 13 个基础 UI 组件。每个组件覆盖所有状态变体，点击卡片查看完整设计稿。</p>
+  </div>
+
+  <div class="grid">
+    <a href="button.html" class="card">
+      <div class="card-icon"><i class="mdi mdi-cursor-default-click"></i></div>
+      <h3>Button 按钮</h3>
+      <p>Primary / Secondary / Ghost / Danger / Icon 变体，3 种尺寸，含 Loading、Disabled 状态</p>
+      <div class="card-tags"><span class="card-tag">5 变体</span><span class="card-tag">3 尺寸</span><span class="card-tag">按钮组</span></div>
+    </a>
+
+    <a href="input.html" class="card">
+      <div class="card-icon"><i class="mdi mdi-form-textbox"></i></div>
+      <h3>Input 输入框</h3>
+      <p>Default / Error / Disabled / Read-only 状态，前/后缀图标，Password / Search 特殊场景</p>
+      <div class="card-tags"><span class="card-tag">3 尺寸</span><span class="card-tag">带图标</span><span class="card-tag">密码显隐</span></div>
+    </a>
+
+    <a href="select.html" class="card">
+      <div class="card-icon"><i class="mdi mdi-menu-down"></i></div>
+      <h3>Select 下拉选择</h3>
+      <p>Native / Custom 变体，单选/多选带 Tag，搜索过滤，分组选项</p>
+      <div class="card-tags"><span class="card-tag">多选</span><span class="card-tag">搜索</span><span class="card-tag">分组</span></div>
+    </a>
+
+    <a href="checkbox-radio.html" class="card">
+      <div class="card-icon"><i class="mdi mdi-checkbox-marked"></i></div>
+      <h3>Checkbox &amp; Radio</h3>
+      <p>Checkbox 三态（含 Indeterminate），Radio 选中/禁用，垂直/水平/分组布局</p>
+      <div class="card-tags"><span class="card-tag">三态</span><span class="card-tag">分组</span><span class="card-tag">多行标签</span></div>
+    </a>
+
+    <a href="toggle.html" class="card">
+      <div class="card-icon"><i class="mdi mdi-toggle-switch"></i></div>
+      <h3>Toggle 开关</h3>
+      <p>On/Off/Disabled 状态，3 种尺寸，带标签文字与描述文字</p>
+      <div class="card-tags"><span class="card-tag">3 尺寸</span><span class="card-tag">带标签</span><span class="card-tag">禁用态</span></div>
+    </a>
+
+    <a href="badge.html" class="card">
+      <div class="card-icon"><i class="mdi mdi-badge-account"></i></div>
+      <h3>Badge 徽章</h3>
+      <p>Dot / Number / Text 变体，8 色标签 + 3 语义色，附加在图标和按钮上</p>
+      <div class="card-tags"><span class="card-tag">3 变体</span><span class="card-tag">11 色</span><span class="card-tag">定位展示</span></div>
+    </a>
+
+    <a href="tag.html" class="card">
+      <div class="card-icon"><i class="mdi mdi-tag"></i></div>
+      <h3>Tag 标签</h3>
+      <p>8 色 pastel 变体，Outline / Removable 形态，可点击/可删除/可选中</p>
+      <div class="card-tags"><span class="card-tag">8 色</span><span class="card-tag">可交互</span><span class="card-tag">层级</span></div>
+    </a>
+
+    <a href="tooltip.html" class="card">
+      <div class="card-icon"><i class="mdi mdi-tooltip"></i></div>
+      <h3>Tooltip 提示框</h3>
+      <p>Top/Bottom/Left/Right 方向，纯文本/富内容/快捷键提示，Dark/Light 样式</p>
+      <div class="card-tags"><span class="card-tag">4 方向</span><span class="card-tag">延时显示</span><span class="card-tag">富内容</span></div>
+    </a>
+
+    <a href="loading.html" class="card">
+      <div class="card-icon"><i class="mdi mdi-loading"></i></div>
+      <h3>Loading 加载状态</h3>
+      <p>Spinner 3 尺寸，Skeleton 多场景，Progress bar 确定/不确定进度</p>
+      <div class="card-tags"><span class="card-tag">Spinner</span><span class="card-tag">Skeleton</span><span class="card-tag">进度条</span></div>
+    </a>
+
+    <a href="divider.html" class="card">
+      <div class="card-icon"><i class="mdi mdi-divider"></i></div>
+      <h3>Divider 分割线</h3>
+      <p>水平/垂直方向，Solid/Dashed/Dotted 样式，带文字/图标分割线</p>
+      <div class="card-tags"><span class="card-tag">3 样式</span><span class="card-tag">带文字</span><span class="card-tag">带图标</span></div>
+    </a>
+
+    <a href="dialog.html" class="card">
+      <div class="card-icon"><i class="mdi mdi-window-maximize"></i></div>
+      <h3>Dialog 对话框</h3>
+      <p>Alert / Confirm / Form / Info 类型，3 尺寸，遮罩层 + Esc 关闭 + 动画</p>
+      <div class="card-tags"><span class="card-tag">4 类型</span><span class="card-tag">3 尺寸</span><span class="card-tag">遮罩动画</span></div>
+    </a>
+
+    <a href="toast.html" class="card">
+      <div class="card-icon"><i class="mdi mdi-bell"></i></div>
+      <h3>Toast 通知</h3>
+      <p>Success / Warning / Error / Info 类型，多位置堆叠，自动消失 + 操作按钮</p>
+      <div class="card-tags"><span class="card-tag">4 类型</span><span class="card-tag">可堆叠</span><span class="card-tag">自动消失</span></div>
+    </a>
+
+    <a href="context-menu.html" class="card">
+      <div class="card-icon"><i class="mdi mdi-menu-open"></i></div>
+      <h3>Context Menu 右键菜单</h3>
+      <p>分组菜单项 / 分隔线 / 子菜单，带图标 + 快捷键 + 选中标记 + Danger 项</p>
+      <div class="card-tags"><span class="card-tag">分组</span><span class="card-tag">子菜单</span><span class="card-tag">快捷键</span></div>
+    </a>
+  </div>
+
+  <div class="footer">
+    MindFlow Design System &middot; 基于 Design Spec v0.1 &middot; 2026-07
+  </div>
+</body>
+</html>

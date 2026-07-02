@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tooltip 提示框 | MindFlow 组件</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-bg-primary: #FAFAFA; --color-bg-secondary: #F5F5F5; --color-bg-tertiary: #EEEEEE;
+      --color-text-primary: #1A1A1A; --color-text-secondary: #6B6B6B; --color-text-tertiary: #9E9E9E;
+      --color-text-link: #3B82F6; --color-text-on-accent: #FFFFFF;
+      --color-accent: #3B82F6; --color-accent-hover: #2563EB; --color-accent-soft: #E8F0FE;
+      --color-success: #10B981; --color-warning: #F59E0B; --color-error: #EF4444;
+      --font-family-ui: 'Inter', system-ui, -apple-system, sans-serif;
+      --font-family-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-size-xs: 11px; --font-size-sm: 13px; --font-size-base: 15px;
+      --font-size-lg: 18px; --font-size-xl: 22px; --font-size-2xl: 28px; --font-size-3xl: 36px;
+      --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 20px; --space-6: 24px;
+      --space-8: 32px; --space-10: 40px; --space-12: 48px; --space-16: 64px;
+      --radius-sm: 4px; --radius-md: 8px; --radius-lg: 12px; --radius-xl: 16px; --radius-full: 9999px;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05); --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
+      --shadow-lg: 0 8px 24px rgba(0,0,0,0.12); --shadow-xl: 0 16px 48px rgba(0,0,0,0.16);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: var(--font-family-body); background: var(--color-bg-primary); color: var(--color-text-primary); padding: var(--space-6); -webkit-font-smoothing: antialiased; }
+    .page-header { margin-bottom: var(--space-8); display: flex; align-items: flex-start; gap: var(--space-4); }
+    .page-header a { color: var(--color-accent); text-decoration: none; font-size: var(--font-size-sm); font-family: var(--font-family-ui); display: flex; align-items: center; gap: 4px; padding: 6px 12px; border-radius: var(--radius-sm); transition: background 0.15s; flex-shrink: 0; }
+    .page-header a:hover { background: var(--color-accent-soft); }
+    .page-header h1 { font-family: var(--font-family-ui); font-size: var(--font-size-2xl); font-weight: 700; }
+    .page-header p { color: var(--color-text-secondary); font-size: var(--font-size-sm); margin-top: var(--space-1); }
+    .section { margin-bottom: var(--space-10); }
+    .section-title { font-family: var(--font-family-ui); font-size: var(--font-size-base); font-weight: 600; padding-bottom: var(--space-2); margin-bottom: var(--space-4); border-bottom: 1px solid #E8E8E8; display: flex; align-items: center; gap: var(--space-2); }
+    .section-title code { font-size: var(--font-size-xs); background: var(--color-bg-secondary); padding: 2px 8px; border-radius: var(--radius-sm); color: var(--color-text-secondary); }
+    .demo-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4); padding: var(--space-4); background: #fff; border: 1px solid #E8E8E8; border-radius: var(--radius-md); margin-bottom: var(--space-3); }
+    .demo-row-label { width: 100%; font-size: var(--font-size-xs); color: var(--color-text-secondary); font-family: var(--font-family-ui); font-weight: 500; margin-bottom: -4px; }
+
+    /* ===== TOOLTIP BASE ===== */
+    .tooltip-demo {
+      position: relative; display: inline-flex; align-items: center; gap: var(--space-1);
+      cursor: pointer; padding: 8px 16px; border-radius: var(--radius-sm);
+      background: var(--color-bg-secondary); font-size: var(--font-size-sm);
+      font-family: var(--font-family-ui); transition: background 0.15s;
+    }
+    .tooltip-demo:hover { background: var(--color-bg-tertiary); }
+
+    /* Tooltip element */
+    .tooltip-demo .tooltip {
+      position: absolute; z-index: 100;
+      font-family: var(--font-family-body); font-weight: 400;
+      white-space: nowrap; pointer-events: none;
+      opacity: 0; transition: opacity 0.15s ease, transform 0.15s ease;
+      font-size: var(--font-size-xs); line-height: 1.4;
+    }
+    /* Keep showing for demonstration with .show class */
+    .tooltip-demo .tooltip.show { opacity: 1; pointer-events: auto; }
+
+    /* Dark tooltip */
+    .tooltip-dark {
+      background: #1E1E1E; color: #E0E0E0; padding: 6px 10px;
+      border-radius: var(--radius-sm); box-shadow: var(--shadow-md);
+    }
+
+    /* Light tooltip */
+    .tooltip-light {
+      background: #fff; color: var(--color-text-primary); padding: 6px 10px;
+      border-radius: var(--radius-sm); box-shadow: var(--shadow-lg);
+      border: 1px solid #E0E0E0;
+    }
+
+    /* Arrow (dark) */
+    .tooltip-dark::after {
+      content: ''; position: absolute; width: 8px; height: 8px;
+      background: #1E1E1E; transform: rotate(45deg);
+    }
+    .tooltip-light::after {
+      content: ''; position: absolute; width: 8px; height: 8px;
+      background: #fff; transform: rotate(45deg);
+      border: 1px solid #E0E0E0; border-top: none; border-left: none;
+    }
+
+    /* Positions */
+    .tooltip-top { bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%) translateY(4px); }
+    .tooltip-top.show { transform: translateX(-50%) translateY(0); }
+    .tooltip-top::after { top: 100%; left: 50%; margin-left: -4px; }
+
+    .tooltip-bottom { top: calc(100% + 8px); left: 50%; transform: translateX(-50%) translateY(-4px); }
+    .tooltip-bottom.show { transform: translateX(-50%) translateY(0); }
+    .tooltip-bottom::after { bottom: 100%; left: 50%; margin-left: -4px; }
+
+    .tooltip-left { right: calc(100% + 8px); top: 50%; transform: translateY(-50%) translateX(4px); }
+    .tooltip-left.show { transform: translateY(-50%) translateX(0); }
+    .tooltip-left::after { left: 100%; top: 50%; margin-top: -4px; }
+
+    .tooltip-right { left: calc(100% + 8px); top: 50%; transform: translateY(-50%) translateX(-4px); }
+    .tooltip-right.show { transform: translateY(-50%) translateX(0); }
+    .tooltip-right::after { right: 100%; top: 50%; margin-top: -4px; }
+
+    /* Light tooltip arrow needs border clipping */
+    .tooltip-light.tooltip-top::after { border: 1px solid #E0E0E0; border-top: none; border-left: none; top: calc(100% - 4px); }
+    .tooltip-light.tooltip-bottom::after { border: 1px solid #E0E0E0; border-bottom: none; border-right: none; bottom: calc(100% - 4px); }
+    .tooltip-light.tooltip-left::after { border: 1px solid #E0E0E0; border-left: none; border-bottom: none; left: calc(100% - 4px); }
+    .tooltip-light.tooltip-right::after { border: 1px solid #E0E0E0; border-right: none; border-top: none; right: calc(100% - 4px); }
+
+    /* Rich tooltip */
+    .tooltip-rich { white-space: normal; min-width: 180px; max-width: 240px; padding: 10px 12px; }
+    .tooltip-rich .ti-title { font-weight: 600; font-size: var(--font-size-sm); color: #fff; margin-bottom: 4px; }
+    .tooltip-light .tooltip-rich .ti-title { color: var(--color-text-primary); }
+    .tooltip-rich .ti-desc { font-size: var(--font-size-xs); color: #B0B0B0; line-height: 1.5; }
+    .tooltip-light .tooltip-rich .ti-desc { color: var(--color-text-secondary); }
+
+    /* Shortcut */
+    .tooltip-shortcut { display: flex; align-items: center; gap: 8px; }
+    .tooltip-shortcut .kbd {
+      display: inline-flex; align-items: center; gap: 2px;
+      background: rgba(255,255,255,0.15); padding: 1px 5px; border-radius: 3px;
+      font-family: var(--font-family-ui); font-size: 10px;
+    }
+    .tooltip-light .tooltip-shortcut .kbd { background: var(--color-bg-secondary); color: var(--color-text-secondary); }
+
+    /* Demo grid for directions */
+    .direction-grid {
+      display: flex; flex-wrap: wrap; gap: var(--space-6); align-items: center; justify-content: center;
+      padding: var(--space-8) var(--space-4); background: #fff; border: 1px solid #E8E8E8;
+      border-radius: var(--radius-md);
+    }
+    .direction-grid .tooltip-demo { padding: 16px 24px; }
+  </style>
+</head>
+<body>
+  <div class="page-header">
+    <a href="index.html"><i class="mdi mdi-arrow-left"></i> 返回</a>
+    <div>
+      <h1>Tooltip 提示框</h1>
+      <p>4 个方向，Dark / Light 样式，支持纯文本 / 富内容 / 快捷键提示。悬停或点击触发显示。</p>
+    </div>
+  </div>
+
+  <!-- 方向 -->
+  <div class="section">
+    <div class="section-title">方向 <code>top / bottom / left / right</code></div>
+    <div class="direction-grid">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:var(--space-2)">
+        <span style="font-size:var(--font-size-xs);color:var(--color-text-tertiary)">Top</span>
+        <div class="tooltip-demo" onmouseenter="showTip('t-top')" onmouseleave="hideTip('t-top')">
+          上方提示
+          <span class="tooltip tooltip-dark tooltip-top show" id="t-top">这是上方的提示文字</span>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:var(--space-2)">
+        <span style="font-size:var(--font-size-xs);color:var(--color-text-tertiary)">Bottom</span>
+        <div class="tooltip-demo" onmouseenter="showTip('t-bottom')" onmouseleave="hideTip('t-bottom')">
+          下方提示
+          <span class="tooltip tooltip-dark tooltip-bottom" id="t-bottom">这是下方的提示文字</span>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:var(--space-2)">
+        <span style="font-size:var(--font-size-xs);color:var(--color-text-tertiary)">Left</span>
+        <div class="tooltip-demo" onmouseenter="showTip('t-left')" onmouseleave="hideTip('t-left')">
+          左侧提示
+          <span class="tooltip tooltip-dark tooltip-left" id="t-left">这是左侧的提示</span>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:var(--space-2)">
+        <span style="font-size:var(--font-size-xs);color:var(--color-text-tertiary)">Right</span>
+        <div class="tooltip-demo" onmouseenter="showTip('t-right')" onmouseleave="hideTip('t-right')">
+          右侧提示
+          <span class="tooltip tooltip-dark tooltip-right" id="t-right">这是右侧的提示</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 内容 -->
+  <div class="section">
+    <div class="section-title">内容类型 <code>content variants</code></div>
+    <div class="demo-row" style="gap: var(--space-8)">
+      <div class="tooltip-demo" onmouseenter="showTip('t-text')" onmouseleave="hideTip('t-text')" style="padding:12px 20px">
+        Short Text
+        <span class="tooltip tooltip-dark tooltip-top" id="t-text">保存成功</span>
+      </div>
+      <div class="tooltip-demo" onmouseenter="showTip('t-rich')" onmouseleave="hideTip('t-rich')" style="padding:12px 20px">
+        Rich Content
+        <span class="tooltip tooltip-dark tooltip-top tooltip-rich" id="t-rich" style="white-space:normal;width:200px">
+          <div class="ti-title">双向链接</div>
+          <div class="ti-desc">使用 [[ 创建笔记之间的双向链接，自动建立知识网络</div>
+        </span>
+      </div>
+      <div class="tooltip-demo" onmouseenter="showTip('t-shortcut')" onmouseleave="hideTip('t-shortcut')" style="padding:12px 20px">
+        Shortcut
+        <span class="tooltip tooltip-dark tooltip-top tooltip-shortcut" id="t-shortcut">
+          搜索笔记
+          <span class="kbd"><i class="mdi mdi-apple-keyboard-command" style="font-size:10px"></i>K</span>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Style -->
+  <div class="section">
+    <div class="section-title">样式 <code>dark vs light</code></div>
+    <div class="direction-grid">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:var(--space-2)">
+        <span style="font-size:var(--font-size-xs);color:var(--color-text-tertiary)">Dark（默认）</span>
+        <div class="tooltip-demo" onmouseenter="showTip('t-dark')" onmouseleave="hideTip('t-dark')">
+          深色提示
+          <span class="tooltip tooltip-dark tooltip-top show" id="t-dark">深色背景 tooltip</span>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:var(--space-2)">
+        <span style="font-size:var(--font-size-xs);color:var(--color-text-tertiary)">Light</span>
+        <div class="tooltip-demo" onmouseenter="showTip('t-light')" onmouseleave="hideTip('t-light')">
+          浅色提示
+          <span class="tooltip tooltip-light tooltip-top" id="t-light">浅色背景 tooltip</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 使用场景 -->
+  <div class="section">
+    <div class="section-title">使用场景</div>
+    <div class="demo-row" style="flex-direction:column;align-items:flex-start;gap:var(--space-4)">
+      <div style="display:flex;gap:var(--space-3);align-items:center">
+        <span style="font-size:var(--font-size-sm)">图标按钮提示：</span>
+        <div class="tooltip-demo" style="width:36px;height:36px;padding:0;justify-content:center;border-radius:var(--radius-sm);background:#fff;border:1px solid #E0E0E0" onmouseenter="showTip('t-add')" onmouseleave="hideTip('t-add')">
+          <i class="mdi mdi-plus" style="font-size:18px"></i>
+          <span class="tooltip tooltip-dark tooltip-bottom" id="t-add">新建笔记</span>
+        </div>
+        <div class="tooltip-demo" style="width:36px;height:36px;padding:0;justify-content:center;border-radius:var(--radius-sm);background:#fff;border:1px solid #E0E0E0" onmouseenter="showTip('t-search')" onmouseleave="hideTip('t-search')">
+          <i class="mdi mdi-magnify" style="font-size:18px"></i>
+          <span class="tooltip tooltip-dark tooltip-bottom" id="t-search">搜索 <span style="background:rgba(255,255,255,0.15);padding:1px 4px;border-radius:3px;font-size:10px">⌘K</span></span>
+        </div>
+        <div class="tooltip-demo" style="width:36px;height:36px;padding:0;justify-content:center;border-radius:var(--radius-sm);background:#fff;border:1px solid #E0E0E0" onmouseenter="showTip('t-settings')" onmouseleave="hideTip('t-settings')">
+          <i class="mdi mdi-cog" style="font-size:18px"></i>
+          <span class="tooltip tooltip-dark tooltip-bottom" id="t-settings">设置</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:var(--space-3);align-items:center">
+        <span style="font-size:var(--font-size-sm)">富内容提示：</span>
+        <div class="tooltip-demo" style="padding:8px 16px" onmouseenter="showTip('t-rich2')" onmouseleave="hideTip('t-rich2')">
+          <i class="mdi mdi-information" style="font-size:16px;margin-right:4px"></i> 了解更多
+          <span class="tooltip tooltip-light tooltip-bottom tooltip-rich" id="t-rich2" style="white-space:normal;width:200px">
+            <div class="ti-title" style="color:var(--color-text-primary)">自动保存</div>
+            <div class="ti-desc">MindFlow 会在你停止输入 2 秒后自动保存笔记内容，无需手动操作</div>
+          </span>
+        </div>
+        <div class="tooltip-demo" style="padding:8px 16px" onmouseenter="showTip('t-shortcut2')" onmouseleave="hideTip('t-shortcut2')">
+          <i class="mdi mdi-keyboard" style="font-size:16px;margin-right:4px"></i> 快捷键
+          <span class="tooltip tooltip-dark tooltip-bottom tooltip-shortcut" id="t-shortcut2">
+            新建笔记
+            <span class="kbd"><i class="mdi mdi-apple-keyboard-command"></i>N</span>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function showTip(id) {
+      const el = document.getElementById(id);
+      if (el) setTimeout(() => el.classList.add('show'), 300);
+    }
+    function hideTip(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.remove('show');
+    }
+  </script>
+</body>
+</html>

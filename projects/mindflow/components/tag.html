@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tag 标签 | MindFlow 组件</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-bg-primary: #FAFAFA; --color-bg-secondary: #F5F5F5; --color-bg-tertiary: #EEEEEE;
+      --color-text-primary: #1A1A1A; --color-text-secondary: #6B6B6B; --color-text-tertiary: #9E9E9E;
+      --color-text-link: #3B82F6; --color-text-on-accent: #FFFFFF;
+      --color-accent: #3B82F6; --color-accent-hover: #2563EB; --color-accent-soft: #E8F0FE;
+      --color-success: #10B981; --color-warning: #F59E0B; --color-error: #EF4444;
+      --font-family-ui: 'Inter', system-ui, -apple-system, sans-serif;
+      --font-family-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-size-xs: 11px; --font-size-sm: 13px; --font-size-base: 15px;
+      --font-size-lg: 18px; --font-size-xl: 22px; --font-size-2xl: 28px; --font-size-3xl: 36px;
+      --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 20px; --space-6: 24px;
+      --space-8: 32px; --space-10: 40px; --space-12: 48px; --space-16: 64px;
+      --radius-sm: 4px; --radius-md: 8px; --radius-lg: 12px; --radius-xl: 16px; --radius-full: 9999px;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05); --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
+      --shadow-lg: 0 8px 24px rgba(0,0,0,0.12); --shadow-xl: 0 16px 48px rgba(0,0,0,0.16);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: var(--font-family-body); background: var(--color-bg-primary); color: var(--color-text-primary); padding: var(--space-6); -webkit-font-smoothing: antialiased; }
+    .page-header { margin-bottom: var(--space-8); display: flex; align-items: flex-start; gap: var(--space-4); }
+    .page-header a { color: var(--color-accent); text-decoration: none; font-size: var(--font-size-sm); font-family: var(--font-family-ui); display: flex; align-items: center; gap: 4px; padding: 6px 12px; border-radius: var(--radius-sm); transition: background 0.15s; flex-shrink: 0; }
+    .page-header a:hover { background: var(--color-accent-soft); }
+    .page-header h1 { font-family: var(--font-family-ui); font-size: var(--font-size-2xl); font-weight: 700; }
+    .page-header p { color: var(--color-text-secondary); font-size: var(--font-size-sm); margin-top: var(--space-1); }
+    .section { margin-bottom: var(--space-10); }
+    .section-title { font-family: var(--font-family-ui); font-size: var(--font-size-base); font-weight: 600; padding-bottom: var(--space-2); margin-bottom: var(--space-4); border-bottom: 1px solid #E8E8E8; display: flex; align-items: center; gap: var(--space-2); }
+    .section-title code { font-size: var(--font-size-xs); background: var(--color-bg-secondary); padding: 2px 8px; border-radius: var(--radius-sm); color: var(--color-text-secondary); }
+    .demo-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); padding: var(--space-4); background: #fff; border: 1px solid #E8E8E8; border-radius: var(--radius-md); margin-bottom: var(--space-3); }
+    .demo-row-label { width: 100%; font-size: var(--font-size-xs); color: var(--color-text-secondary); font-family: var(--font-family-ui); font-weight: 500; margin-bottom: -4px; }
+
+    /* ===== TAG BASE ===== */
+    .tag {
+      display: inline-flex; align-items: center; gap: 3px;
+      font-family: var(--font-family-ui); font-weight: 500;
+      border-radius: var(--radius-sm); cursor: default; white-space: nowrap;
+      transition: all 0.15s ease; border: 1px solid transparent;
+    }
+    .tag .mdi-close { font-size: 12px; cursor: pointer; opacity: 0.6; transition: opacity 0.15s; }
+    .tag .mdi-close:hover { opacity: 1; }
+
+    /* Sizes */
+    .tag-sm { height: 20px; padding: 0 6px; font-size: 10px; }
+    .tag-md { height: 24px; padding: 0 8px; font-size: var(--font-size-xs); }
+    .tag-lg { height: 28px; padding: 0 10px; font-size: var(--font-size-sm); }
+
+    /* ===== COLOR VARIANTS ===== */
+    .tag-red { background: #FEE2E2; color: #7F1D1D; border-color: transparent; }
+    .tag-orange { background: #FFEDD5; color: #7C2D12; border-color: transparent; }
+    .tag-yellow { background: #FEF3C7; color: #78350F; border-color: transparent; }
+    .tag-green { background: #D1FAE5; color: #064E3B; border-color: transparent; }
+    .tag-teal { background: #CCFBF1; color: #134E4A; border-color: transparent; }
+    .tag-blue { background: #DBEAFE; color: #1E3A5F; border-color: transparent; }
+    .tag-purple { background: #EDE9FE; color: #4C1D95; border-color: transparent; }
+    .tag-pink { background: #FCE7F3; color: #831843; border-color: transparent; }
+
+    /* Outline */
+    .tag-outline-red { background: transparent; color: #7F1D1D; border-color: #FECACA; }
+    .tag-outline-orange { background: transparent; color: #7C2D12; border-color: #FED7AA; }
+    .tag-outline-yellow { background: transparent; color: #78350F; border-color: #FDE68A; }
+    .tag-outline-green { background: transparent; color: #064E3B; border-color: #A7F3D0; }
+    .tag-outline-teal { background: transparent; color: #134E4A; border-color: #99F6E4; }
+    .tag-outline-blue { background: transparent; color: #1E3A5F; border-color: #BFDBFE; }
+    .tag-outline-purple { background: transparent; color: #4C1D95; border-color: #DDD6FE; }
+    .tag-outline-pink { background: transparent; color: #831843; border-color: #FBCFE8; }
+
+    /* Clickable */
+    .tag-clickable { cursor: pointer; }
+    .tag-clickable:hover { filter: brightness(0.95); transform: translateY(-1px); }
+
+    /* Selectable (toggle) */
+    .tag-selectable { cursor: pointer; }
+    .tag-selectable.selected { box-shadow: 0 0 0 2px currentColor; }
+
+    /* Disabled */
+    .tag.disabled { opacity: 0.4; cursor: not-allowed; }
+    .tag.disabled:hover { filter: none; transform: none; }
+
+    /* Hierarchy tags */
+    .tag-hierarchy { background: transparent; color: var(--color-text-secondary); border: none; padding: 0; gap: 0; }
+    .tag-hierarchy .sep { color: var(--color-text-tertiary); margin: 0 2px; font-weight: 400; }
+    .tag-hierarchy .part { color: var(--color-accent); font-weight: 500; cursor: pointer; }
+    .tag-hierarchy .part:hover { text-decoration: underline; }
+
+    .demo-color-grid {
+      display: flex; flex-wrap: wrap; gap: var(--space-2); padding: var(--space-3);
+      background: #fff; border: 1px solid #E8E8E8; border-radius: var(--radius-md); margin-bottom: var(--space-3);
+    }
+  </style>
+</head>
+<body>
+  <div class="page-header">
+    <a href="index.html"><i class="mdi mdi-arrow-left"></i> 返回</a>
+    <div>
+      <h1>Tag 标签</h1>
+      <p>8 色 pastel 变体，Outline / Removable 形态，支持 Clickable / Selectable / Disabled 交互状态。</p>
+    </div>
+  </div>
+
+  <!-- 8 色 Pastel -->
+  <div class="section">
+    <div class="section-title">8 色 Pastel <code>default variant</code></div>
+    <div class="demo-row">
+      <div class="demo-row-label">Default 形态</div>
+      <span class="tag tag-md tag-red">设计</span>
+      <span class="tag tag-md tag-orange">创意</span>
+      <span class="tag tag-md tag-yellow">想法</span>
+      <span class="tag tag-md tag-green">完成</span>
+      <span class="tag tag-md tag-teal">归档</span>
+      <span class="tag tag-md tag-blue">工作</span>
+      <span class="tag tag-md tag-purple">学习</span>
+      <span class="tag tag-md tag-pink">个人</span>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">尺寸：Small / Default / Large</div>
+      <span class="tag tag-sm tag-blue">小</span>
+      <span class="tag tag-md tag-blue">默认</span>
+      <span class="tag tag-lg tag-blue">大尺寸</span>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">状态：Default / Hover / Selected / Disabled</div>
+      <span class="tag tag-md tag-blue">默认状态</span>
+      <span class="tag tag-md tag-blue tag-clickable" style="filter:brightness(0.9);transform:translateY(-1px)">Hover 悬停</span>
+      <span class="tag tag-md tag-blue tag-selectable selected">已选中</span>
+      <span class="tag tag-md tag-blue disabled">已禁用</span>
+    </div>
+  </div>
+
+  <!-- Outline -->
+  <div class="section">
+    <div class="section-title">Outline <code>边框形态</code></div>
+    <div class="demo-row">
+      <div class="demo-row-label">8 色 Outline</div>
+      <span class="tag tag-md tag-outline-red">设计</span>
+      <span class="tag tag-md tag-outline-orange">创意</span>
+      <span class="tag tag-md tag-outline-yellow">想法</span>
+      <span class="tag tag-md tag-outline-green">完成</span>
+      <span class="tag tag-md tag-outline-teal">归档</span>
+      <span class="tag tag-md tag-outline-blue">工作</span>
+      <span class="tag tag-md tag-outline-purple">学习</span>
+      <span class="tag tag-md tag-outline-pink">个人</span>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">对比：Default vs Outline</div>
+      <span class="tag tag-md tag-green">Default</span>
+      <span class="tag tag-md tag-outline-green">Outline</span>
+      <span class="tag tag-md tag-purple">Default</span>
+      <span class="tag tag-md tag-outline-purple">Outline</span>
+    </div>
+  </div>
+
+  <!-- Removable -->
+  <div class="section">
+    <div class="section-title">Removable <code>可删除（带 x 关闭按钮）</code></div>
+    <div class="demo-row">
+      <div class="demo-row-label">8 色可删除</div>
+      <span class="tag tag-md tag-red">设计 <i class="mdi mdi-close"></i></span>
+      <span class="tag tag-md tag-orange">创意 <i class="mdi mdi-close"></i></span>
+      <span class="tag tag-md tag-yellow">想法 <i class="mdi mdi-close"></i></span>
+      <span class="tag tag-md tag-green">完成 <i class="mdi mdi-close"></i></span>
+      <span class="tag tag-md tag-teal">归档 <i class="mdi mdi-close"></i></span>
+      <span class="tag tag-md tag-blue">工作 <i class="mdi mdi-close"></i></span>
+      <span class="tag tag-md tag-purple">学习 <i class="mdi mdi-close"></i></span>
+      <span class="tag tag-md tag-pink">个人 <i class="mdi mdi-close"></i></span>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">交互示例（点击 × 可删除）</div>
+      <span class="tag tag-md tag-blue removable-demo">设计系统 <i class="mdi mdi-close" onclick="this.parentElement.style.display='none'"></i></span>
+      <span class="tag tag-md tag-purple removable-demo">用户体验 <i class="mdi mdi-close" onclick="this.parentElement.style.display='none'"></i></span>
+      <span class="tag tag-md tag-green removable-demo">已完成 <i class="mdi mdi-close" onclick="this.parentElement.style.display='none'"></i></span>
+      <span class="tag tag-md tag-orange removable-demo">待处理 <i class="mdi mdi-close" onclick="this.parentElement.style.display='none'"></i></span>
+    </div>
+  </div>
+
+  <!-- 交互 -->
+  <div class="section">
+    <div class="section-title">交互 <code>clickable / toggle select</code></div>
+    <div class="demo-row">
+      <div class="demo-row-label">Clickable（可点击 — 模拟 hover 效果）</div>
+      <span class="tag tag-md tag-blue tag-clickable">点击我</span>
+      <span class="tag tag-md tag-green tag-clickable">可点击标签</span>
+      <span class="tag tag-md tag-purple tag-clickable">更多</span>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">Toggle Select（点击切换选中状态）</div>
+      <span class="tag tag-md tag-blue tag-selectable" onclick="toggleSelect(this)">设计系统</span>
+      <span class="tag tag-md tag-blue tag-selectable selected" onclick="toggleSelect(this)">用户体验</span>
+      <span class="tag tag-md tag-blue tag-selectable" onclick="toggleSelect(this)">前端开发</span>
+      <span class="tag tag-md tag-blue tag-selectable" onclick="toggleSelect(this)">后端开发</span>
+      <button class="tag-reset-btn" onclick="resetTags()" style="margin-left:8px;font-size:var(--font-size-xs);color:var(--color-accent);background:none;border:none;cursor:pointer;font-family:var(--font-family-ui)">重置</button>
+    </div>
+    <script>
+      function toggleSelect(el) {
+        if (!el.classList.contains('disabled')) {
+          el.classList.toggle('selected');
+        }
+      }
+      function resetTags() {
+        document.querySelectorAll('.tag-selectable').forEach(t => t.classList.remove('selected'));
+        document.querySelectorAll('.removable-demo').forEach(t => t.style.display = '');
+      }
+    </script>
+  </div>
+
+  <!-- Hierarchy -->
+  <div class="section">
+    <div class="section-title">层级标签 <code>科技/AI/LLM 样式</code></div>
+    <div class="demo-row">
+      <div class="tag tag-hierarchy tag-md">
+        <span class="part">科技</span><span class="sep">/</span>
+        <span class="part">人工智能</span><span class="sep">/</span>
+        <span class="part">大语言模型</span>
+      </div>
+      <div class="tag tag-hierarchy tag-md">
+        <span class="part">设计</span><span class="sep">/</span>
+        <span class="part">UX</span><span class="sep">/</span>
+        <span class="part">交互设计</span>
+      </div>
+      <div class="tag tag-hierarchy tag-md">
+        <span class="part">前端</span><span class="sep">/</span>
+        <span class="part">React</span><span class="sep">/</span>
+        <span class="part">状态管理</span>
+      </div>
+      <div style="font-size:var(--font-size-xs);color:var(--color-text-tertiary);margin-top:4px;width:100%">每个 / 分隔的部分可单独点击进行筛选</div>
+    </div>
+  </div>
+
+  <!-- 使用场景 -->
+  <div class="section">
+    <div class="section-title">使用场景</div>
+    <div class="demo-row" style="flex-direction:column;align-items:flex-start;gap:var(--space-3)">
+      <div>
+        <span style="font-size:var(--font-size-sm);font-weight:600;font-family:var(--font-family-ui)">笔记条目标签</span>
+        <div style="display:flex;gap:var(--space-2);margin-top:var(--space-2)">
+          <span class="tag tag-sm tag-blue">MindFlow</span>
+          <span class="tag tag-sm tag-green">设计系统</span>
+          <span class="tag tag-sm tag-purple">组件库</span>
+          <span class="tag tag-sm tag-orange">WIP</span>
+        </div>
+      </div>
+      <div>
+        <span style="font-size:var(--font-size-sm);font-weight:600;font-family:var(--font-family-ui)">选中状态</span>
+        <div style="display:flex;gap:var(--space-2);margin-top:var(--space-2)">
+          <span class="tag tag-md tag-outline-blue tag-selectable selected" onclick="toggleSelect(this)">全部</span>
+          <span class="tag tag-md tag-outline-blue tag-selectable" onclick="toggleSelect(this)">工作</span>
+          <span class="tag tag-md tag-outline-blue tag-selectable" onclick="toggleSelect(this)">个人</span>
+          <span class="tag tag-md tag-outline-blue tag-selectable" onclick="toggleSelect(this)">学习</span>
+        </div>
+      </div>
+      <div>
+        <span style="font-size:var(--font-size-sm);font-weight:600;font-family:var(--font-family-ui)">带删除操作（已选标签）</span>
+        <div style="display:flex;gap:var(--space-2);margin-top:var(--space-2);flex-wrap:wrap">
+          <span class="tag tag-md tag-blue">设计系统 <i class="mdi mdi-close" onclick="this.parentElement.style.display='none'"></i></span>
+          <span class="tag tag-md tag-purple">用户体验 <i class="mdi mdi-close" onclick="this.parentElement.style.display='none'"></i></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

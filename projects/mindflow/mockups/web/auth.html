@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MindFlow — 登录 & 注册 | 高保真 Mockup</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+  <style>
+    :root {
+      --color-bg-primary: #FAFAFA;
+      --color-bg-secondary: #F5F5F5;
+      --color-bg-tertiary: #EEEEEE;
+      --color-text-primary: #1A1A1A;
+      --color-text-secondary: #6B6B6B;
+      --color-text-tertiary: #9E9E9E;
+      --color-accent: #3B82F6;
+      --color-accent-hover: #2563EB;
+      --color-accent-soft: #E8F0FE;
+      --color-success: #10B981;
+      --color-warning: #F59E0B;
+      --color-error: #EF4444;
+      --color-border: #E8E8E8;
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-xl: 16px;
+      --radius-full: 9999px;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+      --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
+      --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+      --shadow-xl: 0 16px 48px rgba(0,0,0,0.16);
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+      --space-10: 40px;
+      --space-12: 48px;
+      --space-16: 64px;
+      --font-size-xs: 11px;
+      --font-size-sm: 13px;
+      --font-size-base: 15px;
+      --font-size-lg: 18px;
+      --font-size-xl: 22px;
+      --font-size-2xl: 28px;
+      --font-size-3xl: 36px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      height: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-size: var(--font-size-base);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .ui-font { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--color-bg-primary);
+      background-image:
+        radial-gradient(ellipse at 50% 30%, rgba(59,130,246,0.06) 0%, transparent 60%),
+        radial-gradient(ellipse at 50% 80%, rgba(59,130,246,0.03) 0%, transparent 50%),
+        linear-gradient(180deg, #FAFAFA 0%, #F0F0F0 100%);
+      padding: var(--space-6);
+    }
+
+    /* Card */
+    .auth-card {
+      width: 440px;
+      max-width: 100%;
+      background: #FFFFFF;
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-lg);
+      padding: var(--space-10) var(--space-8) var(--space-8);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Brand */
+    .brand {
+      text-align: center;
+      margin-bottom: var(--space-8);
+    }
+    .brand .logo-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      margin-bottom: var(--space-2);
+    }
+    .brand .logo-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--color-accent);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 22px;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .brand .logo-icon i { line-height: 1; }
+    .brand .logo-text {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      font-size: var(--font-size-xl);
+      font-weight: 600;
+      color: var(--color-text-primary);
+      letter-spacing: -0.3px;
+    }
+    .brand .tagline {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+      font-style: italic;
+      font-weight: 400;
+      letter-spacing: 0.2px;
+    }
+
+    /* Tabs */
+    .auth-tabs {
+      display: flex;
+      position: relative;
+      margin-bottom: var(--space-6);
+      border-bottom: 1.5px solid var(--color-border);
+    }
+    .auth-tab {
+      flex: 1;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      font-size: var(--font-size-base);
+      font-weight: 500;
+      color: var(--color-text-tertiary);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      transition: color 200ms ease;
+      position: relative;
+      z-index: 1;
+    }
+    .auth-tab:hover { color: var(--color-text-secondary); }
+    .auth-tab.active { color: var(--color-accent); }
+    .tab-indicator {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 50%;
+      height: 2.5px;
+      background: var(--color-accent);
+      border-radius: 2px 2px 0 0;
+      transition: transform 200ms ease;
+    }
+    .tab-indicator.right { transform: translateX(100%); }
+
+    /* Form */
+    .auth-form { display: block; }
+    .auth-form.hidden { display: none; }
+
+    .form-group {
+      margin-bottom: var(--space-5);
+      position: relative;
+    }
+    .form-group label {
+      display: block;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      font-size: var(--font-size-sm);
+      font-weight: 500;
+      color: var(--color-text-primary);
+      margin-bottom: var(--space-2);
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+    .input-wrap .input-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--color-text-tertiary);
+      font-size: 18px;
+      pointer-events: none;
+      transition: color 200ms ease;
+    }
+    .input-wrap .input-icon.focused { color: var(--color-accent); }
+
+    .form-input {
+      width: 100%;
+      height: 44px;
+      padding: 0 14px 0 42px;
+      border: 1.5px solid #E0E0E0;
+      border-radius: var(--radius-md);
+      font-size: var(--font-size-base);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--color-text-primary);
+      background: #FFFFFF;
+      outline: none;
+      transition: border-color 200ms ease, box-shadow 200ms ease;
+    }
+    .form-input::placeholder { color: var(--color-text-tertiary); }
+    .form-input:focus {
+      border-color: var(--color-accent);
+      box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+    }
+    .form-input.error {
+      border-color: var(--color-error);
+      box-shadow: 0 0 0 3px rgba(239,68,68,0.08);
+    }
+    .form-input.no-icon { padding-left: 14px; }
+
+    .input-right-btn {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      background: transparent;
+      color: var(--color-text-tertiary);
+      cursor: pointer;
+      border-radius: var(--radius-sm);
+      font-size: 18px;
+      transition: color 150ms ease, background 150ms ease;
+    }
+    .input-right-btn:hover { color: var(--color-text-secondary); background: var(--color-bg-tertiary); }
+
+    .field-error {
+      font-size: var(--font-size-xs);
+      color: var(--color-error);
+      margin-top: var(--space-1);
+      font-weight: 400;
+      display: none;
+    }
+    .field-error.visible { display: block; }
+
+    /* Password strength */
+    .pwd-strength {
+      display: flex;
+      gap: var(--space-1);
+      margin-top: var(--space-2);
+      height: 4px;
+    }
+    .pwd-strength .seg {
+      flex: 1;
+      height: 100%;
+      border-radius: 2px;
+      background: var(--color-bg-tertiary);
+      transition: background 300ms ease;
+    }
+    .pwd-strength .seg.weak { background: var(--color-error); }
+    .pwd-strength .seg.medium { background: var(--color-warning); }
+    .pwd-strength .seg.strong { background: var(--color-success); }
+    .pwd-strength-label {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-tertiary);
+      margin-top: var(--space-1);
+      text-align: right;
+      transition: color 300ms ease;
+    }
+    .pwd-strength-label.weak { color: var(--color-error); }
+    .pwd-strength-label.medium { color: var(--color-warning); }
+    .pwd-strength-label.strong { color: var(--color-success); }
+
+    /* Primary Button */
+    .btn-primary {
+      width: 100%;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      background: var(--color-accent);
+      color: #FFFFFF;
+      border: none;
+      border-radius: var(--radius-md);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      font-size: var(--font-size-base);
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 150ms ease, transform 150ms ease, box-shadow 150ms ease;
+      box-shadow: var(--shadow-sm);
+    }
+    .btn-primary:hover {
+      background: var(--color-accent-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(59,130,246,0.25);
+    }
+    .btn-primary:active {
+      transform: translateY(0);
+      box-shadow: var(--shadow-sm);
+    }
+    .btn-primary:disabled {
+      background: var(--color-bg-tertiary);
+      color: var(--color-text-tertiary);
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    .btn-primary .spinner {
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      display: none;
+    }
+    .btn-primary.loading .spinner { display: block; }
+    .btn-primary.loading .btn-text { display: none; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Divider */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+      margin: var(--space-6) 0;
+    }
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--color-border);
+    }
+    .divider span {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      font-size: var(--font-size-sm);
+      color: var(--color-text-tertiary);
+      white-space: nowrap;
+    }
+
+    /* OAuth Buttons */
+    .oauth-group {
+      display: flex;
+      gap: var(--space-3);
+    }
+    .btn-oauth {
+      flex: 1;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      background: #FFFFFF;
+      color: var(--color-text-primary);
+      border: 1px solid #E0E0E0;
+      border-radius: var(--radius-md);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      font-size: var(--font-size-sm);
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
+    }
+    .btn-oauth:hover {
+      background: var(--color-bg-secondary);
+      border-color: #D0D0D0;
+      box-shadow: var(--shadow-sm);
+    }
+    .btn-oauth:active {
+      background: var(--color-bg-tertiary);
+    }
+    .btn-oauth i { font-size: 20px; }
+    .btn-oauth .google-color { color: #EA4335; }
+    .btn-oauth .apple-color { color: #000000; }
+
+    /* Bottom links */
+    .bottom-links {
+      text-align: center;
+      margin-top: var(--space-6);
+    }
+    .bottom-links a {
+      display: inline-block;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      font-size: var(--font-size-sm);
+      color: var(--color-accent);
+      text-decoration: none;
+      transition: color 150ms ease;
+      cursor: pointer;
+    }
+    .bottom-links a:hover { color: var(--color-accent-hover); text-decoration: underline; }
+    .bottom-links .divider-dot {
+      color: var(--color-text-tertiary);
+      margin: 0 var(--space-2);
+    }
+    .bottom-links .muted {
+      color: var(--color-text-secondary);
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      top: var(--space-6);
+      left: 50%;
+      transform: translateX(-50%) translateY(-20px);
+      background: var(--color-text-primary);
+      color: #fff;
+      padding: var(--space-3) var(--space-5);
+      border-radius: var(--radius-md);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      font-size: var(--font-size-sm);
+      box-shadow: var(--shadow-lg);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 250ms ease, transform 250ms ease;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+    .toast.visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+      pointer-events: auto;
+    }
+    .toast i { font-size: 18px; }
+    .toast.success i { color: var(--color-success); }
+    .toast.error i { color: var(--color-error); }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .auth-card {
+        padding: var(--space-8) var(--space-5) var(--space-6);
+        border-radius: var(--radius-lg);
+      }
+      .brand .logo-text { font-size: var(--font-size-lg); }
+      .brand .logo-icon { width: 32px; height: 32px; font-size: 18px; }
+      .oauth-group { flex-direction: column; }
+      body { padding: var(--space-4); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Toast -->
+  <div class="toast" id="toast">
+    <i class="mdi"></i>
+    <span class="toast-msg"></span>
+  </div>
+
+  <div class="auth-card">
+    <!-- Brand -->
+    <div class="brand">
+      <div class="logo-wrap">
+        <div class="logo-icon">
+          <i class="mdi mdi-graph-outline"></i>
+        </div>
+        <span class="logo-text">MindFlow</span>
+      </div>
+      <p class="tagline">让思维流动，让知识生长</p>
+    </div>
+
+    <!-- Tabs -->
+    <div class="auth-tabs">
+      <button class="auth-tab active" data-tab="login">登录</button>
+      <button class="auth-tab" data-tab="register">注册</button>
+      <div class="tab-indicator" id="tabIndicator"></div>
+    </div>
+
+    <!-- Login Form -->
+    <form class="auth-form" id="loginForm" autocomplete="off" onsubmit="return false;">
+      <div class="form-group">
+        <label for="loginEmail">邮箱地址</label>
+        <div class="input-wrap">
+          <i class="mdi mdi-email-outline input-icon"></i>
+          <input class="form-input" id="loginEmail" type="email" placeholder="your@email.com" value="demo@mindflow.app" autocomplete="email">
+        </div>
+        <div class="field-error" id="loginEmailError">请输入有效的邮箱地址</div>
+      </div>
+      <div class="form-group">
+        <label for="loginPwd">密码</label>
+        <div class="input-wrap">
+          <i class="mdi mdi-lock-outline input-icon"></i>
+          <input class="form-input" id="loginPwd" type="password" placeholder="输入密码" value="Mindflow2026" autocomplete="current-password">
+          <button type="button" class="input-right-btn" id="toggleLoginPwd" aria-label="切换密码可见性">
+            <i class="mdi mdi-eye-outline" id="loginPwdIcon"></i>
+          </button>
+        </div>
+        <div class="field-error" id="loginPwdError">密码不正確</div>
+      </div>
+
+      <button type="submit" class="btn-primary" id="loginBtn">
+        <span class="btn-text">登 录</span>
+        <div class="spinner"></div>
+      </button>
+
+      <div class="divider">
+        <span>或使用第三方登录</span>
+      </div>
+
+      <div class="oauth-group">
+        <button type="button" class="btn-oauth" id="googleLogin">
+          <i class="mdi mdi-google google-color"></i>
+          <span>Google 登录</span>
+        </button>
+        <button type="button" class="btn-oauth" id="appleLogin">
+          <i class="mdi mdi-apple apple-color"></i>
+          <span>Apple 登录</span>
+        </button>
+      </div>
+
+      <div class="bottom-links">
+        <span class="muted">还没有账号？</span>
+        <a id="switchToRegister">立即注册 →</a>
+        <br>
+        <a id="forgotPwd" style="font-size: var(--font-size-xs); color: var(--color-text-tertiary); margin-top: var(--space-1);">忘记密码？</a>
+      </div>
+    </form>
+
+    <!-- Register Form -->
+    <form class="auth-form hidden" id="registerForm" autocomplete="off" onsubmit="return false;">
+      <div class="form-group">
+        <label for="regEmail">邮箱地址</label>
+        <div class="input-wrap">
+          <i class="mdi mdi-email-outline input-icon"></i>
+          <input class="form-input" id="regEmail" type="email" placeholder="your@email.com" autocomplete="off">
+        </div>
+        <div class="field-error" id="regEmailError">请输入有效的邮箱地址</div>
+      </div>
+      <div class="form-group">
+        <label for="regPwd">密码</label>
+        <div class="input-wrap">
+          <i class="mdi mdi-lock-outline input-icon"></i>
+          <input class="form-input" id="regPwd" type="password" placeholder="至少 8 个字符" autocomplete="new-password">
+          <button type="button" class="input-right-btn" id="toggleRegPwd" aria-label="切换密码可见性">
+            <i class="mdi mdi-eye-outline" id="regPwdIcon"></i>
+          </button>
+        </div>
+        <div class="pwd-strength" id="pwdStrength">
+          <div class="seg" data-i="0"></div>
+          <div class="seg" data-i="1"></div>
+          <div class="seg" data-i="2"></div>
+        </div>
+        <div class="pwd-strength-label" id="pwdStrengthLabel">输入密码</div>
+      </div>
+      <div class="form-group">
+        <label for="regPwdConfirm">确认密码</label>
+        <div class="input-wrap">
+          <i class="mdi mdi-lock-outline input-icon"></i>
+          <input class="form-input" id="regPwdConfirm" type="password" placeholder="再次输入密码" autocomplete="new-password">
+          <button type="button" class="input-right-btn" id="toggleRegPwdConfirm" aria-label="切换密码可见性">
+            <i class="mdi mdi-eye-outline" id="regPwdConfirmIcon"></i>
+          </button>
+        </div>
+        <div class="field-error" id="regPwdConfirmError">两次密码不一致</div>
+      </div>
+
+      <button type="submit" class="btn-primary" id="registerBtn">
+        <span class="btn-text">注 册</span>
+        <div class="spinner"></div>
+      </button>
+
+      <div class="divider">
+        <span>或使用第三方登录</span>
+      </div>
+
+      <div class="oauth-group">
+        <button type="button" class="btn-oauth" id="googleRegister">
+          <i class="mdi mdi-google google-color"></i>
+          <span>Google 注册</span>
+        </button>
+        <button type="button" class="btn-oauth" id="appleRegister">
+          <i class="mdi mdi-apple apple-color"></i>
+          <span>Apple 注册</span>
+        </button>
+      </div>
+
+      <div class="bottom-links">
+        <span class="muted">已有账号？</span>
+        <a id="switchToLogin">立即登录 →</a>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    (function() {
+      // --- Tab switching ---
+      const tabs = document.querySelectorAll('.auth-tab');
+      const indicator = document.getElementById('tabIndicator');
+      const loginForm = document.getElementById('loginForm');
+      const registerForm = document.getElementById('registerForm');
+
+      function switchTab(tab) {
+        const isLogin = tab.dataset.tab === 'login';
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        indicator.classList.toggle('right', !isLogin);
+        loginForm.classList.toggle('hidden', !isLogin);
+        registerForm.classList.toggle('hidden', isLogin);
+        // Clear loading state
+        document.getElementById('loginBtn').classList.remove('loading');
+        document.getElementById('registerBtn').classList.remove('loading');
+      }
+
+      tabs.forEach(t => {
+        t.addEventListener('click', function() { switchTab(this); });
+      });
+
+      // --- Tab switch links ---
+      document.getElementById('switchToRegister').addEventListener('click', function(e) {
+        e.preventDefault();
+        switchTab(tabs[1]);
+      });
+      document.getElementById('switchToLogin').addEventListener('click', function(e) {
+        e.preventDefault();
+        switchTab(tabs[0]);
+      });
+
+      // --- Password visibility toggle ---
+      function togglePwd(inputId, iconId) {
+        const input = document.getElementById(inputId);
+        const icon = document.getElementById(iconId);
+        const isPwd = input.type === 'password';
+        input.type = isPwd ? 'text' : 'password';
+        icon.className = 'mdi ' + (isPwd ? 'mdi-eye-off-outline' : 'mdi-eye-outline');
+      }
+
+      document.getElementById('toggleLoginPwd').addEventListener('click', function() {
+        togglePwd('loginPwd', 'loginPwdIcon');
+      });
+      document.getElementById('toggleRegPwd').addEventListener('click', function() {
+        togglePwd('regPwd', 'regPwdIcon');
+      });
+      document.getElementById('toggleRegPwdConfirm').addEventListener('click', function() {
+        togglePwd('regPwdConfirm', 'regPwdConfirmIcon');
+      });
+
+      // --- Input focus effect on icon ---
+      document.querySelectorAll('.form-input').forEach(input => {
+        const wrap = input.closest('.input-wrap');
+        if (!wrap) return;
+        const icon = wrap.querySelector('.input-icon');
+        if (!icon) return;
+        input.addEventListener('focus', function() { icon.classList.add('focused'); });
+        input.addEventListener('blur', function() { icon.classList.remove('focused'); });
+      });
+
+      // --- Password strength ---
+      const pwdInput = document.getElementById('regPwd');
+      const segments = document.querySelectorAll('#pwdStrength .seg');
+      const strengthLabel = document.getElementById('pwdStrengthLabel');
+
+      pwdInput.addEventListener('input', function() {
+        const val = this.value;
+        let level = 0;
+        let label = '输入密码';
+        let cls = '';
+        if (val.length > 0) {
+          let score = 0;
+          if (val.length >= 8) score += 1;
+          if (val.length >= 12) score += 1;
+          if (/[A-Z]/.test(val)) score += 1;
+          if (/[a-z]/.test(val)) score += 1;
+          if (/[0-9]/.test(val)) score += 1;
+          if (/[^A-Za-z0-9]/.test(val)) score += 1;
+          if (score <= 2) { level = 1; label = '弱'; cls = 'weak'; }
+          else if (score <= 3) { level = 2; label = '中'; cls = 'medium'; }
+          else { level = 3; label = '强'; cls = 'strong'; }
+        }
+        segments.forEach((seg, i) => {
+          seg.className = 'seg';
+          if (i < level) seg.classList.add(cls);
+        });
+        strengthLabel.textContent = val.length === 0 ? '输入密码' : label;
+        strengthLabel.className = 'pwd-strength-label' + (val.length > 0 ? ' ' + cls : '');
+      });
+
+      // --- Toast ---
+      let toastTimer = null;
+      function showToast(message, type) {
+        const toast = document.getElementById('toast');
+        const icon = toast.querySelector('i');
+        const msg = toast.querySelector('.toast-msg');
+        icon.className = 'mdi ' + (type === 'success' ? 'mdi-check-circle' : 'mdi-alert-circle');
+        toast.className = 'toast ' + type;
+        msg.textContent = message;
+        toast.classList.add('visible');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(function() {
+          toast.classList.remove('visible');
+        }, 2500);
+      }
+
+      // --- Login submit ---
+      document.getElementById('loginBtn').addEventListener('click', function(e) {
+        e.preventDefault();
+        const btn = this;
+        const email = document.getElementById('loginEmail').value.trim();
+        const pwd = document.getElementById('loginPwd').value;
+        const emailErr = document.getElementById('loginEmailError');
+        const pwdErr = document.getElementById('loginPwdError');
+
+        emailErr.classList.remove('visible');
+        pwdErr.classList.remove('visible');
+        document.getElementById('loginEmail').classList.remove('error');
+        document.getElementById('loginPwd').classList.remove('error');
+
+        if (!email || !email.includes('@')) {
+          emailErr.classList.add('visible');
+          document.getElementById('loginEmail').classList.add('error');
+          return;
+        }
+        if (!pwd || pwd.length < 4) {
+          pwdErr.classList.add('visible');
+          document.getElementById('loginPwd').classList.add('error');
+          return;
+        }
+
+        btn.classList.add('loading');
+        setTimeout(function() {
+          btn.classList.remove('loading');
+          showToast('登录成功，欢迎回来！', 'success');
+          // Reset fields to original after a moment to simulate redirect
+          setTimeout(function() {
+            document.getElementById('loginEmail').value = 'demo@mindflow.app';
+            document.getElementById('loginPwd').value = 'Mindflow2026';
+          }, 100);
+        }, 1200);
+      });
+
+      // --- Register submit ---
+      document.getElementById('registerBtn').addEventListener('click', function(e) {
+        e.preventDefault();
+        const btn = this;
+        const email = document.getElementById('regEmail').value.trim();
+        const pwd = document.getElementById('regPwd').value;
+        const pwdConfirm = document.getElementById('regPwdConfirm').value;
+        const emailErr = document.getElementById('regEmailError');
+        const pwdConfirmErr = document.getElementById('regPwdConfirmError');
+
+        emailErr.classList.remove('visible');
+        pwdConfirmErr.classList.remove('visible');
+        document.getElementById('regEmail').classList.remove('error');
+        document.getElementById('regPwdConfirm').classList.remove('error');
+
+        if (!email || !email.includes('@')) {
+          emailErr.classList.add('visible');
+          document.getElementById('regEmail').classList.add('error');
+          return;
+        }
+        if (pwd.length < 8) {
+          showToast('密码至少需要 8 个字符', 'error');
+          return;
+        }
+        if (pwd !== pwdConfirm) {
+          pwdConfirmErr.classList.add('visible');
+          document.getElementById('regPwdConfirm').classList.add('error');
+          return;
+        }
+
+        btn.classList.add('loading');
+        setTimeout(function() {
+          btn.classList.remove('loading');
+          showToast('注册成功！欢迎加入 MindFlow', 'success');
+          // Switch to login tab after a moment
+          setTimeout(function() {
+            switchTab(tabs[0]);
+            document.getElementById('loginEmail').value = email;
+            document.getElementById('loginPwd').value = '';
+          }, 1200);
+        }, 1200);
+      });
+
+      // --- OAuth buttons ---
+      document.querySelectorAll('.btn-oauth').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const isGoogle = this.querySelector('.mdi-google') !== null;
+          const action = loginForm.classList.contains('hidden') ? '注册' : '登录';
+          showToast('正在跳转至 ' + (isGoogle ? 'Google' : 'Apple') + ' ' + action + '…', 'success');
+        });
+      });
+
+      // --- Forgot password ---
+      document.getElementById('forgotPwd').addEventListener('click', function(e) {
+        e.preventDefault();
+        showToast('密码重置链接已发送至您的邮箱', 'success');
+      });
+
+    })();
+  </script>
+</body>
+</html>

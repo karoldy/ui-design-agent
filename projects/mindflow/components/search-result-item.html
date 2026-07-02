@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SearchResultItem — 搜索结果项 | MindFlow 复合组件</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-bg-primary: #FAFAFA;
+      --color-bg-secondary: #F5F5F5;
+      --color-bg-tertiary: #EEEEEE;
+      --color-text-primary: #1A1A1A;
+      --color-text-secondary: #6B6B6B;
+      --color-text-tertiary: #9E9E9E;
+      --color-text-link: #3B82F6;
+      --color-text-on-accent: #FFFFFF;
+      --color-accent: #3B82F6;
+      --color-accent-hover: #2563EB;
+      --color-accent-soft: #E8F0FE;
+      --color-divider: #E8E8E8;
+      --color-highlight-bg: #FEF3C7;
+      --color-highlight-text: #92400E;
+
+      --tag-red: #FEE2E2;
+      --tag-orange: #FFEDD5;
+      --tag-yellow: #FEF3C7;
+      --tag-green: #D1FAE5;
+      --tag-teal: #CCFBF1;
+      --tag-blue: #DBEAFE;
+      --tag-purple: #EDE9FE;
+      --tag-pink: #FCE7F3;
+
+      --font-family-ui: 'Inter', system-ui, -apple-system, sans-serif;
+      --font-family-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-size-xs: 11px;
+      --font-size-sm: 13px;
+      --font-size-base: 15px;
+      --font-size-lg: 18px;
+      --font-size-xl: 22px;
+      --font-size-2xl: 28px;
+
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-xl: 16px;
+      --radius-full: 9999px;
+
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+      --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
+      --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-family-ui);
+      background: var(--color-bg-primary);
+      color: var(--color-text-primary);
+      padding: var(--space-8);
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    .page-title { font-size: var(--font-size-xl); font-weight: 600; margin-bottom: var(--space-2); }
+    .page-desc { font-size: var(--font-size-sm); color: var(--color-text-secondary); margin-bottom: var(--space-8); line-height: 1.5; }
+    .section { margin-bottom: var(--space-8); }
+    .section-title { font-size: var(--font-size-base); font-weight: 600; margin-bottom: var(--space-3); padding-bottom: var(--space-1); border-bottom: 1px solid var(--color-divider); }
+    .section-desc { font-size: var(--font-size-xs); color: var(--color-text-secondary); margin-bottom: var(--space-3); }
+
+    .demo-group {
+      display: flex;
+      flex-direction: column;
+      background: var(--color-bg-secondary);
+      border-radius: var(--radius-md);
+      padding: var(--space-4);
+      border: 1px solid var(--color-divider);
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+      margin-bottom: var(--space-4);
+      align-items: center;
+    }
+
+    .controls label {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+      font-size: var(--font-size-sm);
+      cursor: pointer;
+      padding: 4px 10px;
+      border-radius: var(--radius-sm);
+      background: var(--color-bg-secondary);
+      border: 1px solid var(--color-divider);
+      transition: background 150ms ease, border-color 150ms ease;
+    }
+    .controls label:hover { background: var(--color-bg-tertiary); }
+    .controls input[type="radio"] { accent-color: var(--color-accent); }
+
+    /* ===========================
+       Search Result Item Component
+       =========================== */
+
+    .search-result-item {
+      display: flex;
+      align-items: flex-start;
+      padding: var(--space-3) var(--space-4);
+      cursor: pointer;
+      border-radius: var(--radius-md);
+      transition: background 150ms ease, box-shadow 150ms ease;
+      gap: var(--space-3);
+      border: 1px solid transparent;
+    }
+
+    .search-result-item:hover {
+      background: var(--color-bg-tertiary);
+    }
+
+    .search-result-item.selected {
+      background: var(--color-accent-soft);
+      border-color: var(--color-accent);
+    }
+
+    .search-result-item:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: -2px;
+    }
+
+    .search-result-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .search-result-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      margin-bottom: var(--space-1);
+    }
+
+    .search-result-title {
+      font-size: var(--font-size-base);
+      font-weight: 600;
+      line-height: 1.4;
+      color: var(--color-text-primary);
+    }
+
+    /* Highlighted text */
+    .highlight {
+      background: var(--color-highlight-bg);
+      color: var(--color-highlight-text);
+      padding: 0 2px;
+      border-radius: 2px;
+      font-weight: 500;
+    }
+
+    .search-result-summary {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+      line-height: 1.5;
+      margin-bottom: var(--space-2);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      max-height: 2.9em;
+    }
+
+    .search-result-meta {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      flex-wrap: wrap;
+    }
+
+    /* Match type badge */
+    .match-type-badge {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 1px 6px;
+      border-radius: var(--radius-sm);
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+    }
+
+    .match-type-badge.exact-title {
+      background: var(--color-accent-soft);
+      color: var(--color-accent);
+    }
+
+    .match-type-badge.fuzzy-title {
+      background: #E0E7FF;
+      color: #4338CA;
+    }
+
+    .match-type-badge.fulltext {
+      background: #F3E8FF;
+      color: #7C3AED;
+    }
+
+    /* Tags */
+    .tag-group { display: flex; align-items: center; gap: var(--space-1); flex-wrap: wrap; }
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 11px;
+      padding: 1px 6px;
+      border-radius: var(--radius-sm);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    .tag-dot { width: 6px; height: 6px; border-radius: var(--radius-full); flex-shrink: 0; }
+
+    .tag-red { background: var(--tag-red); color: #991B1B; }
+    .tag-orange { background: var(--tag-orange); color: #9A3412; }
+    .tag-yellow { background: var(--tag-yellow); color: #92400E; }
+    .tag-green { background: var(--tag-green); color: #065F46; }
+    .tag-teal { background: var(--tag-teal); color: #115E59; }
+    .tag-blue { background: var(--tag-blue); color: #1E40AF; }
+    .tag-purple { background: var(--tag-purple); color: #5B21B6; }
+    .tag-pink { background: var(--tag-pink); color: #9D174D; }
+
+    .tag-dot-red { background: #DC2626; }
+    .tag-dot-orange { background: #EA580C; }
+    .tag-dot-yellow { background: #CA8A04; }
+    .tag-dot-green { background: #16A34A; }
+    .tag-dot-teal { background: #0D9488; }
+    .tag-dot-blue { background: #2563EB; }
+    .tag-dot-purple { background: #7C3AED; }
+    .tag-dot-pink { background: #DB2777; }
+
+    .timestamp {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-tertiary);
+      white-space: nowrap;
+    }
+    .meta-divider { width: 3px; height: 3px; border-radius: var(--radius-full); background: var(--color-text-tertiary); flex-shrink: 0; opacity: 0.5; }
+
+    .preview-label {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-secondary);
+      font-weight: 500;
+      margin-bottom: var(--space-2);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Search result icon */
+    .result-icon {
+      flex-shrink: 0;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-sm);
+      background: var(--color-accent-soft);
+      color: var(--color-accent);
+    }
+    .result-icon .mdi { font-size: 20px; }
+
+    /* Keyboard nav hint */
+    .key-hint {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      font-size: 10px;
+      color: var(--color-text-tertiary);
+    }
+  </style>
+</head>
+<body>
+  <h1 class="page-title">搜索结果项 — Search Result Item</h1>
+  <p class="page-desc">
+    搜索面板中的结果条目。与笔记列表项类似，但增加了匹配文字高亮（黄色背景）、
+    匹配类型标签（精确标题/模糊标题/全文匹配）。支持键盘导航选中状态。
+  </p>
+
+  <!-- ================ SECTION: Match Type Groups ================ -->
+  <div class="section">
+    <h2 class="section-title">分组展示 — 按匹配类型</h2>
+    <p class="section-desc">搜索下拉面板中的结果分组，模拟 Cmd+K 搜索体验。</p>
+
+    <!-- Group: Exact Title Match -->
+    <div style="margin-bottom:var(--space-4);">
+      <div style="display:flex;align-items:center;gap:var(--space-2);padding:var(--space-2) var(--space-3);font-size:var(--font-size-xs);color:var(--color-text-secondary);font-weight:500;letter-spacing:0.3px;">
+        <span class="mdi mdi-check-bold" style="font-size:12px;color:var(--color-accent);"></span>
+        精确标题匹配
+        <span style="color:var(--color-text-tertiary);font-weight:400;">Exact Title Match</span>
+      </div>
+      <div class="demo-group" style="gap:2px;">
+        <div class="search-result-item" onclick="this.classList.toggle('selected')">
+          <div class="result-icon"><span class="mdi mdi-file-document-outline"></span></div>
+          <div class="search-result-content">
+            <div class="search-result-header">
+              <span class="search-result-title"><span class="highlight">观察者</span><span class="highlight">模式</span>在前端状态管理中的应用</span>
+            </div>
+            <div class="search-result-summary">观察者模式是一种行为设计模式，定义了对象之间的一对多依赖关系。当前端状态发生变化时，所有依赖于它的视图都会得到通知并自动更新。Redux 和 Vue 都基于此<span class="highlight">模式</span>...</div>
+            <div class="search-result-meta">
+              <span class="match-type-badge exact-title">EXACT</span>
+              <div class="tag-group">
+                <span class="tag tag-blue"><span class="tag-dot tag-dot-blue"></span>前端</span>
+              </div>
+              <span class="meta-divider"></span>
+              <span class="timestamp">3分钟前</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Group: Fuzzy Title Match -->
+    <div style="margin-bottom:var(--space-4);">
+      <div style="display:flex;align-items:center;gap:var(--space-2);padding:var(--space-2) var(--space-3);font-size:var(--font-size-xs);color:var(--color-text-secondary);font-weight:500;letter-spacing:0.3px;">
+        <span class="mdi mdi-approximation" style="font-size:12px;color:#4338CA;"></span>
+        模糊标题匹配
+        <span style="color:var(--color-text-tertiary);font-weight:400;">Fuzzy Title Match</span>
+      </div>
+      <div class="demo-group" style="gap:2px;">
+        <div class="search-result-item" onclick="this.classList.toggle('selected')">
+          <div class="result-icon"><span class="mdi mdi-file-document-outline"></span></div>
+          <div class="search-result-content">
+            <div class="search-result-header">
+              <span class="search-result-title">前端性能优化：虚拟滚动与<span class="highlight">观察</span>者<span class="highlight">模式</span></span>
+            </div>
+            <div class="search-result-summary">本文探讨虚拟滚动技术如何在处理大量数据列表时提升前端性能，以及如何利用<span class="highlight">观察</span>者<span class="highlight">模式</span>实现高效的状态更新机制...</div>
+            <div class="search-result-meta">
+              <span class="match-type-badge fuzzy-title">FUZZY</span>
+              <div class="tag-group">
+                <span class="tag tag-green"><span class="tag-dot tag-dot-green"></span>性能</span>
+                <span class="tag tag-teal"><span class="tag-dot tag-dot-teal"></span>优化</span>
+              </div>
+              <span class="meta-divider"></span>
+              <span class="timestamp">1天前</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="search-result-item" onclick="this.classList.toggle('selected')">
+          <div class="result-icon"><span class="mdi mdi-file-document-outline"></span></div>
+          <div class="search-result-content">
+            <div class="search-result-header">
+              <span class="search-result-title">React 源码分析：<span class="highlight">观察</span>者<span class="highlight">模式</span>在 Fiber 架构中的体现</span>
+            </div>
+            <div class="search-result-summary">深入 React 18 源码，分析 Fiber 架构中如何借鉴<span class="highlight">观察</span>者<span class="highlight">模式</span>来实现高效的批量更新与优先级调度...</div>
+            <div class="search-result-meta">
+              <span class="match-type-badge fuzzy-title">FUZZY</span>
+              <div class="tag-group">
+                <span class="tag tag-purple"><span class="tag-dot tag-dot-purple"></span>React</span>
+              </div>
+              <span class="meta-divider"></span>
+              <span class="timestamp">3天前</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Group: Full text match -->
+    <div style="margin-bottom:var(--space-4);">
+      <div style="display:flex;align-items:center;gap:var(--space-2);padding:var(--space-2) var(--space-3);font-size:var(--font-size-xs);color:var(--color-text-secondary);font-weight:500;letter-spacing:0.3px;">
+        <span class="mdi mdi-text-search" style="font-size:12px;color:#7C3AED;"></span>
+        全文匹配
+        <span style="color:var(--color-text-tertiary);font-weight:400;">Full Text Match</span>
+      </div>
+      <div class="demo-group" style="gap:2px;">
+        <div class="search-result-item" onclick="this.classList.toggle('selected')">
+          <div class="result-icon"><span class="mdi mdi-file-document-outline"></span></div>
+          <div class="search-result-content">
+            <div class="search-result-header">
+              <span class="search-result-title">State Management 选型指南：从 Redux 到 Zustand</span>
+            </div>
+            <div class="search-result-summary">...Vue 的响应式系统基于发布-<span class="highlight">观察</span>者<span class="highlight">模式</span>，在数据变更时自动追踪依赖并更新视图。Zustand 采用极简的 API 设计...</div>
+            <div class="search-result-meta">
+              <span class="match-type-badge fulltext">FULL</span>
+              <div class="tag-group">
+                <span class="tag tag-blue"><span class="tag-dot tag-dot-blue"></span>前端</span>
+                <span class="tag tag-orange"><span class="tag-dot tag-dot-orange"></span>教程</span>
+              </div>
+              <span class="meta-divider"></span>
+              <span class="timestamp">1周前</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="search-result-item" onclick="this.classList.toggle('selected')">
+          <div class="result-icon"><span class="mdi mdi-file-document-outline"></span></div>
+          <div class="search-result-content">
+            <div class="search-result-header">
+              <span class="search-result-title">前端架构设计笔记（2026）</span>
+            </div>
+            <div class="search-result-summary">...微前端架构中，每个子应用可以独立使用自己的状态管理方案，通过 Event Bus 实现跨应用的<span class="highlight">观察</span>者<span class="highlight">模式</span>通信...</div>
+            <div class="search-result-meta">
+              <span class="match-type-badge fulltext">FULL</span>
+              <span class="meta-divider"></span>
+              <span class="timestamp">2周前</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================ SECTION: States ================ -->
+  <div class="section">
+    <h2 class="section-title">交互状态 States</h2>
+    <p class="section-desc">搜索结果的 Default / Hover / Selected 状态对比。</p>
+    <div class="demo-group">
+      <div class="preview-label">三种状态对比</div>
+
+      <!-- Default -->
+      <div class="search-result-item" style="cursor:default;">
+        <div class="result-icon"><span class="mdi mdi-file-document-outline"></span></div>
+        <div class="search-result-content">
+          <div class="search-result-header">
+            <span class="search-result-title">Default 状态 — 搜索结果默认展示</span>
+          </div>
+          <div class="search-result-summary">这是搜索结果的默认状态。背景为透明，无边框。匹配文字使用黄色背景高亮。</div>
+          <div class="search-result-meta">
+            <span class="match-type-badge exact-title">EXACT</span>
+            <span class="meta-divider"></span>
+            <span class="timestamp">刚刚</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hover -->
+      <div class="search-result-item" style="background:var(--color-bg-tertiary);cursor:default;">
+        <div class="result-icon"><span class="mdi mdi-file-document-outline"></span></div>
+        <div class="search-result-content">
+          <div class="search-result-header">
+            <span class="search-result-title">Hover 状态 — 鼠标悬停</span>
+          </div>
+          <div class="search-result-summary">鼠标悬停时，背景变为 <span class="highlight">--color-bg-tertiary</span> (#EEEEEE)，为浅灰色背景。</div>
+          <div class="search-result-meta">
+            <span class="match-type-badge fuzzy-title">FUZZY</span>
+            <span class="meta-divider"></span>
+            <span class="timestamp">刚刚</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Selected (keyboard navigation) -->
+      <div class="search-result-item" style="background:var(--color-accent-soft);border-color:var(--color-accent);cursor:default;">
+        <div class="result-icon"><span class="mdi mdi-file-document-outline"></span></div>
+        <div class="search-result-content">
+          <div class="search-result-header">
+            <span class="search-result-title">Selected 状态 — 键盘导航选中</span>
+            <span class="key-hint"><span class="mdi mdi-keyboard" style="font-size:12px;"></span> ↑↓</span>
+          </div>
+          <div class="search-result-summary">通过键盘 ↑↓ 方向键导航时，选中项背景变为 <span class="highlight">--color-accent-soft</span>，蓝色边框突出显示。</div>
+          <div class="search-result-meta">
+            <span class="match-type-badge fulltext">FULL</span>
+            <span class="meta-divider"></span>
+            <span class="timestamp">刚刚</span>
+            <span style="font-size:10px;color:var(--color-text-tertiary);">按 Enter 打开</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================ SECTION: Interactive Demo ================ -->
+  <div class="section">
+    <h2 class="section-title">交互演示 Interactive Demo</h2>
+    <p class="section-desc">点击任意结果项切换 Selected 状态。点击可模拟在搜索面板中上下选择的效果。</p>
+    <div class="demo-group">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-3);">
+        <div class="preview-label" style="margin-bottom:0;">搜索：<span class="highlight" style="padding:2px 6px;font-size:var(--font-size-sm);">观察者模式</span></div>
+        <span style="font-size:var(--font-size-xs);color:var(--color-text-tertiary);">共 5 条结果</span>
+      </div>
+
+      <div class="search-result-item" onclick="document.querySelectorAll('#interactive-group .search-result-item').forEach(el=>el.classList.remove('selected'));this.classList.add('selected');">
+        <div class="result-icon"><span class="mdi mdi-file-document-outline"></span></div>
+        <div class="search-result-content">
+          <div class="search-result-header">
+            <span class="search-result-title">理解 <span class="highlight">观察者</span><span class="highlight">模式</span>：前端状态管理核心</span>
+          </div>
+          <div class="search-result-summary">本文系统讲解<span class="highlight">观察者</span><span class="highlight">模式</span>在 JavaScript 中的实现方式，以及 Redux、MobX 等库如何运用该<span class="highlight">模式</span>...</div>
+          <div class="search-result-meta">
+            <span class="match-type-badge exact-title">EXACT</span>
+            <span class="meta-divider"></span>
+            <span class="timestamp">3分钟前</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="search-result-item" onclick="document.querySelectorAll('#interactive-group .search-result-item').forEach(el=>el.classList.remove('selected'));this.classList.add('selected');">
+        <div class="result-icon"><span class="mdi mdi-file-document-outline"></span></div>
+        <div class="search-result-content">
+          <div class="search-result-header">
+            <span class="search-result-title"><span class="highlight">观察者</span><span class="highlight">模式</span>与发布-订阅模式的区别</span>
+          </div>
+          <div class="search-result-summary">虽然两者常被混淆，但<span class="highlight">观察者</span><span class="highlight">模式</span>和发布-订阅模式在架构和应用场景上有本质区别...</div>
+          <div class="search-result-meta">
+            <span class="match-type-badge fuzzy-title">FUZZY</span>
+            <span class="meta-divider"></span>
+            <span class="timestamp">1天前</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="search-result-item" onclick="document.querySelectorAll('#interactive-group .search-result-item').forEach(el=>el.classList.remove('selected'));this.classList.add('selected');">
+        <div class="result-icon"><span class="mdi mdi-file-document-outline"></span></div>
+        <div class="search-result-content">
+          <div class="search-result-header">
+            <span class="search-result-title">Vue 3 响应式原理：从 Proxy 到依赖追踪</span>
+          </div>
+          <div class="search-result-summary">Vue 3 使用 Proxy 替代 Object.defineProperty，实现了更强大的响应式系统。其依赖追踪本质上是一种<span class="highlight">观察者</span><span class="highlight">模式</span>的应用...</div>
+          <div class="search-result-meta">
+            <span class="match-type-badge fulltext">FULL</span>
+            <span class="meta-divider"></span>
+            <span class="timestamp">3天前</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding:var(--space-2) var(--space-3);font-size:var(--font-size-xs);color:var(--color-text-secondary);text-align:center;border-top:1px solid var(--color-divider);margin-top:var(--space-2);">
+        点击选中一项，模拟键盘导航效果。按方向键 ↑↓ 导航（本演示通过点击模拟）
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Make all search-result-items toggle selected on click
+    document.querySelectorAll('.demo-group .search-result-item').forEach(item => {
+      item.addEventListener('click', function(e) {
+        // If it's in the interactive demo group, handle exclusive selection
+        if (this.closest('#interactive-group') || !this.closest('.demo-group')) return;
+        this.classList.toggle('selected');
+      });
+    });
+  </script>
+</body>
+</html>

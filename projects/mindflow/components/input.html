@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Input 输入框 | MindFlow 组件</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-bg-primary: #FAFAFA;
+      --color-bg-secondary: #F5F5F5;
+      --color-bg-tertiary: #EEEEEE;
+      --color-text-primary: #1A1A1A;
+      --color-text-secondary: #6B6B6B;
+      --color-text-tertiary: #9E9E9E;
+      --color-text-link: #3B82F6;
+      --color-text-on-accent: #FFFFFF;
+      --color-accent: #3B82F6;
+      --color-accent-hover: #2563EB;
+      --color-accent-soft: #E8F0FE;
+      --color-success: #10B981;
+      --color-warning: #F59E0B;
+      --color-error: #EF4444;
+      --font-family-ui: 'Inter', system-ui, -apple-system, sans-serif;
+      --font-family-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-size-xs: 11px;
+      --font-size-sm: 13px;
+      --font-size-base: 15px;
+      --font-size-lg: 18px;
+      --font-size-xl: 22px;
+      --font-size-2xl: 28px;
+      --font-size-3xl: 36px;
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+      --space-10: 40px;
+      --space-12: 48px;
+      --space-16: 64px;
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-xl: 16px;
+      --radius-full: 9999px;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+      --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
+      --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+      --shadow-xl: 0 16px 48px rgba(0,0,0,0.16);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: var(--font-family-body);
+      background: var(--color-bg-primary);
+      color: var(--color-text-primary);
+      padding: var(--space-6);
+      -webkit-font-smoothing: antialiased;
+    }
+    .page-header {
+      margin-bottom: var(--space-8);
+      display: flex; align-items: flex-start; gap: var(--space-4);
+    }
+    .page-header a {
+      color: var(--color-accent); text-decoration: none; font-size: var(--font-size-sm);
+      font-family: var(--font-family-ui); display: flex; align-items: center; gap: 4px;
+      padding: 6px 12px; border-radius: var(--radius-sm); transition: background 0.15s; flex-shrink: 0;
+    }
+    .page-header a:hover { background: var(--color-accent-soft); }
+    .page-header h1 { font-family: var(--font-family-ui); font-size: var(--font-size-2xl); font-weight: 700; }
+    .page-header p { color: var(--color-text-secondary); font-size: var(--font-size-sm); margin-top: var(--space-1); }
+    .section { margin-bottom: var(--space-10); }
+    .section-title {
+      font-family: var(--font-family-ui); font-size: var(--font-size-base); font-weight: 600;
+      padding-bottom: var(--space-2); margin-bottom: var(--space-4); border-bottom: 1px solid #E8E8E8;
+      display: flex; align-items: center; gap: var(--space-2);
+    }
+    .section-title code { font-size: var(--font-size-xs); background: var(--color-bg-secondary); padding: 2px 8px; border-radius: var(--radius-sm); color: var(--color-text-secondary); }
+    .demo-row {
+      display: flex; flex-wrap: wrap; align-items: flex-start; gap: var(--space-4);
+      padding: var(--space-4); background: #fff; border: 1px solid #E8E8E8;
+      border-radius: var(--radius-md); margin-bottom: var(--space-3);
+    }
+    .demo-row-label {
+      width: 100%; font-size: var(--font-size-xs); color: var(--color-text-secondary);
+      font-family: var(--font-family-ui); font-weight: 500; margin-bottom: -4px;
+    }
+
+    /* ===== INPUT BASE ===== */
+    .input-wrapper {
+      display: flex; flex-direction: column; gap: 4px; width: 240px;
+    }
+    .input-label {
+      font-family: var(--font-family-ui); font-size: var(--font-size-sm);
+      font-weight: 500; color: var(--color-text-primary);
+    }
+    .input-field {
+      display: flex; align-items: center; gap: 6px;
+      border: 1px solid #D0D0D0; border-radius: var(--radius-sm);
+      background: #fff; transition: all 0.15s ease; width: 100%;
+    }
+    .input-field .mdi { color: var(--color-text-tertiary); font-size: 16px; flex-shrink: 0; }
+    .input-field input {
+      flex: 1; border: none; outline: none; background: transparent;
+      font-family: var(--font-family-body); font-size: var(--font-size-sm);
+      color: var(--color-text-primary); width: 100%;
+    }
+    .input-field input::placeholder { color: var(--color-text-tertiary); }
+    .input-field input:disabled { cursor: not-allowed; }
+
+    /* Focus */
+    .input-field:focus-within { border-color: var(--color-accent); box-shadow: 0 0 0 3px rgba(59,130,246,0.12); }
+    .input-field:focus-within .mdi { color: var(--color-accent); }
+
+    /* Error */
+    .input-field.error { border-color: var(--color-error); }
+    .input-field.error:focus-within { box-shadow: 0 0 0 3px rgba(239,68,68,0.12); }
+    .input-field.error .mdi { color: var(--color-error); }
+    .input-helper.error { color: var(--color-error); }
+
+    /* Disabled */
+    .input-field.disabled { background: var(--color-bg-secondary); border-color: #E0E0E0; }
+    .input-field.disabled .mdi { color: #D0D0D0; }
+
+    /* Read-only */
+    .input-field.readonly { background: var(--color-bg-secondary); }
+
+    /* Sizes */
+    .input-field.input-sm { height: 28px; padding: 0 8px; }
+    .input-field.input-sm input { font-size: var(--font-size-xs); }
+    .input-field.input-md { height: 36px; padding: 0 10px; }
+    .input-field.input-lg { height: 44px; padding: 0 12px; }
+    .input-field.input-lg input { font-size: var(--font-size-base); }
+
+    .input-field.input-sm .mdi { font-size: 14px; }
+    .input-field.input-lg .mdi { font-size: 18px; }
+
+    /* Helper & Char count */
+    .input-helper { font-size: var(--font-size-xs); color: var(--color-text-secondary); font-family: var(--font-family-ui); }
+    .input-char-count { font-size: var(--font-size-xs); color: var(--color-text-tertiary); font-family: var(--font-family-ui); margin-left: auto; }
+
+    /* Password toggle */
+    .input-action {
+      background: none; border: none; cursor: pointer; padding: 0;
+      color: var(--color-text-tertiary); display: flex; align-items: center;
+      font-size: 16px; transition: color 0.15s;
+    }
+    .input-action:hover { color: var(--color-text-secondary); }
+
+    /* Search clear */
+    .search-clear {
+      background: none; border: none; cursor: pointer; padding: 0;
+      color: var(--color-text-tertiary); display: none; font-size: 14px;
+    }
+    .search-clear:hover { color: var(--color-text-secondary); }
+    .input-field.search-filled .search-clear { display: flex; }
+  </style>
+</head>
+<body>
+  <div class="page-header">
+    <a href="index.html"><i class="mdi mdi-arrow-left"></i> 返回</a>
+    <div>
+      <h1>Input 输入框</h1>
+      <p>统一高度 36px，圆角 4px，边框 1px solid #D0D0D0。覆盖所有交互状态和特殊场景。</p>
+    </div>
+  </div>
+
+  <!-- 基本输入框 - 状态 -->
+  <div class="section">
+    <div class="section-title">状态 <code>states</code></div>
+    <div class="demo-row">
+      <div class="demo-row-label">Default</div>
+      <div class="input-wrapper">
+        <div class="input-field input-md">
+          <input type="text" placeholder="请输入内容…">
+        </div>
+      </div>
+      <div class="input-wrapper">
+        <label class="input-label">用户名</label>
+        <div class="input-field input-md">
+          <i class="mdi mdi-account"></i>
+          <input type="text" placeholder="请输入用户名">
+        </div>
+      </div>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">Focused</div>
+      <div class="input-wrapper">
+        <div class="input-field input-md focused-style">
+          <input type="text" placeholder="正在输入…" value="正在输入的文本">
+        </div>
+      </div>
+      <style>.focused-style { border-color: var(--color-accent); box-shadow: 0 0 0 3px rgba(59,130,246,0.12); } .focused-style .mdi { color: var(--color-accent); }</style>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">Filled (已填写)</div>
+      <div class="input-wrapper">
+        <label class="input-label">邮箱</label>
+        <div class="input-field input-md">
+          <i class="mdi mdi-email"></i>
+          <input type="email" value="user@mindflow.app">
+        </div>
+      </div>
+      <div class="input-wrapper">
+        <label class="input-label">密码</label>
+        <div class="input-field input-md">
+          <i class="mdi mdi-lock"></i>
+          <input type="password" value="mypassword123">
+        </div>
+      </div>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">Error</div>
+      <div class="input-wrapper">
+        <div class="input-field input-md error">
+          <i class="mdi mdi-email"></i>
+          <input type="email" value="invalid-email" placeholder="请输入邮箱">
+        </div>
+        <span class="input-helper error"><i class="mdi mdi-alert-circle"></i> 邮箱格式不正确</span>
+      </div>
+      <div class="input-wrapper">
+        <label class="input-label">密码</label>
+        <div class="input-field input-md error">
+          <i class="mdi mdi-lock"></i>
+          <input type="password" value="123">
+        </div>
+        <span class="input-helper error">密码至少 6 个字符</span>
+      </div>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">Disabled</div>
+      <div class="input-wrapper">
+        <label class="input-label">已禁用的输入框</label>
+        <div class="input-field input-md disabled">
+          <i class="mdi mdi-account"></i>
+          <input type="text" value="不可编辑的内容" disabled>
+        </div>
+      </div>
+      <div class="input-wrapper">
+        <label class="input-label">只读</label>
+        <div class="input-field input-md readonly">
+          <i class="mdi mdi-calendar"></i>
+          <input type="text" value="2026-07-02" readonly>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 带图标的输入框 -->
+  <div class="section">
+    <div class="section-title">带图标 <code>leading / trailing icon</code></div>
+    <div class="demo-row">
+      <div class="demo-row-label">前缀图标 (Leading)</div>
+      <div class="input-wrapper"><div class="input-field input-md"><i class="mdi mdi-magnify"></i><input type="text" placeholder="搜索笔记…"></div></div>
+      <div class="input-wrapper"><div class="input-field input-md"><i class="mdi mdi-email"></i><input type="email" placeholder="邮箱地址"></div></div>
+      <div class="input-wrapper"><div class="input-field input-md"><i class="mdi mdi-lock"></i><input type="password" placeholder="密码"></div></div>
+      <div class="input-wrapper"><div class="input-field input-md"><i class="mdi mdi-link"></i><input type="url" placeholder="粘贴链接"></div></div>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">后缀图标 (Trailing)</div>
+      <div class="input-wrapper">
+        <div class="input-field input-md">
+          <input type="text" placeholder="搜索…">
+          <i class="mdi mdi-magnify" style="color:var(--color-accent)"></i>
+        </div>
+      </div>
+      <div class="input-wrapper">
+        <label class="input-label">日期</label>
+        <div class="input-field input-md">
+          <input type="text" value="2026-07-02">
+          <i class="mdi mdi-calendar"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 带辅助文字与字符计数 -->
+  <div class="section">
+    <div class="section-title">辅助文字 &amp; 字符计数 <code>helper / char count</code></div>
+    <div class="demo-row">
+      <div class="input-wrapper">
+        <label class="input-label">笔记标题</label>
+        <div class="input-field input-md">
+          <input type="text" placeholder="输入标题…" maxlength="100">
+        </div>
+        <div style="display:flex;justify-content:space-between">
+          <span class="input-helper">最多 100 个字符</span>
+          <span class="input-char-count">0/100</span>
+        </div>
+      </div>
+      <div class="input-wrapper">
+        <label class="input-label">标签</label>
+        <div class="input-field input-md">
+          <i class="mdi mdi-tag"></i>
+          <input type="text" placeholder="输入标签，用逗号分隔" value="设计, UX">
+        </div>
+        <span class="input-helper">按逗号分隔多个标签</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 尺寸 -->
+  <div class="section">
+    <div class="section-title">尺寸 <code>size</code></div>
+    <div class="demo-row">
+      <div class="demo-row-label">Small (28px)</div>
+      <div class="input-wrapper"><div class="input-field input-sm"><i class="mdi mdi-magnify"></i><input type="text" placeholder="紧凑搜索"></div></div>
+      <div class="input-wrapper" style="width:160px"><div class="input-field input-sm"><input type="text" placeholder="小尺寸输入" value="小尺寸"></div></div>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">Medium (36px) — 默认</div>
+      <div class="input-wrapper"><div class="input-field input-md"><i class="mdi mdi-magnify"></i><input type="text" placeholder="标准搜索"></div></div>
+      <div class="input-wrapper" style="width:200px"><div class="input-field input-md"><input type="text" placeholder="中等尺寸" value="标准输入"></div></div>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">Large (44px)</div>
+      <div class="input-wrapper"><div class="input-field input-lg"><i class="mdi mdi-magnify"></i><input type="text" placeholder="大尺寸搜索"></div></div>
+      <div class="input-wrapper" style="width:240px"><div class="input-field input-lg"><input type="text" placeholder="大尺寸输入" value="大尺寸"></div></div>
+    </div>
+  </div>
+
+  <!-- 特殊场景：密码 -->
+  <div class="section">
+    <div class="section-title">密码输入框 <code>password with toggle</code></div>
+    <div class="demo-row">
+      <div class="input-wrapper">
+        <label class="input-label">密码</label>
+        <div class="input-field input-md" id="pw-wrapper">
+          <i class="mdi mdi-lock"></i>
+          <input type="password" value="supersecret123" id="pw-input">
+          <button class="input-action" onclick="togglePw()"><i class="mdi mdi-eye-off" id="pw-icon"></i></button>
+        </div>
+      </div>
+      <div class="input-wrapper">
+        <label class="input-label">确认密码</label>
+        <div class="input-field input-md">
+          <i class="mdi mdi-lock"></i>
+          <input type="password" placeholder="再次输入密码" value="supersecret123">
+          <button class="input-action"><i class="mdi mdi-eye-off"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 特殊场景：搜索 -->
+  <div class="section">
+    <div class="section-title">搜索输入框 <code>search with clear</code></div>
+    <div class="demo-row">
+      <div class="input-wrapper" style="width:320px">
+        <div class="input-field input-md search-filled" id="search-demo">
+          <i class="mdi mdi-magnify" style="color:var(--color-accent)"></i>
+          <input type="text" placeholder="搜索笔记…" value="设计系统" oninput="toggleClear(this)">
+          <button class="search-clear" onclick="this.parentElement.querySelector('input').value='';this.parentElement.classList.remove('search-filled');"><i class="mdi mdi-close-circle"></i></button>
+        </div>
+        <div style="display:flex;gap:var(--space-2);margin-top:4px">
+          <span class="input-helper">按 ⌘K 快速搜索</span>
+          <a href="#" style="font-size:var(--font-size-xs);color:var(--color-accent);text-decoration:none;font-family:var(--font-family-ui)">高级搜索</a>
+        </div>
+      </div>
+      <script>
+        function togglePw() {
+          const inp = document.getElementById('pw-input');
+          const icon = document.getElementById('pw-icon');
+          const isPw = inp.type === 'password';
+          inp.type = isPw ? 'text' : 'password';
+          icon.className = 'mdi mdi-' + (isPw ? 'eye' : 'eye-off');
+        }
+        function toggleClear(input) {
+          const wrapper = input.parentElement;
+          wrapper.classList.toggle('search-filled', input.value.length > 0);
+        }
+      </script>
+    </div>
+  </div>
+
+  <!-- 标签变体 -->
+  <div class="section">
+    <div class="section-title">标签 &amp; 布局变体</div>
+    <div class="demo-row" style="flex-direction:column;gap:var(--space-4)">
+      <div style="display:flex;gap:var(--space-3);align-items:center;width:100%">
+        <div class="input-wrapper" style="flex:1">
+          <label class="input-label">邮箱地址 <span style="color:var(--color-error)">*</span></label>
+          <div class="input-field input-md">
+            <i class="mdi mdi-email"></i>
+            <input type="email" placeholder="your@email.com">
+          </div>
+        </div>
+        <div class="input-wrapper" style="flex:1">
+          <label class="input-label">全名</label>
+          <div class="input-field input-md">
+            <i class="mdi mdi-account"></i>
+            <input type="text" placeholder="输入姓名">
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;gap:var(--space-3);align-items:flex-start;width:100%">
+        <div class="input-wrapper" style="flex:1">
+          <div class="input-field input-md">
+            <input type="text" placeholder="房间号（可选）">
+          </div>
+        </div>
+        <div class="input-wrapper" style="flex:1">
+          <button class="btn btn-primary btn-md" style="height:36px;margin-top:0">搜索</button>
+          <style>.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;font-family:var(--font-family-ui);font-weight:500;border-radius:var(--radius-sm);cursor:pointer;border:1px solid transparent;transition:all .15s;white-space:nowrap;position:relative;text-decoration:none;}.btn-primary{background:var(--color-accent);color:#fff;border-color:var(--color-accent);}.btn-primary:hover{background:var(--color-accent-hover);}.btn-md{height:36px;padding:0 16px;font-size:var(--font-size-sm);}</style>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

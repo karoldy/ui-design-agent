@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NoteListItem — 笔记列表项 | MindFlow 复合组件</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Colors */
+      --color-bg-primary: #FAFAFA;
+      --color-bg-secondary: #F5F5F5;
+      --color-bg-tertiary: #EEEEEE;
+      --color-text-primary: #1A1A1A;
+      --color-text-secondary: #6B6B6B;
+      --color-text-tertiary: #9E9E9E;
+      --color-text-link: #3B82F6;
+      --color-text-on-accent: #FFFFFF;
+      --color-accent: #3B82F6;
+      --color-accent-hover: #2563EB;
+      --color-accent-soft: #E8F0FE;
+      --color-success: #10B981;
+      --color-warning: #F59E0B;
+      --color-error: #EF4444;
+      --color-divider: #E8E8E8;
+      --color-selected-border: #3B82F6;
+      --color-draft: #F59E0B;
+
+      /* Tag colors */
+      --tag-red: #FEE2E2;
+      --tag-orange: #FFEDD5;
+      --tag-yellow: #FEF3C7;
+      --tag-green: #D1FAE5;
+      --tag-teal: #CCFBF1;
+      --tag-blue: #DBEAFE;
+      --tag-purple: #EDE9FE;
+      --tag-pink: #FCE7F3;
+
+      /* Typography */
+      --font-family-ui: 'Inter', system-ui, -apple-system, sans-serif;
+      --font-family-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-size-xs: 11px;
+      --font-size-sm: 13px;
+      --font-size-base: 15px;
+      --font-size-lg: 18px;
+      --font-size-xl: 22px;
+      --font-size-2xl: 28px;
+      --font-size-3xl: 36px;
+
+      /* Spacing */
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+      --space-10: 40px;
+      --space-12: 48px;
+
+      /* Radius */
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-xl: 16px;
+      --radius-full: 9999px;
+
+      /* Shadows */
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+      --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
+      --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-family-ui);
+      background: var(--color-bg-primary);
+      color: var(--color-text-primary);
+      padding: var(--space-8);
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .page-title {
+      font-size: var(--font-size-xl);
+      font-weight: 600;
+      margin-bottom: var(--space-2);
+    }
+
+    .page-desc {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+      margin-bottom: var(--space-8);
+      line-height: 1.5;
+    }
+
+    .section {
+      margin-bottom: var(--space-8);
+    }
+
+    .section-title {
+      font-size: var(--font-size-base);
+      font-weight: 600;
+      margin-bottom: var(--space-3);
+      padding-bottom: var(--space-1);
+      border-bottom: 1px solid var(--color-divider);
+    }
+
+    .section-desc {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-secondary);
+      margin-bottom: var(--space-3);
+    }
+
+    .demo-group {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      background: var(--color-bg-secondary);
+      border-radius: var(--radius-md);
+      padding: var(--space-4);
+      border: 1px solid var(--color-divider);
+    }
+
+    /* ========================
+       Note List Item Component
+       ======================== */
+
+    .note-item {
+      display: flex;
+      align-items: flex-start;
+      padding: var(--space-3) var(--space-5);
+      cursor: pointer;
+      border-radius: var(--radius-md);
+      position: relative;
+      transition: background 150ms ease, box-shadow 150ms ease;
+      gap: var(--space-3);
+      border-left: 3px solid transparent;
+      min-height: 48px;
+    }
+
+    .note-item:hover {
+      background: var(--color-bg-tertiary);
+    }
+
+    .note-item.selected {
+      background: var(--color-accent-soft);
+      border-left-color: var(--color-selected-border);
+    }
+
+    .note-item.editing {
+      background: white;
+      border-left-color: var(--color-accent);
+      box-shadow: 0 0 0 1px var(--color-accent), var(--shadow-sm);
+    }
+
+    .note-item.editing:hover {
+      background: white;
+    }
+
+    .note-item.active-editing {
+      background: white;
+      border-left-color: var(--color-accent);
+      box-shadow: 0 0 0 2px var(--color-accent), var(--shadow-sm);
+    }
+
+    /* Drag handle */
+    .note-drag-handle {
+      flex-shrink: 0;
+      width: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 150ms ease;
+      cursor: grab;
+      color: var(--color-text-tertiary);
+      padding-top: 4px;
+    }
+
+    .note-item:hover .note-drag-handle {
+      opacity: 0.5;
+    }
+
+    .note-drag-handle:hover {
+      opacity: 1 !important;
+    }
+
+    .note-drag-handle .mdi {
+      font-size: 16px;
+    }
+
+    /* Content area */
+    .note-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .note-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      margin-bottom: var(--space-1);
+    }
+
+    .note-title {
+      font-size: var(--font-size-base);
+      font-weight: 600;
+      line-height: 1.4;
+      color: var(--color-text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .note-title.placeholder {
+      color: var(--color-text-tertiary);
+      font-style: italic;
+      font-weight: 400;
+    }
+
+    .note-pin-icon {
+      flex-shrink: 0;
+      color: var(--color-accent);
+      font-size: 14px;
+      opacity: 0.7;
+    }
+
+    .note-draft-badge {
+      flex-shrink: 0;
+      font-size: 10px;
+      color: var(--color-draft);
+      background: #FEF3C7;
+      padding: 1px 6px;
+      border-radius: var(--radius-sm);
+      font-weight: 500;
+      letter-spacing: 0.3px;
+    }
+
+    .note-summary {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+      line-height: 1.5;
+      margin-bottom: var(--space-2);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      /* Fallback for non-webkit browsers */
+      max-height: 2.9em;
+    }
+
+    .note-summary.no-body {
+      color: var(--color-text-tertiary);
+      font-style: italic;
+    }
+
+    .note-meta {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      flex-wrap: wrap;
+    }
+
+    /* Tags */
+    .tag-group {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 11px;
+      padding: 1px 6px;
+      border-radius: var(--radius-sm);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .tag-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: var(--radius-full);
+      flex-shrink: 0;
+    }
+
+    .tag-overflow {
+      font-size: 11px;
+      color: var(--color-text-tertiary);
+      font-weight: 500;
+    }
+
+    .tag-red { background: var(--tag-red); color: #991B1B; }
+    .tag-orange { background: var(--tag-orange); color: #9A3412; }
+    .tag-yellow { background: var(--tag-yellow); color: #92400E; }
+    .tag-green { background: var(--tag-green); color: #065F46; }
+    .tag-teal { background: var(--tag-teal); color: #115E59; }
+    .tag-blue { background: var(--tag-blue); color: #1E40AF; }
+    .tag-purple { background: var(--tag-purple); color: #5B21B6; }
+    .tag-pink { background: var(--tag-pink); color: #9D174D; }
+
+    /* Tag dot colors (vivid for the dot) */
+    .tag-dot-red { background: #DC2626; }
+    .tag-dot-orange { background: #EA580C; }
+    .tag-dot-yellow { background: #CA8A04; }
+    .tag-dot-green { background: #16A34A; }
+    .tag-dot-teal { background: #0D9488; }
+    .tag-dot-blue { background: #2563EB; }
+    .tag-dot-purple { background: #7C3AED; }
+    .tag-dot-pink { background: #DB2777; }
+
+    .timestamp {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-tertiary);
+      white-space: nowrap;
+    }
+
+    .meta-divider {
+      width: 3px;
+      height: 3px;
+      border-radius: var(--radius-full);
+      background: var(--color-text-tertiary);
+      flex-shrink: 0;
+      opacity: 0.5;
+    }
+
+    .backlink-count {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-link);
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      white-space: nowrap;
+    }
+
+    .backlink-count .mdi {
+      font-size: 12px;
+    }
+
+    /* Right actions */
+    .note-actions {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+      opacity: 0;
+      transition: opacity 150ms ease;
+    }
+
+    .note-item:hover .note-actions,
+    .note-item.selected .note-actions {
+      opacity: 1;
+    }
+
+    .note-action-btn {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      background: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      color: var(--color-text-secondary);
+      transition: background 150ms ease, color 150ms ease;
+    }
+
+    .note-action-btn:hover {
+      background: var(--color-bg-tertiary);
+      color: var(--color-text-primary);
+    }
+
+    .note-action-btn .mdi {
+      font-size: 16px;
+    }
+
+    /* More menu button */
+    .note-more-btn {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      background: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      color: var(--color-text-secondary);
+      transition: background 150ms ease, color 150ms ease;
+    }
+
+    .note-more-btn:hover {
+      background: var(--color-bg-tertiary);
+      color: var(--color-text-primary);
+    }
+
+    .note-more-btn .mdi {
+      font-size: 18px;
+    }
+
+    /* Context menu */
+    .context-menu {
+      display: none;
+      position: absolute;
+      right: var(--space-6);
+      top: 100%;
+      background: white;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--color-divider);
+      min-width: 160px;
+      padding: var(--space-1) 0;
+      z-index: 100;
+    }
+
+    .context-menu.open {
+      display: block;
+    }
+
+    .context-menu-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-3);
+      font-size: var(--font-size-sm);
+      color: var(--color-text-primary);
+      cursor: pointer;
+      transition: background 100ms ease;
+    }
+
+    .context-menu-item:hover {
+      background: var(--color-bg-secondary);
+    }
+
+    .context-menu-item .mdi {
+      font-size: 16px;
+      color: var(--color-text-secondary);
+    }
+
+    .context-menu-item.danger {
+      color: var(--color-error);
+    }
+
+    .context-menu-item.danger .mdi {
+      color: var(--color-error);
+    }
+
+    .context-menu-divider {
+      height: 1px;
+      background: var(--color-divider);
+      margin: var(--space-1) 0;
+    }
+
+    /* Interactive toggles */
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+      margin-bottom: var(--space-4);
+      align-items: center;
+    }
+
+    .controls label {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+      font-size: var(--font-size-sm);
+      cursor: pointer;
+      padding: 4px 10px;
+      border-radius: var(--radius-sm);
+      background: var(--color-bg-secondary);
+      border: 1px solid var(--color-divider);
+      transition: background 150ms ease, border-color 150ms ease;
+    }
+
+    .controls label:hover {
+      background: var(--color-bg-tertiary);
+    }
+
+    .controls label.active {
+      background: var(--color-accent-soft);
+      border-color: var(--color-accent);
+      color: var(--color-accent);
+    }
+
+    .controls input[type="checkbox"] {
+      accent-color: var(--color-accent);
+    }
+
+    .controls input[type="radio"] {
+      accent-color: var(--color-accent);
+    }
+
+    /* Hover preview */
+    .hover-preview-area {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      background: var(--color-bg-secondary);
+      border-radius: var(--radius-md);
+      padding: var(--space-4);
+      border: 1px solid var(--color-divider);
+    }
+
+    .preview-label {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-secondary);
+      font-weight: 500;
+      margin-bottom: var(--space-2);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+  </style>
+</head>
+<body>
+  <h1 class="page-title">笔记列表项 — Note List Item</h1>
+  <p class="page-desc">
+    笔记列表中的核心复合组件。展示标题、摘要、标签组、时间戳、反向链接计数。
+    支持标准、置顶、草稿、多标签溢出、反向链接等变体，以及 Default / Hover / Selected / Active-edit 状态。
+  </p>
+
+  <!-- Interactive Controls -->
+  <div class="controls">
+    <span style="font-size:var(--font-size-sm);font-weight:500;color:var(--color-text-secondary);margin-right:var(--space-2);">交互控制：</span>
+    <label id="ctrl-hover" onmouseenter="document.querySelectorAll('.demo-item').forEach(el => el.classList.add('hover'))" onmouseleave="document.querySelectorAll('.demo-item').forEach(el => el.classList.remove('hover'))">
+      <span class="mdi mdi-cursor-pointer" style="font-size:14px"></span> 全局悬停
+    </label>
+    <label id="ctrl-drag" onclick="document.querySelectorAll('.note-drag-handle').forEach(el => { el.style.opacity = el.style.opacity === '1' ? '0' : '1'; })">
+      <span class="mdi mdi-drag" style="font-size:14px"></span> 显示拖拽手柄
+    </label>
+    <label id="ctrl-more" onclick="document.querySelectorAll('.note-actions').forEach(el => { el.style.opacity = el.style.opacity === '1' ? '' : '1'; })">
+      <span class="mdi mdi-dots-horizontal" style="font-size:14px"></span> 固定显示更多
+    </label>
+  </div>
+
+  <!-- ================ SECTION: Variants ================ -->
+  <div class="section">
+    <h2 class="section-title">变体展示 Variants</h2>
+    <p class="section-desc">展示 7 种笔记列表项的常见变体。悬停/点击可查看状态变化。</p>
+    <div class="demo-group">
+      <!-- Variant 1: Standard with title + summary -->
+      <div class="note-item demo-item" onclick="this.classList.toggle('selected')">
+        <div class="note-drag-handle"><span class="mdi mdi-drag"></span></div>
+        <div class="note-content">
+          <div class="note-header">
+            <span class="note-title">设计模式：观察者模式在前端状态管理中的应用</span>
+          </div>
+          <div class="note-summary">观察者模式是一种行为设计模式，它定义了对象之间的一对多依赖关系。当一个对象的状态发生变化时，所有依赖于它的对象都会得到通知并自动更新。在前端领域，Redux、Zustand、Vue 的响应式系统都基于此模式...</div>
+          <div class="note-meta">
+            <div class="tag-group">
+              <span class="tag tag-blue"><span class="tag-dot tag-dot-blue"></span>前端架构</span>
+              <span class="tag tag-green"><span class="tag-dot tag-dot-green"></span>设计模式</span>
+            </div>
+            <span class="meta-divider"></span>
+            <span class="timestamp">3分钟前</span>
+            <span class="meta-divider"></span>
+            <span class="backlink-count"><span class="mdi mdi-link-variant"></span>5个链接</span>
+          </div>
+        </div>
+        <div class="note-actions">
+          <button class="note-action-btn" title="删除" onclick="event.stopPropagation();"><span class="mdi mdi-delete-outline"></span></button>
+          <button class="note-more-btn" onclick="event.stopPropagation();this.nextElementSibling.classList.toggle('open')"><span class="mdi mdi-dots-horizontal"></span>
+            <div class="context-menu">
+              <div class="context-menu-item"><span class="mdi mdi-pencil-outline"></span>重命名</div>
+              <div class="context-menu-item"><span class="mdi mdi-folder-move-outline"></span>移动</div>
+              <div class="context-menu-item"><span class="mdi mdi-link-variant"></span>复制链接</div>
+              <div class="context-menu-divider"></div>
+              <div class="context-menu-item danger"><span class="mdi mdi-delete-outline"></span>删除</div>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Variant 2: Pinned note -->
+      <div class="note-item demo-item" onclick="this.classList.toggle('selected')">
+        <div class="note-drag-handle"><span class="mdi mdi-drag"></span></div>
+        <div class="note-content">
+          <div class="note-header">
+            <span class="mdi mdi-pin note-pin-icon"></span>
+            <span class="note-title">MindFlow 产品需求文档（PRD）</span>
+          </div>
+          <div class="note-summary">产品定位：面向知识工作者的轻量级双向链接笔记工具，支持 Markdown 编辑、标签管理、知识图谱可视化。核心用户画像：技术写作者、产品经理、设计师...</div>
+          <div class="note-meta">
+            <div class="tag-group">
+              <span class="tag tag-purple"><span class="tag-dot tag-dot-purple"></span>产品</span>
+              <span class="tag tag-red"><span class="tag-dot tag-dot-red"></span>重要</span>
+            </div>
+            <span class="meta-divider"></span>
+            <span class="timestamp">1小时前</span>
+            <span class="meta-divider"></span>
+            <span class="backlink-count"><span class="mdi mdi-link-variant"></span>12个链接</span>
+          </div>
+        </div>
+        <div class="note-actions">
+          <button class="note-action-btn" title="取消置顶" onclick="event.stopPropagation();"><span class="mdi mdi-pin-off-outline"></span></button>
+          <button class="note-more-btn" onclick="event.stopPropagation();"><span class="mdi mdi-dots-horizontal"></span></button>
+        </div>
+      </div>
+
+      <!-- Variant 3: Untitled note (placeholder) -->
+      <div class="note-item demo-item" onclick="this.classList.toggle('selected')">
+        <div class="note-drag-handle"><span class="mdi mdi-drag"></span></div>
+        <div class="note-content">
+          <div class="note-header">
+            <span class="note-title placeholder">无标题笔记</span>
+          </div>
+          <div class="note-summary">开始写作… 输入 [[ 链接笔记，输入 # 添加标签</div>
+          <div class="note-meta">
+            <span class="timestamp">刚刚</span>
+          </div>
+        </div>
+        <div class="note-actions">
+          <button class="note-more-btn" onclick="event.stopPropagation();"><span class="mdi mdi-dots-horizontal"></span></button>
+        </div>
+      </div>
+
+      <!-- Variant 4: Title only, no body -->
+      <div class="note-item demo-item" onclick="this.classList.toggle('selected')">
+        <div class="note-drag-handle"><span class="mdi mdi-drag"></span></div>
+        <div class="note-content">
+          <div class="note-header">
+            <span class="note-title">周末购物清单</span>
+          </div>
+          <div class="note-summary no-body">无正文内容</div>
+          <div class="note-meta">
+            <div class="tag-group">
+              <span class="tag tag-yellow"><span class="tag-dot tag-dot-yellow"></span>生活</span>
+            </div>
+            <span class="meta-divider"></span>
+            <span class="timestamp">昨天</span>
+          </div>
+        </div>
+        <div class="note-actions">
+          <button class="note-more-btn" onclick="event.stopPropagation();"><span class="mdi mdi-dots-horizontal"></span></button>
+        </div>
+      </div>
+
+      <!-- Variant 5: Multiple tags with overflow -->
+      <div class="note-item demo-item" onclick="this.classList.toggle('selected')">
+        <div class="note-drag-handle"><span class="mdi mdi-drag"></span></div>
+        <div class="note-content">
+          <div class="note-header">
+            <span class="note-title">AI Agent 架构设计：从 ReAct 到 Multi-Agent 协作</span>
+          </div>
+          <div class="note-summary">本文深入探讨 AI Agent 的架构演进，从基础的 ReAct 模式（推理+行动循环）到复杂的 Multi-Agent 协作系统。我们将分析 LangChain、AutoGPT、CrewAI 等框架的实现原理...</div>
+          <div class="note-meta">
+            <div class="tag-group">
+              <span class="tag tag-teal"><span class="tag-dot tag-dot-teal"></span>AI</span>
+              <span class="tag tag-blue"><span class="tag-dot tag-dot-blue"></span>技术</span>
+              <span class="tag tag-purple"><span class="tag-dot tag-dot-purple"></span>架构</span>
+              <span class="tag-overflow">+3</span>
+            </div>
+            <span class="meta-divider"></span>
+            <span class="timestamp">2天前</span>
+            <span class="meta-divider"></span>
+            <span class="backlink-count"><span class="mdi mdi-link-variant"></span>3个链接</span>
+          </div>
+        </div>
+        <div class="note-actions">
+          <button class="note-more-btn" onclick="event.stopPropagation();"><span class="mdi mdi-dots-horizontal"></span></button>
+        </div>
+      </div>
+
+      <!-- Variant 6: Draft (unsaved) -->
+      <div class="note-item demo-item" onclick="this.classList.toggle('selected')">
+        <div class="note-drag-handle"><span class="mdi mdi-drag"></span></div>
+        <div class="note-content">
+          <div class="note-header">
+            <span class="note-title">关于知识图谱的调研笔记</span>
+            <span class="note-draft-badge">DRAFT</span>
+          </div>
+          <div class="note-summary">知识图谱（Knowledge Graph）是一种用图结构来建模知识和实体之间关系的技术。它由 Google 在 2012 年首次提出，用于增强搜索引擎的语义理解能力。常见的知识图谱...</div>
+          <div class="note-meta">
+            <div class="tag-group">
+              <span class="tag tag-green"><span class="tag-dot tag-dot-green"></span>研究</span>
+            </div>
+            <span class="meta-divider"></span>
+            <span class="timestamp" style="color:var(--color-warning);">未保存</span>
+          </div>
+        </div>
+        <div class="note-actions">
+          <button class="note-more-btn" onclick="event.stopPropagation();"><span class="mdi mdi-dots-horizontal"></span></button>
+        </div>
+      </div>
+
+      <!-- Variant 7: With backlinks only (no tags) -->
+      <div class="note-item demo-item" onclick="this.classList.toggle('selected')">
+        <div class="note-drag-handle"><span class="mdi mdi-drag"></span></div>
+        <div class="note-content">
+          <div class="note-header">
+            <span class="note-title">Shell 脚本中的错误处理最佳实践</span>
+          </div>
+          <div class="note-summary">在编写 Shell 脚本时，错误处理往往是容易被忽视的一环。本文将介绍 set -e、trap、exit codes 等关键概念，以及如何编写健壮的 Shell 脚本...</div>
+          <div class="note-meta">
+            <span class="timestamp">5天前</span>
+            <span class="meta-divider"></span>
+            <span class="backlink-count"><span class="mdi mdi-link-variant"></span>1个链接</span>
+          </div>
+        </div>
+        <div class="note-actions">
+          <button class="note-more-btn" onclick="event.stopPropagation();"><span class="mdi mdi-dots-horizontal"></span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================ SECTION: States ================ -->
+  <div class="section">
+    <h2 class="section-title">交互状态 States</h2>
+    <p class="section-desc">同一个笔记项在不同交互状态下的视觉表现。点击体验各状态切换。</p>
+    <div class="demo-group">
+      <div class="preview-label">点击切换状态：</div>
+      <!-- Default state -->
+      <div class="note-item" id="state-default">
+        <div class="note-drag-handle"><span class="mdi mdi-drag"></span></div>
+        <div class="note-content">
+          <div class="note-header">
+            <span class="note-title">Default 状态 — 默认态</span>
+          </div>
+          <div class="note-summary">这是笔记列表项的默认展示状态，没有交互行为时的视觉样式。背景为透明，左边界无颜色。</div>
+          <div class="note-meta">
+            <div class="tag-group">
+              <span class="tag tag-blue"><span class="tag-dot tag-dot-blue"></span>示例</span>
+            </div>
+            <span class="meta-divider"></span>
+            <span class="timestamp">10分钟前</span>
+          </div>
+        </div>
+        <div class="note-actions">
+          <button class="note-more-btn"><span class="mdi mdi-dots-horizontal"></span></button>
+        </div>
+      </div>
+
+      <!-- Hover state (simulated via CSS :hover, also via JS) -->
+      <div class="note-item" id="state-hover" style="background:var(--color-bg-tertiary);">
+        <div class="note-drag-handle"><span class="mdi mdi-drag"></span></div>
+        <div class="note-content">
+          <div class="note-header">
+            <span class="note-title">Hover 状态 — 悬停态</span>
+          </div>
+          <div class="note-summary">鼠标悬停时背景变为 --color-bg-tertiary (#EEEEEE)，右侧更多按钮显示。</div>
+          <div class="note-meta">
+            <div class="tag-group">
+              <span class="tag tag-green"><span class="tag-dot tag-dot-green"></span>示例</span>
+            </div>
+            <span class="meta-divider"></span>
+            <span class="timestamp">10分钟前</span>
+          </div>
+        </div>
+        <div class="note-actions" style="opacity:1;">
+          <button class="note-more-btn"><span class="mdi mdi-dots-horizontal"></span></button>
+        </div>
+      </div>
+
+      <!-- Selected state -->
+      <div class="note-item" id="state-selected" style="background:var(--color-accent-soft);border-left-color:var(--color-selected-border);">
+        <div class="note-drag-handle"><span class="mdi mdi-drag"></span></div>
+        <div class="note-content">
+          <div class="note-header">
+            <span class="note-title">Selected 状态 — 选中态</span>
+          </div>
+          <div class="note-summary">选中时左侧出现 accent 色(3px)边框，背景变为 --color-accent-soft (#E8F0FE)。</div>
+          <div class="note-meta">
+            <div class="tag-group">
+              <span class="tag tag-purple"><span class="tag-dot tag-dot-purple"></span>示例</span>
+            </div>
+            <span class="meta-divider"></span>
+            <span class="timestamp">10分钟前</span>
+          </div>
+        </div>
+        <div class="note-actions" style="opacity:1;">
+          <button class="note-more-btn"><span class="mdi mdi-dots-horizontal"></span></button>
+        </div>
+      </div>
+
+      <!-- Active editing state -->
+      <div class="note-item" id="state-editing" style="background:white;border-left-color:var(--color-accent);box-shadow:0 0 0 2px var(--color-accent), 0 1px 2px rgba(0,0,0,0.05);">
+        <div class="note-drag-handle"><span class="mdi mdi-drag"></span></div>
+        <div class="note-content">
+          <div class="note-header">
+            <span class="note-title">Active Edit 状态 — 编辑中</span>
+            <span class="note-draft-badge">EDITING</span>
+          </div>
+          <div class="note-summary">当前正在编辑的笔记，左侧边框+外发光，白色背景，右上角显示编辑标识。</div>
+          <div class="note-meta">
+            <div class="tag-group">
+              <span class="tag tag-orange"><span class="tag-dot tag-dot-orange"></span>示例</span>
+            </div>
+            <span class="meta-divider"></span>
+            <span class="timestamp">刚刚</span>
+          </div>
+        </div>
+        <div class="note-actions" style="opacity:1;">
+          <button class="note-more-btn"><span class="mdi mdi-dots-horizontal"></span></button>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:var(--space-2);margin-top:var(--space-3);">
+      <button class="note-action-btn" style="width:auto;padding:4px 12px;border:1px solid var(--color-divider);border-radius:var(--radius-sm);" onclick="document.querySelectorAll('#state-default, #state-hover, #state-selected, #state-editing').forEach(el => { el.style.background = ''; el.style.borderLeftColor = ''; el.style.boxShadow = ''; el.querySelector('.note-actions').style.opacity = ''; el.querySelector('.note-draft-badge')?.remove(); }); document.getElementById('state-default').querySelector('.note-header').innerHTML = '<span class=\"note-title\">Default 状态 — 默认态</span>';">重置所有状态</button>
+    </div>
+  </div>
+
+  <!-- ================ SECTION: Interactive Demo ================ -->
+  <div class="section">
+    <h2 class="section-title">交互演示 Interactive Demo</h2>
+    <p class="section-desc">点击笔记项切换 Selected 状态；悬停查看点击 "..." 展开上下文菜单；拖拽手柄悬停可见。</p>
+    <div class="hover-preview-area">
+      <div class="preview-label">交互提示</div>
+      <div class="note-item" style="cursor:pointer;">
+        <div class="note-drag-handle"><span class="mdi mdi-drag"></span></div>
+        <div class="note-content">
+          <div class="note-header">
+            <span class="note-title">点击我切换选中状态</span>
+          </div>
+          <div class="note-summary">点击此项可看到 Selected 状态的切换效果。悬停时右侧出现操作按钮。</div>
+          <div class="note-meta">
+            <div class="tag-group">
+              <span class="tag tag-pink"><span class="tag-dot tag-dot-pink"></span>交互</span>
+              <span class="tag tag-teal"><span class="tag-dot tag-dot-teal"></span>演示</span>
+            </div>
+            <span class="meta-divider"></span>
+            <span class="timestamp">刚刚</span>
+          </div>
+        </div>
+        <div class="note-actions">
+          <button class="note-more-btn" onclick="event.stopPropagation();var m=this.nextElementSibling;if(m)m.classList.toggle('open');"><span class="mdi mdi-dots-horizontal"></span>
+            <div class="context-menu">
+              <div class="context-menu-item"><span class="mdi mdi-pencil-outline"></span>重命名</div>
+              <div class="context-menu-item"><span class="mdi mdi-folder-move-outline"></span>移动</div>
+              <div class="context-menu-item"><span class="mdi mdi-link-variant"></span>复制链接</div>
+              <div class="context-menu-divider"></div>
+              <div class="context-menu-item danger"><span class="mdi mdi-delete-outline"></span>删除</div>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Make all note-items with class demo-item clickable for selected state
+    document.querySelectorAll('.note-item').forEach(item => {
+      // Context menu close on outside click
+      item.addEventListener('click', function(e) {
+        if (this.classList.contains('demo-item')) {
+          this.classList.toggle('selected');
+        }
+      });
+    });
+
+    // Close context menus on document click
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.context-menu') && !e.target.closest('.note-more-btn')) {
+        document.querySelectorAll('.context-menu.open').forEach(m => m.classList.remove('open'));
+      }
+    });
+
+    // Drag handle visual feedback
+    document.querySelectorAll('.note-drag-handle').forEach(h => {
+      h.addEventListener('mousedown', function() {
+        this.style.color = 'var(--color-accent)';
+      });
+      h.addEventListener('mouseup', function() {
+        this.style.color = '';
+      });
+    });
+  </script>
+</body>
+</html>

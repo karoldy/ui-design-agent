@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MindFlow Android — 设置</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+  <style>
+    /* ===== Material 3 Token ===== */
+    :root {
+      --md-primary: #3B5F90;
+      --md-on-primary: #FFFFFF;
+      --md-primary-container: #D6E3FF;
+      --md-on-primary-container: #001B3E;
+      --md-secondary: #58617A;
+      --md-on-secondary: #FFFFFF;
+      --md-secondary-container: #DDE5FF;
+      --md-surface: #FFFBFE;
+      --md-surface-variant: #F3F0F4;
+      --md-on-surface: #1C1B1F;
+      --md-on-surface-variant: #49454F;
+      --md-outline: #79747E;
+      --md-outline-variant: #CAC4D0;
+      --md-error: #BA1A1A;
+      --md-on-error: #FFFFFF;
+      --md-error-container: #FFDAD6;
+      --md-background: #FFFBFE;
+      --md-shadow: rgba(0,0,0,0.08);
+      --md-elevation-1: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.12);
+      --md-elevation-2: 0 2px 6px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.10);
+      --md-elevation-3: 0 4px 12px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.08);
+      --md-radius-sm: 8px;
+      --md-radius-md: 12px;
+      --md-radius-lg: 16px;
+      --md-radius-xl: 28px;
+      --md-radius-full: 9999px;
+      --pixel-8-width: 412px;
+      --pixel-8-height: 915px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Roboto', system-ui, -apple-system, sans-serif;
+      background: #E6E1E5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .device-frame {
+      width: var(--pixel-8-width);
+      height: var(--pixel-8-height);
+      background: var(--md-surface);
+      border-radius: 40px;
+      overflow: hidden;
+      box-shadow:
+        0 0 0 1px rgba(0,0,0,0.1),
+        0 20px 60px rgba(0,0,0,0.15),
+        0 8px 24px rgba(0,0,0,0.1);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+
+    /* ===== Status Bar ===== */
+    .status-bar {
+      height: 36px;
+      background: var(--md-surface);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      flex-shrink: 0;
+    }
+    .status-bar .time { font-size: 14px; font-weight: 500; color: var(--md-on-surface); }
+    .status-bar .status-icons { display: flex; align-items: center; gap: 6px; color: var(--md-on-surface); font-size: 14px; }
+    .status-bar .status-icons i { font-size: 16px; }
+    .camera-cutout {
+      position: absolute;
+      top: 10px; left: 50%; transform: translateX(-50%);
+      width: 10px; height: 10px; border-radius: 50%; background: #1C1B1F; opacity: 0.9;
+    }
+
+    /* ===== Top App Bar ===== */
+    .top-app-bar {
+      display: flex;
+      align-items: center;
+      padding: 0 4px 4px 4px;
+      flex-shrink: 0;
+      height: 56px;
+    }
+    .top-app-bar .back-btn {
+      width: 48px; height: 48px; border-radius: var(--md-radius-full);
+      border: none; background: transparent; color: var(--md-on-surface);
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: background 0.2s;
+    }
+    .top-app-bar .back-btn:hover { background: rgba(59, 95, 144, 0.08); }
+    .top-app-bar .back-btn i { font-size: 24px; }
+    .top-app-bar .title {
+      flex: 1;
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--md-on-surface);
+      padding-left: 4px;
+    }
+
+    /* ===== Scroll Content ===== */
+    .scroll-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0 16px 100px 16px;
+      background: var(--md-background);
+    }
+    .scroll-content::-webkit-scrollbar { width: 0; }
+
+    /* ===== Section ===== */
+    .settings-section {
+      margin-bottom: 8px;
+    }
+    .settings-section .section-label {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--md-primary);
+      padding: 16px 16px 8px 16px;
+      letter-spacing: 0.1px;
+      text-transform: uppercase;
+    }
+
+    /* ===== Material 3 Card Group ===== */
+    .settings-card {
+      background: var(--md-surface);
+      border-radius: var(--md-radius-lg);
+      overflow: hidden;
+      box-shadow: var(--md-elevation-1);
+      margin-bottom: 4px;
+    }
+
+    /* ===== Settings Item ===== */
+    .settings-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 12px 16px;
+      min-height: 56px;
+      cursor: pointer;
+      transition: background 0.15s;
+      position: relative;
+    }
+    .settings-item:hover { background: var(--md-surface-variant); }
+    .settings-item:active { background: rgba(59, 95, 144, 0.08); }
+    .settings-item .item-icon {
+      width: 40px; height: 40px;
+      border-radius: var(--md-radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .settings-item .item-icon i { font-size: 22px; }
+    .settings-item .item-content {
+      flex: 1;
+      min-width: 0;
+    }
+    .settings-item .item-title {
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--md-on-surface);
+      line-height: 1.4;
+    }
+    .settings-item .item-subtitle {
+      font-size: 13px;
+      color: var(--md-on-surface-variant);
+      line-height: 1.4;
+      margin-top: 1px;
+    }
+    .settings-item .item-trailing {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+    .settings-item .item-trailing .trailing-text {
+      font-size: 13px;
+      color: var(--md-on-surface-variant);
+    }
+    .settings-item .item-trailing i {
+      font-size: 20px;
+      color: var(--md-outline);
+    }
+
+    /* ===== Switch ===== */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 52px;
+      height: 32px;
+      flex-shrink: 0;
+    }
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .switch .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: var(--md-outline);
+      border-radius: 16px;
+      transition: background 0.2s;
+    }
+    .switch .slider::before {
+      content: "";
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      left: 4px;
+      bottom: 4px;
+      background: white;
+      border-radius: 50%;
+      transition: transform 0.2s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+    .switch input:checked + .slider {
+      background: var(--md-primary);
+    }
+    .switch input:checked + .slider::before {
+      transform: translateX(20px);
+    }
+
+    /* ===== Divider ===== */
+    .settings-divider {
+      height: 1px;
+      background: var(--md-outline-variant);
+      margin: 0 16px;
+    }
+
+    /* ===== User Avatar ===== */
+    .user-avatar {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: var(--md-primary-container);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--md-on-primary-container);
+      font-size: 18px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    /* ===== Badge ===== */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: var(--md-radius-full);
+      font-size: 11px;
+      font-weight: 600;
+      background: var(--md-primary-container);
+      color: var(--md-on-primary-container);
+    }
+    .badge.success {
+      background: #D1FAE5;
+      color: #047857;
+    }
+    .badge.warning {
+      background: #FEF3C7;
+      color: #B45309;
+    }
+
+    /* ===== Progress ===== */
+    .usage-bar {
+      width: 100%;
+      height: 4px;
+      background: var(--md-surface-variant);
+      border-radius: 2px;
+      margin-top: 8px;
+      overflow: hidden;
+    }
+    .usage-bar .usage-fill {
+      height: 100%;
+      border-radius: 2px;
+      background: var(--md-primary);
+      transition: width 0.3s;
+    }
+
+    /* ===== Dialog/Modal ===== */
+    .dialog-overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.32);
+      z-index: 50;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+    .dialog-overlay.active { display: flex; }
+    .dialog {
+      background: var(--md-surface);
+      border-radius: var(--md-radius-xl);
+      padding: 24px;
+      max-width: 312px;
+      width: 90%;
+      box-shadow: var(--md-elevation-3);
+    }
+    .dialog h3 {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--md-on-surface);
+      margin-bottom: 8px;
+    }
+    .dialog p {
+      font-size: 14px;
+      color: var(--md-on-surface-variant);
+      line-height: 1.5;
+      margin-bottom: 24px;
+    }
+    .dialog .dialog-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+    .dialog .dialog-btn {
+      padding: 10px 24px;
+      border-radius: var(--md-radius-full);
+      border: none;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Roboto', sans-serif;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      transition: background 0.15s;
+    }
+    .dialog .dialog-btn.secondary {
+      background: transparent;
+      color: var(--md-primary);
+    }
+    .dialog .dialog-btn.primary {
+      background: var(--md-primary);
+      color: var(--md-on-primary);
+    }
+    .dialog .dialog-btn.destructive {
+      background: var(--md-error);
+      color: var(--md-on-error);
+    }
+
+    /* ===== Toast ===== */
+    .toast {
+      position: absolute;
+      bottom: 100px;
+      left: 16px;
+      right: 16px;
+      background: #332D41;
+      color: #FFFBFE;
+      padding: 14px 16px;
+      border-radius: var(--md-radius-sm);
+      font-size: 14px;
+      font-weight: 500;
+      box-shadow: var(--md-elevation-3);
+      z-index: 100;
+      transform: translateY(120px);
+      opacity: 0;
+      transition: transform 0.3s cubic-bezier(0.2,0,0,1), opacity 0.3s;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+
+    /* ===== Demo Controls ===== */
+    .demo-controls {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+      z-index: 200;
+      background: rgba(28, 27, 31, 0.9);
+      padding: 8px 16px;
+      border-radius: var(--md-radius-xl);
+      backdrop-filter: blur(12px);
+    }
+    .demo-controls button {
+      padding: 6px 14px;
+      border-radius: var(--md-radius-full);
+      border: none;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      background: rgba(255, 255, 255, 0.15);
+      color: #FFF;
+      font-family: 'Roboto', sans-serif;
+      transition: background 0.2s;
+    }
+    .demo-controls button:hover { background: rgba(255, 255, 255, 0.25); }
+    .demo-controls button.active { background: var(--md-primary); color: var(--md-on-primary); }
+
+    @media (max-width: 480px) {
+      body { padding: 0; }
+      .device-frame { width: 100%; height: 100vh; border-radius: 0; box-shadow: none; }
+      .demo-controls { display: none; }
+    }
+
+    /* ===== Ripple ===== */
+    .ripple {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(59, 95, 144, 0.15);
+      transform: scale(0);
+      animation: ripple-anim 0.6s ease-out;
+      pointer-events: none;
+    }
+    @keyframes ripple-anim {
+      to { transform: scale(4); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="device-frame" id="deviceFrame">
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span class="time">09:41</span>
+      <div class="camera-cutout"></div>
+      <div class="status-icons">
+        <i class="mdi mdi-signal-cellular-3"></i>
+        <i class="mdi mdi-wifi"></i>
+        <i class="mdi mdi-battery-50"></i>
+      </div>
+    </div>
+
+    <!-- Top App Bar -->
+    <div class="top-app-bar">
+      <button class="back-btn" id="backBtn">
+        <i class="mdi mdi-arrow-left"></i>
+      </button>
+      <span class="title">设置</span>
+    </div>
+
+    <!-- Scroll Content -->
+    <div class="scroll-content">
+
+      <!-- Account Section -->
+      <div class="settings-section">
+        <div class="section-label">账户</div>
+        <div class="settings-card">
+          <div class="settings-item" onclick="showDialog('account')">
+            <div class="user-avatar">J</div>
+            <div class="item-content">
+              <div class="item-title">John Doe</div>
+              <div class="item-subtitle">johndoe@mindflow.app</div>
+            </div>
+            <div class="item-trailing">
+              <i class="mdi mdi-chevron-right"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sync Section -->
+      <div class="settings-section">
+        <div class="section-label">同步</div>
+        <div class="settings-card">
+          <div class="settings-item">
+            <div class="item-icon" style="background:#D6E3FF;color:#001B3E;">
+              <i class="mdi mdi-sync"></i>
+            </div>
+            <div class="item-content">
+              <div class="item-title">自动同步</div>
+              <div class="item-subtitle">最后同步：15:32 · 已同步</div>
+            </div>
+            <div class="item-trailing">
+              <label class="switch">
+                <input type="checkbox" id="syncSwitch" checked />
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="settings-divider"></div>
+
+          <div class="settings-item" onclick="showToast('立即同步…')">
+            <div class="item-icon" style="background:#D1FAE5;color:#047857;">
+              <i class="mdi mdi-cloud-sync"></i>
+            </div>
+            <div class="item-content">
+              <div class="item-title">立即同步</div>
+              <div class="item-subtitle">手动触发全部笔记同步</div>
+            </div>
+            <div class="item-trailing">
+              <i class="mdi mdi-chevron-right"></i>
+            </div>
+          </div>
+
+          <div class="settings-divider"></div>
+
+          <div class="settings-item" onclick="showToast('仅限 Wi-Fi 同步已切换')">
+            <div class="item-icon" style="background:#EDE9FE;color:#4C1D95;">
+              <i class="mdi mdi-wifi"></i>
+            </div>
+            <div class="item-content">
+              <div class="item-title">仅限 Wi-Fi</div>
+              <div class="item-subtitle">仅在 Wi-Fi 环境下同步附件</div>
+            </div>
+            <div class="item-trailing">
+              <label class="switch">
+                <input type="checkbox" id="wifiSyncSwitch" />
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Editor Section -->
+      <div class="settings-section">
+        <div class="section-label">编辑器</div>
+        <div class="settings-card">
+          <div class="settings-item" onclick="showToast('字号设置')">
+            <div class="item-icon" style="background:#FCE7F3;color:#BE185D;">
+              <i class="mdi mdi-format-size"></i>
+            </div>
+            <div class="item-content">
+              <div class="item-title">默认字号</div>
+              <div class="item-subtitle">16px · 标准</div>
+            </div>
+            <div class="item-trailing">
+              <i class="mdi mdi-chevron-right"></i>
+            </div>
+          </div>
+
+          <div class="settings-divider"></div>
+
+          <div class="settings-item" onclick="showToast('行间距设置')">
+            <div class="item-icon" style="background:#E8F0FE;color:#1A56DB;">
+              <i class="mdi mdi-format-line-spacing"></i>
+            </div>
+            <div class="item-content">
+              <div class="item-title">行间距</div>
+              <div class="item-subtitle">1.6 · 宽松</div>
+            </div>
+            <div class="item-trailing">
+              <i class="mdi mdi-chevron-right"></i>
+            </div>
+          </div>
+
+          <div class="settings-divider"></div>
+
+          <div class="settings-item" onclick="showToast('自动保存设置')">
+            <div class="item-icon" style="background:#D1FAE5;color:#047857;">
+              <i class="mdi mdi-content-save-outline"></i>
+            </div>
+            <div class="item-content">
+              <div class="item-title">自动保存</div>
+              <div class="item-subtitle">输入暂停 2 秒后自动保存</div>
+            </div>
+            <div class="item-trailing">
+              <label class="switch">
+                <input type="checkbox" id="autoSaveSwitch" checked />
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Appearance Section -->
+      <div class="settings-section">
+        <div class="section-label">外观</div>
+        <div class="settings-card">
+          <div class="settings-item" onclick="showToast('主题设置')">
+            <div class="item-icon" style="background:#FEF3C7;color:#B45309;">
+              <i class="mdi mdi-theme-light-dark"></i>
+            </div>
+            <div class="item-content">
+              <div class="item-title">主题</div>
+              <div class="item-subtitle">跟随系统 · 浅色模式</div>
+            </div>
+            <div class="item-trailing">
+              <i class="mdi mdi-chevron-right"></i>
+            </div>
+          </div>
+
+          <div class="settings-divider"></div>
+
+          <div class="settings-item" onclick="showToast('Material You 设置')">
+            <div class="item-icon" style="background:#F3E8FF;color:#6B21A8;">
+              <i class="mdi mdi-palette-outline"></i>
+            </div>
+            <div class="item-content">
+              <div class="item-title">动态取色</div>
+              <div class="item-subtitle">从壁纸提取主题色 (Material You)</div>
+            </div>
+            <div class="item-trailing">
+              <label class="switch">
+                <input type="checkbox" id="monetSwitch" />
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Data Section -->
+      <div class="settings-section">
+        <div class="section-label">数据</div>
+        <div class="settings-card">
+          <div class="settings-item" onclick="showDialog('export')">
+            <div class="item-icon" style="background:#D6E3FF;color:#001B3E;">
+              <i class="mdi mdi-database-export-outline"></i>
+            </div>
+            <div class="item-content">
+              <div class="item-title">导出数据</div>
+              <div class="item-subtitle">Markdown / JSON 格式</div>
+            </div>
+            <div class="item-trailing">
+              <i class="mdi mdi-chevron-right"></i>
+            </div>
+          </div>
+
+          <div class="settings-divider"></div>
+
+          <div class="settings-item" onclick="showDialog('clear')">
+            <div class="item-icon" style="background:#FFDAD6;color:#410002;">
+              <i class="mdi mdi-delete-sweep-outline"></i>
+            </div>
+            <div class="item-content">
+              <div class="item-title">清除数据</div>
+              <div class="item-subtitle">清除本地缓存与离线数据</div>
+            </div>
+            <div class="item-trailing">
+              <i class="mdi mdi-chevron-right"></i>
+            </div>
+          </div>
+
+          <div class="settings-divider"></div>
+
+          <div class="settings-item">
+            <div class="item-icon" style="background:#F3F0F4;color:#49454F;">
+              <i class="mdi mdi-database-outline"></i>
+            </div>
+            <div class="item-content">
+              <div class="item-title">存储用量</div>
+              <div class="item-subtitle">
+                <span>已用 12.3 MB / 100 MB</span>
+                <div class="usage-bar">
+                  <div class="usage-fill" style="width:12%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Security Section -->
+      <div class="settings-section">
+        <div class="section-label">安全 & 隐私</div>
+        <div class="settings-card">
+          <div class="settings-item" onclick="showDialog('biometric')">
+            <div class="item-icon" style="background:#EDE9FE;color:#4C1D95;">
+              <i class="mdi mdi-fingerprint"></i>
+            </div>
+            <div class="item-content">
+              <div class="item-title">生物识别锁</div>
+              <div class="item-subtitle">使用指纹或面部识别解锁应用</div>
+            </div>
+            <div class="item-trailing">
+              <label class="switch">
+                <input type="checkbox" id="biometricSwitch" />
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="settings-divider"></div>
+
+          <div class="settings-item">
+            <div class="item-icon" style="background:#F3F0F4;color:#49454F;">
+              <i class="mdi mdi-lock-outline"></i>
+            </div>
+            <div class="item-content">
+              <div class="item-title">屏幕锁定保护</div>
+              <div class="item-subtitle">应用进入后台 1 分钟后自动锁定</div>
+            </div>
+            <div class="item-trailing">
+              <i class="mdi mdi-chevron-right"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- About Section -->
+      <div class="settings-section">
+        <div class="section-label">关于</div>
+        <div class="settings-card">
+          <div class="settings-item" onclick="showToast('版本信息')">
+            <div class="item-icon" style="background:#D6E3FF;color:#001B3E;">
+              <i class="mdi mdi-information-outline"></i>
+            </div>
+            <div class="item-content">
+              <div class="item-title">版本</div>
+              <div class="item-subtitle">v1.0.0 (Build 20260701)</div>
+            </div>
+            <div class="item-trailing">
+              <span class="badge success">最新</span>
+            </div>
+          </div>
+
+          <div class="settings-divider"></div>
+
+          <div class="settings-item" onclick="showToast('开源许可')">
+            <div class="item-icon" style="background:#F3F0F4;color:#49454F;">
+              <i class="mdi mdi-code-tags"></i>
+            </div>
+            <div class="item-content">
+              <div class="item-title">开源许可</div>
+              <div class="item-subtitle">MIT License</div>
+            </div>
+            <div class="item-trailing">
+              <i class="mdi mdi-chevron-right"></i>
+            </div>
+          </div>
+
+          <div class="settings-divider"></div>
+
+          <div class="settings-item" onclick="showToast('隐私政策')">
+            <div class="item-icon" style="background:#F3F0F4;color:#49454F;">
+              <i class="mdi mdi-shield-check-outline"></i>
+            </div>
+            <div class="item-content">
+              <div class="item-title">隐私政策</div>
+              <div class="item-subtitle">最后更新：2026年6月</div>
+            </div>
+            <div class="item-trailing">
+              <i class="mdi mdi-chevron-right"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Logout -->
+      <div style="text-align:center; padding: 24px 16px 32px 16px;">
+        <button onclick="showDialog('logout')" style="background:transparent;border:none;color:var(--md-error);font-size:14px;font-weight:500;font-family:'Roboto',sans-serif;cursor:pointer;padding:8px 16px;">
+          退出登录
+        </button>
+      </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+      <span id="toastMsg">已更新</span>
+    </div>
+
+    <!-- Dialog Overlay -->
+    <div class="dialog-overlay" id="dialogOverlay">
+      <div class="dialog" id="dialogContent">
+        <h3 id="dialogTitle">确认</h3>
+        <p id="dialogMessage">确定要执行此操作吗？</p>
+        <div class="dialog-actions" id="dialogActions">
+          <button class="dialog-btn secondary" onclick="closeDialog()">取消</button>
+          <button class="dialog-btn primary" id="dialogConfirm">确定</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Demo Controls -->
+  <div class="demo-controls">
+    <button class="active" id="demoNormal">默认</button>
+    <button id="demoDialog">对话框</button>
+    <button id="demoToast">Toast</button>
+  </div>
+
+  <script>
+    const toast = document.getElementById('toast');
+    const toastMsg = document.getElementById('toastMsg');
+    const dialogOverlay = document.getElementById('dialogOverlay');
+    const dialogTitle = document.getElementById('dialogTitle');
+    const dialogMessage = document.getElementById('dialogMessage');
+    const dialogActions = document.getElementById('dialogActions');
+    const demoNormal = document.getElementById('demoNormal');
+    const demoDialog = document.getElementById('demoDialog');
+    const demoToast = document.getElementById('demoToast');
+
+    // ===== Toast =====
+    function showToast(msg) {
+      toastMsg.textContent = msg;
+      toast.classList.add('show');
+      clearTimeout(toast._hideTimer);
+      toast._hideTimer = setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    // ===== Dialog =====
+    function showDialog(type) {
+      let title, message, confirmText, confirmClass = 'primary', confirmAction = () => {};
+
+      switch(type) {
+        case 'account':
+          title = '账户信息';
+          message = '编辑个人资料和账户设置，包括头像、显示名称和邮箱偏好。';
+          confirmText = '编辑';
+          break;
+        case 'export':
+          title = '导出数据';
+          message = '选择导出格式：Markdown 或 JSON。导出内容包括所有笔记、标签和附件。';
+          confirmText = '导出';
+          break;
+        case 'clear':
+          title = '清除数据？';
+          message = '此操作将清除本地缓存和离线数据，但不会删除云端笔记。同步后缓存会自动重建。';
+          confirmText = '清除';
+          confirmClass = 'destructive';
+          break;
+        case 'biometric':
+          title = '生物识别锁';
+          message = '启用后每次打开应用需要使用指纹或面部识别解锁。系统需已注册生物识别信息。';
+          confirmText = '启用';
+          break;
+        case 'logout':
+          title = '退出登录？';
+          message = '退出后需要重新登录才能同步数据。本地未同步的笔记将会丢失。';
+          confirmText = '退出';
+          confirmClass = 'destructive';
+          break;
+        default:
+          title = '确认';
+          message = '确定要执行此操作吗？';
+          confirmText = '确定';
+      }
+
+      dialogTitle.textContent = title;
+      dialogMessage.textContent = message;
+      dialogActions.innerHTML = `
+        <button class="dialog-btn secondary" onclick="closeDialog()">取消</button>
+        <button class="dialog-btn ${confirmClass}" id="dialogConfirm">${confirmText}</button>
+      `;
+      document.getElementById('dialogConfirm').addEventListener('click', () => {
+        closeDialog();
+        showToast(confirmText + '成功');
+      });
+      dialogOverlay.classList.add('active');
+    }
+
+    function closeDialog() {
+      dialogOverlay.classList.remove('active');
+    }
+
+    // ===== Demo State Controls =====
+    function setSettingsState(state) {
+      document.querySelectorAll('.demo-controls button').forEach(b => b.classList.remove('active'));
+      if (state === 'normal') {
+        demoNormal.classList.add('active');
+        closeDialog();
+        toast.classList.remove('show');
+      } else if (state === 'dialog') {
+        demoDialog.classList.add('active');
+        showDialog('clear');
+      } else if (state === 'toast') {
+        demoToast.classList.add('active');
+        showToast('设置已保存');
+      }
+    }
+
+    demoNormal.addEventListener('click', () => setSettingsState('normal'));
+    demoDialog.addEventListener('click', () => setSettingsState('dialog'));
+    demoToast.addEventListener('click', () => setSettingsState('toast'));
+
+    // ===== Back =====
+    document.getElementById('backBtn').addEventListener('click', () => {
+      showToast('返回笔记列表');
+    });
+
+    // ===== Switches =====
+    document.querySelectorAll('.switch input').forEach(s => {
+      s.addEventListener('change', function() {
+        showToast(this.checked ? '已开启' : '已关闭');
+      });
+    });
+
+    // ===== Ripple =====
+    document.querySelectorAll('.settings-item, .back-btn, .dialog-btn').forEach(el => {
+      el.addEventListener('mousedown', function(e) {
+        const rect = this.getBoundingClientRect();
+        const ripple = document.createElement('span');
+        ripple.className = 'ripple';
+        const size = Math.max(rect.width, rect.height);
+        ripple.style.width = ripple.style.height = size + 'px';
+        ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+        ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+        this.appendChild(ripple);
+        ripple.addEventListener('animationend', () => ripple.remove());
+      });
+    });
+  </script>
+</body>
+</html>

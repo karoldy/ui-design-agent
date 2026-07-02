@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SidebarNotebookTree — 侧边栏笔记本树 | MindFlow 复合组件</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-bg-primary: #FAFAFA;
+      --color-bg-secondary: #F5F5F5;
+      --color-bg-tertiary: #EEEEEE;
+      --color-text-primary: #1A1A1A;
+      --color-text-secondary: #6B6B6B;
+      --color-text-tertiary: #9E9E9E;
+      --color-text-link: #3B82F6;
+      --color-accent: #3B82F6;
+      --color-accent-hover: #2563EB;
+      --color-accent-soft: #E8F0FE;
+      --color-divider: #E8E8E8;
+
+      --font-family-ui: 'Inter', system-ui, -apple-system, sans-serif;
+      --font-family-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-size-xs: 11px;
+      --font-size-sm: 13px;
+      --font-size-base: 15px;
+
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-full: 9999px;
+
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+      --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-family-ui);
+      background: var(--color-bg-primary);
+      color: var(--color-text-primary);
+      padding: var(--space-6);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .page-title { font-size: 22px; font-weight: 600; margin-bottom: var(--space-2); }
+    .page-desc { font-size: var(--font-size-sm); color: var(--color-text-secondary); margin-bottom: var(--space-6); line-height: 1.5; }
+    .section { margin-bottom: var(--space-8); }
+    .section-title { font-size: var(--font-size-base); font-weight: 600; margin-bottom: var(--space-3); padding-bottom: var(--space-1); border-bottom: 1px solid var(--color-divider); }
+    .section-desc { font-size: var(--font-size-xs); color: var(--color-text-secondary); margin-bottom: var(--space-3); }
+
+    .sidebar-panel {
+      background: var(--color-bg-secondary);
+      border: 1px solid var(--color-divider);
+      border-radius: var(--radius-md);
+      padding: var(--space-3);
+      width: 280px;
+    }
+
+    .preview-label {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-secondary);
+      font-weight: 500;
+      margin-bottom: var(--space-2);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* ================================
+       Sidebar Notebook Tree Component
+       ================================ */
+
+    .tree-section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-1) var(--space-2);
+      margin-bottom: var(--space-1);
+    }
+
+    .tree-section-label {
+      font-size: var(--font-size-xs);
+      font-weight: 600;
+      color: var(--color-text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .tree-section-action {
+      font-size: var(--font-size-xs);
+      color: var(--color-accent);
+      cursor: pointer;
+      padding: 2px 4px;
+      border-radius: var(--radius-sm);
+      transition: background 120ms ease;
+      display: flex;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .tree-section-action:hover {
+      background: var(--color-accent-soft);
+    }
+
+    /* Tree nodes */
+    .tree-node {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .tree-node ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .tree-item {
+      display: flex;
+      align-items: center;
+      padding: var(--space-1) var(--space-2);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: background 120ms ease;
+      gap: var(--space-1);
+      position: relative;
+      user-select: none;
+    }
+
+    .tree-item:hover {
+      background: var(--color-bg-tertiary);
+    }
+
+    .tree-item.selected,
+    .tree-item.active {
+      background: var(--color-accent-soft);
+      color: var(--color-accent);
+    }
+
+    .tree-item.selected .tree-item-name,
+    .tree-item.active .tree-item-name {
+      font-weight: 600;
+    }
+
+    .tree-item.drag-over {
+      background: var(--color-accent-soft);
+      box-shadow: inset 0 0 0 2px var(--color-accent);
+    }
+
+    .tree-item.empty-folder {
+      opacity: 0.5;
+    }
+
+    .tree-item.empty-folder .tree-item-name {
+      font-style: italic;
+    }
+
+    .tree-toggle {
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: var(--color-text-tertiary);
+      transition: transform 200ms ease;
+      font-size: 16px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      border-radius: var(--radius-sm);
+    }
+
+    .tree-toggle:hover {
+      background: var(--color-bg-tertiary);
+      color: var(--color-text-secondary);
+    }
+
+    .tree-toggle.expanded {
+      transform: rotate(90deg);
+    }
+
+    .tree-toggle.hidden {
+      visibility: hidden;
+    }
+
+    .tree-item-icon {
+      flex-shrink: 0;
+      width: 18px;
+      height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      color: var(--color-text-secondary);
+    }
+
+    .tree-item-icon.folder-open {
+      color: var(--color-accent);
+    }
+
+    .tree-item-name {
+      flex: 1;
+      font-size: var(--font-size-sm);
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-width: 0;
+    }
+
+    .tree-item-count {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-tertiary);
+      margin-left: auto;
+      padding-left: var(--space-2);
+      flex-shrink: 0;
+      font-weight: 500;
+    }
+
+    .tree-children {
+      overflow: hidden;
+      transition: max-height 200ms ease;
+      max-height: 0;
+    }
+
+    .tree-children.expanded {
+      max-height: 1000px;
+    }
+
+    .tree-children .tree-item {
+      padding-left: 32px;
+    }
+
+    .tree-children .tree-children .tree-item {
+      padding-left: 48px;
+    }
+
+    .tree-children .tree-children .tree-children .tree-item {
+      padding-left: 64px;
+    }
+
+    /* Indent guide lines */
+    .tree-item .indent-line {
+      display: none;
+    }
+
+    /* Right-click context menu */
+    .tree-ctx-menu {
+      display: none;
+      position: fixed;
+      background: white;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--color-divider);
+      min-width: 170px;
+      padding: var(--space-1) 0;
+      z-index: 200;
+    }
+
+    .tree-ctx-menu.open { display: block; }
+
+    .tree-ctx-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-3);
+      font-size: var(--font-size-sm);
+      color: var(--color-text-primary);
+      cursor: pointer;
+      transition: background 100ms ease;
+    }
+    .tree-ctx-item:hover { background: var(--color-bg-secondary); }
+    .tree-ctx-item .mdi { font-size: 16px; color: var(--color-text-secondary); }
+    .tree-ctx-item.danger { color: #EF4444; }
+    .tree-ctx-item.danger .mdi { color: #EF4444; }
+    .tree-ctx-divider { height: 1px; background: var(--color-divider); margin: var(--space-1) 0; }
+
+    /* Empty state */
+    .tree-empty-state {
+      padding: var(--space-6) var(--space-4);
+      text-align: center;
+    }
+
+    .tree-empty-state .mdi {
+      font-size: 32px;
+      color: var(--color-text-tertiary);
+      margin-bottom: var(--space-2);
+      opacity: 0.5;
+    }
+
+    .tree-empty-text {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+      margin-bottom: var(--space-3);
+      line-height: 1.5;
+    }
+
+    .tree-empty-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
+      font-size: var(--font-size-sm);
+      font-weight: 500;
+      padding: var(--space-2) var(--space-3);
+      border: 1px dashed var(--color-accent);
+      border-radius: var(--radius-sm);
+      color: var(--color-accent);
+      background: transparent;
+      cursor: pointer;
+      transition: background 120ms ease;
+    }
+
+    .tree-empty-btn:hover {
+      background: var(--color-accent-soft);
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+      margin-bottom: var(--space-4);
+      align-items: center;
+    }
+
+    .controls label {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+      font-size: var(--font-size-sm);
+      cursor: pointer;
+      padding: 4px 10px;
+      border-radius: var(--radius-sm);
+      background: var(--color-bg-secondary);
+      border: 1px solid var(--color-divider);
+    }
+    .controls label:hover { background: var(--color-bg-tertiary); }
+  </style>
+</head>
+<body>
+  <h1 class="page-title">侧边栏笔记本树 — Sidebar Notebook Tree</h1>
+  <p class="page-desc">
+    侧边栏中的笔记本/文件夹树状结构。支持折叠/展开子目录、笔记计数、活跃项高亮、
+    拖拽悬停状态、空状态引导。右键点击项目可查看上下文菜单。
+  </p>
+
+  <!-- ================ SECTION: Standard Tree ================ -->
+  <div class="section">
+    <h2 class="section-title">笔记本树 (3-4 层嵌套)</h2>
+    <p class="section-desc">展示多层嵌套结构。点击箭头展开/折叠，点击笔记名选中。</p>
+
+    <div class="sidebar-panel" id="tree-standard">
+      <div class="tree-section-header">
+        <span class="tree-section-label">笔记本</span>
+        <span class="tree-section-action" onclick="alert('新建笔记本')"><span class="mdi mdi-plus" style="font-size:14px;"></span> 新建</span>
+      </div>
+
+      <ul class="tree-node">
+        <!-- Level 1: Work -->
+        <li>
+          <div class="tree-item" onclick="toggleFolder(this); selectItem(this);">
+            <button class="tree-toggle expanded" onclick="event.stopPropagation();toggleFolder(this.parentElement);">
+              <span class="mdi mdi-chevron-right"></span>
+            </button>
+            <span class="tree-item-icon folder-open"><span class="mdi mdi-folder-open-outline"></span></span>
+            <span class="tree-item-name">工作</span>
+            <span class="tree-item-count">12</span>
+          </div>
+          <ul class="tree-children expanded">
+            <!-- Level 2: Product Design -->
+            <li>
+              <div class="tree-item" onclick="toggleFolder(this); selectItem(this);">
+                <button class="tree-toggle expanded" onclick="event.stopPropagation();toggleFolder(this.parentElement);">
+                  <span class="mdi mdi-chevron-right"></span>
+                </button>
+                <span class="tree-item-icon folder-open"><span class="mdi mdi-folder-open-outline"></span></span>
+                <span class="tree-item-name">产品设计</span>
+                <span class="tree-item-count">8</span>
+              </div>
+              <ul class="tree-children expanded">
+                <!-- Level 3: Competitive Analysis -->
+                <li>
+                  <div class="tree-item" onclick="toggleFolder(this); selectItem(this);">
+                    <button class="tree-toggle expanded" onclick="event.stopPropagation();toggleFolder(this.parentElement);">
+                      <span class="mdi mdi-chevron-right"></span>
+                    </button>
+                    <span class="tree-item-icon"><span class="mdi mdi-folder-outline"></span></span>
+                    <span class="tree-item-name">竞品分析</span>
+                    <span class="tree-item-count">5</span>
+                  </div>
+                  <ul class="tree-children expanded">
+                    <!-- Level 4: Leaves -->
+                    <li>
+                      <div class="tree-item" onclick="selectItem(this);" oncontextmenu="showContextMenu(event,this);">
+                        <button class="tree-toggle hidden"><span class="mdi mdi-chevron-right"></span></button>
+                        <span class="tree-item-icon"><span class="mdi mdi-file-document-outline"></span></span>
+                        <span class="tree-item-name">Notion 竞品分析</span>
+                        <span class="tree-item-count">2</span>
+                      </div>
+                    </li>
+                    <li>
+                      <div class="tree-item" onclick="selectItem(this);">
+                        <button class="tree-toggle hidden"><span class="mdi mdi-chevron-right"></span></button>
+                        <span class="tree-item-icon"><span class="mdi mdi-file-document-outline"></span></span>
+                        <span class="tree-item-name">Obsidian 功能矩阵</span>
+                      </div>
+                    </li>
+                  </ul>
+                </li>
+                <!-- Level 3: User Research -->
+                <li>
+                  <div class="tree-item" onclick="selectItem(this);">
+                    <button class="tree-toggle hidden"><span class="mdi mdi-chevron-right"></span></button>
+                    <span class="tree-item-icon"><span class="mdi mdi-folder-outline"></span></span>
+                    <span class="tree-item-name">用户研究</span>
+                    <span class="tree-item-count">3</span>
+                  </div>
+                </li>
+              </ul>
+            </li>
+            <!-- Level 2: Engineering -->
+            <li>
+              <div class="tree-item" onclick="toggleFolder(this); selectItem(this);">
+                <button class="tree-toggle" onclick="event.stopPropagation();toggleFolder(this.parentElement);">
+                  <span class="mdi mdi-chevron-right"></span>
+                </button>
+                <span class="tree-item-icon"><span class="mdi mdi-folder-outline"></span></span>
+                <span class="tree-item-name">技术方案</span>
+                <span class="tree-item-count">4</span>
+              </div>
+              <ul class="tree-children">
+                <li>
+                  <div class="tree-item" onclick="selectItem(this);">
+                    <button class="tree-toggle hidden"><span class="mdi mdi-chevron-right"></span></button>
+                    <span class="tree-item-icon"><span class="mdi mdi-file-document-outline"></span></span>
+                    <span class="tree-item-name">架构设计评审</span>
+                  </div>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <!-- Level 1: Personal -->
+        <li>
+          <div class="tree-item selected" onclick="toggleFolder(this); selectItem(this);">
+            <button class="tree-toggle expanded" onclick="event.stopPropagation();toggleFolder(this.parentElement);">
+              <span class="mdi mdi-chevron-right"></span>
+            </button>
+            <span class="tree-item-icon folder-open"><span class="mdi mdi-folder-open-outline"></span></span>
+            <span class="tree-item-name">个人</span>
+            <span class="tree-item-count">23</span>
+          </div>
+          <ul class="tree-children expanded">
+            <li>
+              <div class="tree-item" onclick="selectItem(this);">
+                <button class="tree-toggle hidden"><span class="mdi mdi-chevron-right"></span></button>
+                <span class="tree-item-icon"><span class="mdi mdi-folder-outline"></span></span>
+                <span class="tree-item-name">读书笔记</span>
+                <span class="tree-item-count">15</span>
+              </div>
+            </li>
+            <li>
+              <div class="tree-item" onclick="selectItem(this);">
+                <button class="tree-toggle hidden"><span class="mdi mdi-chevron-right"></span></button>
+                <span class="tree-item-icon"><span class="mdi mdi-folder-outline"></span></span>
+                <span class="tree-item-name">旅行计划</span>
+                <span class="tree-item-count">5</span>
+              </div>
+            </li>
+          </ul>
+        </li>
+
+        <!-- Level 1: Empty folder -->
+        <li>
+          <div class="tree-item empty-folder" onclick="toggleFolder(this); selectItem(this);">
+            <button class="tree-toggle hidden"><span class="mdi mdi-chevron-right"></span></button>
+            <span class="tree-item-icon"><span class="mdi mdi-folder-outline"></span></span>
+            <span class="tree-item-name">归档</span>
+            <span class="tree-item-count">0</span>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <div style="font-size:var(--font-size-xs);color:var(--color-text-tertiary);margin-top:var(--space-2);display:flex;gap:var(--space-4);">
+      <span>✦ 点击箭头展开/折叠</span>
+      <span>✦ 点击笔记名选中</span>
+      <span>✦ 右键打开上下文菜单</span>
+    </div>
+  </div>
+
+  <!-- ================ SECTION: Node States ================ -->
+  <div class="section">
+    <h2 class="section-title">节点状态 States</h2>
+    <p class="section-desc">树节点的 Default / Hover / Selected / Drag-over / Empty 五种状态。</p>
+
+    <div class="sidebar-panel">
+      <div class="preview-label">节点状态展示</div>
+      <ul class="tree-node">
+        <li>
+          <div class="tree-item">
+            <button class="tree-toggle hidden"><span class="mdi mdi-chevron-right"></span></button>
+            <span class="tree-item-icon"><span class="mdi mdi-folder-outline"></span></span>
+            <span class="tree-item-name">Default 状态</span>
+            <span class="tree-item-count">3</span>
+          </div>
+        </li>
+        <li>
+          <div class="tree-item" style="background:var(--color-bg-tertiary);">
+            <button class="tree-toggle hidden"><span class="mdi mdi-chevron-right"></span></button>
+            <span class="tree-item-icon"><span class="mdi mdi-folder-outline"></span></span>
+            <span class="tree-item-name">Hover 状态 (背景变深)</span>
+            <span class="tree-item-count">5</span>
+          </div>
+        </li>
+        <li>
+          <div class="tree-item selected">
+            <button class="tree-toggle expanded"><span class="mdi mdi-chevron-right"></span></button>
+            <span class="tree-item-icon folder-open"><span class="mdi mdi-folder-open-outline"></span></span>
+            <span class="tree-item-name">Selected 状态 (高亮)</span>
+            <span class="tree-item-count">8</span>
+          </div>
+        </li>
+        <li>
+          <div class="tree-item" style="background:var(--color-accent-soft);box-shadow:inset 0 0 0 2px var(--color-accent);">
+            <button class="tree-toggle hidden"><span class="mdi mdi-chevron-right"></span></button>
+            <span class="tree-item-icon"><span class="mdi mdi-folder-outline"></span></span>
+            <span class="tree-item-name">Drag-over 状态 (蓝框)</span>
+            <span class="tree-item-count">2</span>
+          </div>
+        </li>
+        <li>
+          <div class="tree-item empty-folder">
+            <button class="tree-toggle hidden"><span class="mdi mdi-chevron-right"></span></button>
+            <span class="tree-item-icon"><span class="mdi mdi-folder-outline"></span></span>
+            <span class="tree-item-name">空文件夹 (灰色斜体)</span>
+            <span class="tree-item-count">0</span>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ================ SECTION: Empty State ================ -->
+  <div class="section">
+    <h2 class="section-title">空状态 Empty State</h2>
+    <p class="section-desc">无笔记本时显示的引导状态，包含插图、提示文字和创建按钮。</p>
+
+    <div class="sidebar-panel">
+      <div class="tree-empty-state">
+        <span class="mdi mdi-book-open-outline"></span>
+        <div class="tree-empty-text">
+          创建笔记本开始组织你的笔记
+        </div>
+        <button class="tree-empty-btn" onclick="alert('新建笔记本')">
+          <span class="mdi mdi-plus" style="font-size:16px;"></span>
+          新建笔记本
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================ SECTION: Context Menu ================ -->
+  <div class="section">
+    <h2 class="section-title">右键菜单 Context Menu</h2>
+    <p class="section-desc">右键点击笔记本树节点时显示的上下文菜单选项。</p>
+
+    <div class="sidebar-panel" style="position:relative;overflow:visible;min-height:220px;">
+      <div class="preview-label">右键菜单预览</div>
+      <div class="tree-ctx-menu open" style="position:relative;display:block;box-shadow:none;border:1px solid var(--color-divider);width:190px;">
+        <div class="tree-ctx-item"><span class="mdi mdi-pencil-outline"></span>重命名</div>
+        <div class="tree-ctx-item"><span class="mdi mdi-content-copy"></span>复制</div>
+        <div class="tree-ctx-item"><span class="mdi mdi-content-paste"></span>粘贴</div>
+        <div class="tree-ctx-divider"></div>
+        <div class="tree-ctx-item"><span class="mdi mdi-folder-plus-outline"></span>新建子笔记本</div>
+        <div class="tree-ctx-item"><span class="mdi mdi-arrow-right-bold-box-outline"></span>移动</div>
+        <div class="tree-ctx-divider"></div>
+        <div class="tree-ctx-item danger"><span class="mdi mdi-delete-outline"></span>删除</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Toggle folder expand/collapse
+    function toggleFolder(item) {
+      const toggle = item.querySelector('.tree-toggle');
+      const children = item.nextElementSibling;
+      if (!children || !children.classList.contains('tree-children')) return;
+
+      toggle.classList.toggle('expanded');
+      children.classList.toggle('expanded');
+
+      // Update folder icon
+      const icon = item.querySelector('.tree-item-icon .mdi');
+      if (icon) {
+        if (children.classList.contains('expanded')) {
+          icon.className = 'mdi mdi-folder-open-outline';
+          item.querySelector('.tree-item-icon').classList.add('folder-open');
+        } else {
+          icon.className = 'mdi mdi-folder-outline';
+          item.querySelector('.tree-item-icon').classList.remove('folder-open');
+        }
+      }
+    }
+
+    // Select a tree item (toggle .selected class)
+    let activeSelection = null;
+    function selectItem(item) {
+      if (activeSelection) {
+        activeSelection.classList.remove('selected');
+      }
+      item.classList.add('selected');
+      activeSelection = item;
+    }
+
+    // Context menu
+    function showContextMenu(e, item) {
+      e.preventDefault();
+      // In a real app, this would position the menu at cursor
+      alert('右键菜单已打开 — 重命名 / 移动 / 删除');
+    }
+
+    // Close context menus on document click
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.tree-ctx-menu')) {
+        document.querySelectorAll('.tree-ctx-menu.open').forEach(m => m.classList.remove('open'));
+      }
+    });
+  </script>
+</body>
+</html>

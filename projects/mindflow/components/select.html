@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Select 下拉选择 | MindFlow 组件</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-bg-primary: #FAFAFA; --color-bg-secondary: #F5F5F5; --color-bg-tertiary: #EEEEEE;
+      --color-text-primary: #1A1A1A; --color-text-secondary: #6B6B6B; --color-text-tertiary: #9E9E9E;
+      --color-text-link: #3B82F6; --color-text-on-accent: #FFFFFF;
+      --color-accent: #3B82F6; --color-accent-hover: #2563EB; --color-accent-soft: #E8F0FE;
+      --color-success: #10B981; --color-warning: #F59E0B; --color-error: #EF4444;
+      --font-family-ui: 'Inter', system-ui, -apple-system, sans-serif;
+      --font-family-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-size-xs: 11px; --font-size-sm: 13px; --font-size-base: 15px;
+      --font-size-lg: 18px; --font-size-xl: 22px; --font-size-2xl: 28px; --font-size-3xl: 36px;
+      --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 20px; --space-6: 24px;
+      --space-8: 32px; --space-10: 40px; --space-12: 48px; --space-16: 64px;
+      --radius-sm: 4px; --radius-md: 8px; --radius-lg: 12px; --radius-xl: 16px; --radius-full: 9999px;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05); --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
+      --shadow-lg: 0 8px 24px rgba(0,0,0,0.12); --shadow-xl: 0 16px 48px rgba(0,0,0,0.16);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: var(--font-family-body); background: var(--color-bg-primary); color: var(--color-text-primary); padding: var(--space-6); -webkit-font-smoothing: antialiased; }
+    .page-header { margin-bottom: var(--space-8); display: flex; align-items: flex-start; gap: var(--space-4); }
+    .page-header a { color: var(--color-accent); text-decoration: none; font-size: var(--font-size-sm); font-family: var(--font-family-ui); display: flex; align-items: center; gap: 4px; padding: 6px 12px; border-radius: var(--radius-sm); transition: background 0.15s; flex-shrink: 0; }
+    .page-header a:hover { background: var(--color-accent-soft); }
+    .page-header h1 { font-family: var(--font-family-ui); font-size: var(--font-size-2xl); font-weight: 700; }
+    .page-header p { color: var(--color-text-secondary); font-size: var(--font-size-sm); margin-top: var(--space-1); }
+    .section { margin-bottom: var(--space-10); }
+    .section-title { font-family: var(--font-family-ui); font-size: var(--font-size-base); font-weight: 600; padding-bottom: var(--space-2); margin-bottom: var(--space-4); border-bottom: 1px solid #E8E8E8; display: flex; align-items: center; gap: var(--space-2); }
+    .section-title code { font-size: var(--font-size-xs); background: var(--color-bg-secondary); padding: 2px 8px; border-radius: var(--radius-sm); color: var(--color-text-secondary); }
+    .demo-row { display: flex; flex-wrap: wrap; align-items: flex-start; gap: var(--space-4); padding: var(--space-4); background: #fff; border: 1px solid #E8E8E8; border-radius: var(--radius-md); margin-bottom: var(--space-3); }
+    .demo-row-label { width: 100%; font-size: var(--font-size-xs); color: var(--color-text-secondary); font-family: var(--font-family-ui); font-weight: 500; margin-bottom: -4px; }
+
+    /* Native select */
+    .select-native {
+      height: 36px; padding: 0 32px 0 10px; border: 1px solid #D0D0D0; border-radius: var(--radius-sm);
+      font-family: var(--font-family-body); font-size: var(--font-size-sm); color: var(--color-text-primary);
+      background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath fill='%236B6B6B' d='M7.41 8.58L12 13.17l4.59-4.59L18 10l-6 6-6-6z'/%3E%3C/svg%3E") no-repeat right 8px center;
+      appearance: none; -webkit-appearance: none; cursor: pointer; transition: border-color 0.15s; min-width: 180px;
+    }
+    .select-native:focus { border-color: var(--color-accent); outline: none; box-shadow: 0 0 0 3px rgba(59,130,246,0.12); }
+    .select-native:disabled { background-color: var(--color-bg-secondary); cursor: not-allowed; color: var(--color-text-tertiary); }
+    .select-native.error { border-color: var(--color-error); }
+    .select-native-wrapper { display: flex; flex-direction: column; gap: 4px; }
+    .select-label { font-family: var(--font-family-ui); font-size: var(--font-size-sm); font-weight: 500; color: var(--color-text-primary); }
+    .select-helper { font-size: var(--font-size-xs); color: var(--color-text-secondary); font-family: var(--font-family-ui); }
+    .select-helper.error { color: var(--color-error); }
+
+    /* Custom select */
+    .custom-select { position: relative; min-width: 200px; }
+    .custom-select-trigger {
+      display: flex; align-items: center; gap: 6px; height: 36px; padding: 0 10px;
+      border: 1px solid #D0D0D0; border-radius: var(--radius-sm); background: #fff;
+      font-family: var(--font-family-body); font-size: var(--font-size-sm); cursor: pointer;
+      transition: border-color 0.15s; user-select: none;
+    }
+    .custom-select-trigger:hover { border-color: #B0B0B0; }
+    .custom-select-trigger .mdi { margin-left: auto; color: var(--color-text-secondary); transition: transform 0.2s; }
+    .custom-select.open .custom-select-trigger { border-color: var(--color-accent); box-shadow: 0 0 0 3px rgba(59,130,246,0.12); }
+    .custom-select.open .custom-select-trigger .mdi { transform: rotate(180deg); }
+    .custom-select.open .custom-select-dropdown { display: block; }
+    .custom-select-dropdown {
+      display: none; position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+      background: #fff; border: 1px solid #E0E0E0; border-radius: var(--radius-sm);
+      box-shadow: var(--shadow-md); z-index: 50; max-height: 260px; overflow-y: auto;
+    }
+    .custom-select-option {
+      display: flex; align-items: center; gap: 8px; padding: 8px 10px;
+      font-family: var(--font-family-body); font-size: var(--font-size-sm); cursor: pointer;
+      transition: background 0.1s;
+    }
+    .custom-select-option:hover { background: var(--color-accent-soft); }
+    .custom-select-option.selected { background: var(--color-accent-soft); color: var(--color-accent); font-weight: 500; }
+    .custom-select-option .mdi { color: var(--color-accent); font-size: 14px; visibility: hidden; }
+    .custom-select-option.selected .mdi { visibility: visible; }
+    .custom-select-option.disabled { color: var(--color-text-tertiary); cursor: not-allowed; }
+    .custom-select-option.disabled:hover { background: transparent; }
+    .custom-select-group-label {
+      padding: 6px 10px 4px; font-family: var(--font-family-ui); font-size: var(--font-size-xs);
+      color: var(--color-text-secondary); font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.3px; border-bottom: 1px solid #F0F0F0;
+    }
+
+    /* Multi-select tags */
+    .multi-select { min-width: 280px; }
+    .multi-select-trigger {
+      display: flex; align-items: center; flex-wrap: wrap; gap: 4px; min-height: 36px;
+      padding: 4px 32px 4px 8px; border: 1px solid #D0D0D0; border-radius: var(--radius-sm);
+      background: #fff; cursor: pointer; position: relative; transition: border-color 0.15s;
+    }
+    .multi-select-trigger .mdi-chevron-down { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); color: var(--color-text-secondary); }
+    .multi-select.open .multi-select-trigger { border-color: var(--color-accent); }
+    .multi-select.open .multi-select-dropdown { display: block; }
+    .multi-select-dropdown { display: none; position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: #fff; border: 1px solid #E0E0E0; border-radius: var(--radius-sm); box-shadow: var(--shadow-md); z-index: 50; max-height: 240px; overflow-y: auto; }
+    .multi-select-tag {
+      display: inline-flex; align-items: center; gap: 2px; height: 22px; padding: 0 6px;
+      background: var(--color-accent-soft); color: var(--color-accent); border-radius: var(--radius-sm);
+      font-size: var(--font-size-xs); font-family: var(--font-family-ui);
+    }
+    .multi-select-tag .mdi { font-size: 12px; cursor: pointer; }
+    .multi-select-placeholder { color: var(--color-text-tertiary); font-size: var(--font-size-sm); padding: 2px 0; }
+
+    /* Search filter */
+    .select-search-input {
+      padding: 8px; border-bottom: 1px solid #F0F0F0;
+    }
+    .select-search-input input {
+      width: 100%; height: 28px; padding: 0 8px; border: 1px solid #E0E0E0;
+      border-radius: var(--radius-sm); font-size: var(--font-size-sm); outline: none;
+      font-family: var(--font-family-body);
+    }
+    .select-search-input input:focus { border-color: var(--color-accent); }
+  </style>
+</head>
+<body>
+  <div class="page-header">
+    <a href="index.html"><i class="mdi mdi-arrow-left"></i> 返回</a>
+    <div>
+      <h1>Select 下拉选择</h1>
+      <p>Native / Custom 变体，支持单选、多选、搜索过滤与分组选项。统一 36px 高度。</p>
+    </div>
+  </div>
+
+  <!-- Native Select -->
+  <div class="section">
+    <div class="section-title">Native Select <code>原生下拉</code></div>
+    <div class="demo-row">
+      <div class="demo-row-label">Default</div>
+      <select class="select-native">
+        <option>请选择笔记本</option>
+        <option>工作笔记</option>
+        <option>个人日记</option>
+        <option>学习笔记</option>
+        <option>项目文档</option>
+      </select>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">Focused</div>
+      <select class="select-native" style="border-color:var(--color-accent);box-shadow:0 0 0 3px rgba(59,130,246,0.12);outline:none;">
+        <option>请选择排序方式</option>
+        <option>最近修改</option>
+        <option>创建时间</option>
+        <option>标题 A-Z</option>
+      </select>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">Selected（已选中）</div>
+      <select class="select-native">
+        <option>请选择标签</option>
+        <option selected>设计系统</option>
+        <option>用户体验</option>
+        <option>前端开发</option>
+      </select>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">Disabled</div>
+      <select class="select-native" disabled>
+        <option>已禁用的选择</option>
+        <option>不可用</option>
+      </select>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">Error</div>
+      <div class="select-native-wrapper">
+        <select class="select-native error">
+          <option>请选择优先级</option>
+          <option>高</option>
+          <option>中</option>
+          <option>低</option>
+        </select>
+        <span class="select-helper error"><i class="mdi mdi-alert-circle"></i> 请选择一个优先级</span>
+      </div>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">带标签 + 分组</div>
+      <div class="select-native-wrapper">
+        <label class="select-label">目标笔记本</label>
+        <select class="select-native">
+          <optgroup label="工作">
+            <option>项目文档</option>
+            <option>会议记录</option>
+            <option>周报</option>
+          </optgroup>
+          <optgroup label="个人">
+            <option>日记</option>
+            <option>读书笔记</option>
+            <option>购物清单</option>
+          </optgroup>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom Select 单选 -->
+  <div class="section">
+    <div class="section-title">Custom Select <code>自定义下拉 - 单选</code></div>
+    <div class="demo-row">
+      <div class="demo-row-label">Default</div>
+      <div class="custom-select" onclick="toggleCustom(this)">
+        <div class="custom-select-trigger">
+          <span>请选择排序方式</span>
+          <i class="mdi mdi-chevron-down"></i>
+        </div>
+        <div class="custom-select-dropdown">
+          <div class="custom-select-option" onclick="selectOption(this,'最近修改')"><i class="mdi mdi-check"></i> 最近修改</div>
+          <div class="custom-select-option" onclick="selectOption(this,'创建时间')"><i class="mdi mdi-check"></i> 创建时间</div>
+          <div class="custom-select-option" onclick="selectOption(this,'标题 A-Z')"><i class="mdi mdi-check"></i> 标题 A-Z</div>
+          <div class="custom-select-option disabled"><i class="mdi mdi-check"></i> 已禁用选项</div>
+        </div>
+      </div>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">Open（展开状态）</div>
+      <div class="custom-select open">
+        <div class="custom-select-trigger">
+          <span>请选择排序方式</span>
+          <i class="mdi mdi-chevron-down"></i>
+        </div>
+        <div class="custom-select-dropdown" style="display:block">
+          <div class="custom-select-option selected" onclick="selectOption(this,'最近修改')"><i class="mdi mdi-check"></i> 最近修改</div>
+          <div class="custom-select-option" onclick="selectOption(this,'创建时间')"><i class="mdi mdi-check"></i> 创建时间</div>
+          <div class="custom-select-option" onclick="selectOption(this,'标题 A-Z')"><i class="mdi mdi-check"></i> 标题 A-Z</div>
+        </div>
+      </div>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">Selected（已选中）</div>
+      <div class="custom-select" onclick="toggleCustom(this)">
+        <div class="custom-select-trigger" style="border-color:var(--color-accent)">
+          <span style="color:var(--color-accent);font-weight:500">最近修改</span>
+          <i class="mdi mdi-chevron-down"></i>
+        </div>
+      </div>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">分组选项</div>
+      <div class="custom-select" onclick="toggleCustom(this)">
+        <div class="custom-select-trigger"><span>请选择标签</span><i class="mdi mdi-chevron-down"></i></div>
+        <div class="custom-select-dropdown">
+          <div class="custom-select-group-label">工作</div>
+          <div class="custom-select-option" onclick="selectOption(this,'项目文档')"><i class="mdi mdi-check"></i> 项目文档</div>
+          <div class="custom-select-option" onclick="selectOption(this,'会议记录')"><i class="mdi mdi-check"></i> 会议记录</div>
+          <div class="custom-select-group-label">个人</div>
+          <div class="custom-select-option" onclick="selectOption(this,'读书笔记')"><i class="mdi mdi-check"></i> 读书笔记</div>
+          <div class="custom-select-option" onclick="selectOption(this,'日记')"><i class="mdi mdi-check"></i> 日记</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Multi-select -->
+  <div class="section">
+    <div class="section-title">多选 + 搜索过滤 <code>multi-select with search</code></div>
+    <div class="demo-row">
+      <div class="demo-row-label">Multi-select 带标签展示</div>
+      <div class="multi-select" onclick="toggleMulti(this)">
+        <div class="multi-select-trigger">
+          <span class="multi-select-tag">设计系统 <i class="mdi mdi-close"></i></span>
+          <span class="multi-select-tag">用户体验 <i class="mdi mdi-close"></i></span>
+          <span class="multi-select-placeholder" style="display:none">选择标签…</span>
+          <i class="mdi mdi-chevron-down"></i>
+        </div>
+        <div class="multi-select-dropdown">
+          <div class="select-search-input"><input type="text" placeholder="搜索标签…"></div>
+          <div class="custom-select-option selected"><i class="mdi mdi-check"></i> 设计系统</div>
+          <div class="custom-select-option selected"><i class="mdi mdi-check"></i> 用户体验</div>
+          <div class="custom-select-option"><i class="mdi mdi-check"></i> 前端开发</div>
+          <div class="custom-select-option"><i class="mdi mdi-check"></i> 后端开发</div>
+          <div class="custom-select-option"><i class="mdi mdi-check"></i> 项目管理</div>
+        </div>
+      </div>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">Multi-select Open（展开 + 搜索已过滤）</div>
+      <div class="multi-select open">
+        <div class="multi-select-trigger">
+          <span class="multi-select-tag">设计系统 <i class="mdi mdi-close"></i></span>
+          <span class="multi-select-placeholder">选择标签…</span>
+          <i class="mdi mdi-chevron-down"></i>
+        </div>
+        <div class="multi-select-dropdown" style="display:block">
+          <div class="select-search-input"><input type="text" placeholder="搜索标签…" value="设计"></div>
+          <div class="custom-select-option" style="font-size:var(--font-size-xs);color:var(--color-text-tertiary);padding:4px 10px;cursor:default">找到 1 个结果</div>
+          <div class="custom-select-option selected"><i class="mdi mdi-check"></i> 设计系统</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function toggleCustom(el) { el.classList.toggle('open'); }
+    function selectOption(el, val) {
+      const container = el.closest('.custom-select');
+      const trigger = container.querySelector('.custom-select-trigger span');
+      container.querySelectorAll('.custom-select-option').forEach(o => o.classList.remove('selected'));
+      el.classList.add('selected');
+      trigger.textContent = val;
+      trigger.style.color = 'var(--color-accent)';
+      trigger.style.fontWeight = '500';
+      container.classList.remove('open');
+    }
+    function toggleMulti(el) { el.classList.toggle('open'); }
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.custom-select')) {
+        document.querySelectorAll('.custom-select.open').forEach(el => el.classList.remove('open'));
+      }
+      if (!e.target.closest('.multi-select')) {
+        document.querySelectorAll('.multi-select.open').forEach(el => el.classList.remove('open'));
+      }
+    });
+  </script>
+</body>
+</html>

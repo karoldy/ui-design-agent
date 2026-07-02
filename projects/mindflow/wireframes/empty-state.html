@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MindFlow — &#31354;&#29366;&#24577;&#24341;&#23548; | &#32447;&#27147;&#22270;</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+  <style>
+    :root {
+      --color-bg-primary: #FAFAFA;
+      --color-bg-secondary: #F5F5F5;
+      --color-bg-tertiary: #EEEEEE;
+      --color-text-primary: #1A1A1A;
+      --color-text-secondary: #6B6B6B;
+      --color-text-tertiary: #9E9E9E;
+      --color-text-link: #3B82F6;
+      --color-text-on-accent: #FFFFFF;
+      --color-accent: #3B82F6;
+      --color-accent-hover: #2563EB;
+      --color-accent-soft: #E8F0FE;
+      --color-success: #10B981;
+      --color-warning: #F59E0B;
+      --color-error: #EF4444;
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-full: 9999px;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+      --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
+      --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+      --space-10: 40px;
+      --space-12: 48px;
+      --space-16: 64px;
+      --font-size-xs: 11px;
+      --font-size-sm: 13px;
+      --font-size-base: 15px;
+      --font-size-lg: 18px;
+      --font-size-xl: 22px;
+      --font-size-2xl: 28px;
+      --font-size-3xl: 36px;
+      --sidebar-width: 240px;
+      --topnav-height: 48px;
+      --statusbar-height: 28px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--color-bg-primary); color: var(--color-text-primary); font-size: var(--font-size-base); line-height: 1.5; -webkit-font-smoothing: antialiased; }
+    .ui-font { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+
+    .app-layout { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+    .main-area { display: flex; flex: 1; overflow: hidden; }
+
+    /* Top Nav */
+    .top-nav { height: var(--topnav-height); min-height: var(--topnav-height); background: var(--color-bg-primary); border-bottom: 1px solid #E8E8E8; display: flex; align-items: center; padding: 0 var(--space-4); gap: var(--space-4); z-index: 200; }
+    .top-nav .logo { display: flex; align-items: center; gap: var(--space-2); font-family: 'Inter', system-ui, sans-serif; font-weight: 600; font-size: var(--font-size-lg); color: var(--color-text-primary); width: var(--sidebar-width); padding-left: var(--space-1); flex-shrink: 0; }
+    .top-nav .logo i { color: var(--color-accent); font-size: 22px; }
+    .top-nav .search-bar { flex: 1; max-width: 440px; position: relative; margin: 0 auto; }
+    .top-nav .search-bar input { width: 100%; height: 32px; border: 1px solid #E0E0E0; border-radius: var(--radius-sm); background: var(--color-bg-secondary); padding: 0 var(--space-8) 0 32px; font-size: var(--font-size-sm); font-family: inherit; color: var(--color-text-primary); outline: none; }
+    .top-nav .search-bar input::placeholder { color: var(--color-text-tertiary); }
+    .top-nav .search-bar .search-icon { position: absolute; left: 8px; top: 50%; transform: translateY(-50%); color: var(--color-text-tertiary); font-size: 16px; pointer-events: none; }
+    .top-nav .search-bar .kbd-hint { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); font-size: var(--font-size-xs); color: var(--color-text-tertiary); background: var(--color-bg-tertiary); padding: 1px 5px; border-radius: 3px; font-family: 'Inter', system-ui, sans-serif; pointer-events: none; }
+    .top-nav .actions { display: flex; align-items: center; gap: var(--space-2); margin-left: auto; }
+    .top-nav .actions .icon-btn { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border: none; background: transparent; border-radius: var(--radius-sm); color: var(--color-text-secondary); cursor: pointer; font-size: 20px; transition: background 150ms ease; }
+    .top-nav .actions .icon-btn:hover { background: var(--color-bg-tertiary); }
+    .top-nav .actions .avatar { width: 28px; height: 28px; border-radius: var(--radius-full); background: var(--color-accent-soft); display: flex; align-items: center; justify-content: center; font-size: var(--font-size-xs); font-weight: 600; color: var(--color-accent); cursor: pointer; }
+
+    /* Sidebar */
+    .sidebar { width: var(--sidebar-width); min-width: var(--sidebar-width); background: var(--color-bg-secondary); border-right: 1px solid #E8E8E8; display: flex; flex-direction: column; overflow-y: auto; padding: var(--space-3) 0; flex-shrink: 0; }
+    .sidebar-section { padding: 0 var(--space-3); margin-bottom: var(--space-2); }
+    .sidebar-section-title { display: flex; align-items: center; justify-content: space-between; font-family: 'Inter', system-ui, sans-serif; font-size: var(--font-size-xs); font-weight: 600; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.5px; padding: var(--space-2) var(--space-1); margin-top: var(--space-1); }
+    .sidebar-item { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-1) var(--space-2); border-radius: var(--radius-sm); cursor: pointer; font-size: var(--font-size-sm); color: var(--color-text-primary); transition: background 150ms ease; height: 30px; }
+    .sidebar-item:hover { background: var(--color-bg-tertiary); }
+    .sidebar-item.active { background: var(--color-accent-soft); color: var(--color-accent); }
+    .sidebar-item i { font-size: 16px; color: var(--color-text-secondary); flex-shrink: 0; }
+    .sidebar-item.active i { color: var(--color-accent); }
+    .sidebar-item .item-label { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .sidebar-divider { height: 1px; background: #E8E8E8; margin: var(--space-2) var(--space-3); }
+    .sidebar-spacer { flex: 1; }
+    .space-usage { padding: var(--space-3); border-top: 1px solid #E8E8E8; }
+    .space-usage .usage-bar { height: 4px; background: var(--color-bg-tertiary); border-radius: 2px; overflow: hidden; margin-bottom: var(--space-1); }
+    .space-usage .usage-bar .fill { height: 100%; width: 0%; background: var(--color-accent); border-radius: 2px; }
+    .space-usage .usage-text { font-size: var(--font-size-xs); color: var(--color-text-tertiary); font-family: 'Inter', system-ui, sans-serif; }
+
+    /* Main Content — Empty State */
+    .content { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: var(--color-bg-primary); }
+    .empty-state-container { flex: 1; display: flex; align-items: center; justify-content: center; padding: var(--space-10); }
+    .empty-state-card { text-align: center; max-width: 440px; }
+
+    /* Illustration */
+    .empty-illustration { width: 160px; height: 120px; margin: 0 auto var(--space-8); position: relative; }
+    .empty-illustration svg { width: 100%; height: 100%; }
+
+    .empty-state-card h1 { font-family: 'Inter', system-ui, sans-serif; font-size: var(--font-size-2xl); font-weight: 600; color: var(--color-text-primary); margin-bottom: var(--space-3); line-height: 1.3; }
+    .empty-state-card p { font-size: var(--font-size-base); color: var(--color-text-secondary); line-height: 1.6; margin-bottom: var(--space-8); max-width: 360px; margin-left: auto; margin-right: auto; }
+    .empty-state-card .cta-group { display: flex; align-items: center; justify-content: center; gap: var(--space-3); flex-wrap: wrap; }
+    .empty-state-card .btn-primary { display: inline-flex; align-items: center; gap: var(--space-2); height: 44px; padding: 0 var(--space-6); background: var(--color-accent); color: var(--color-text-on-accent); border: none; border-radius: var(--radius-sm); font-size: var(--font-size-base); font-family: 'Inter', system-ui, sans-serif; font-weight: 500; cursor: pointer; transition: background 150ms ease; box-shadow: var(--shadow-sm); }
+    .empty-state-card .btn-primary:hover { background: var(--color-accent-hover); }
+    .empty-state-card .btn-primary i { font-size: 20px; }
+    .empty-state-card .btn-ghost { display: inline-flex; align-items: center; gap: var(--space-1); height: 44px; padding: 0 var(--space-4); background: transparent; color: var(--color-text-secondary); border: 1px solid #E0E0E0; border-radius: var(--radius-sm); font-size: var(--font-size-sm); font-family: 'Inter', system-ui, sans-serif; cursor: pointer; transition: background 150ms ease, border-color 150ms ease; }
+    .empty-state-card .btn-ghost:hover { background: var(--color-bg-tertiary); border-color: #D0D0D0; }
+    .empty-state-card .btn-ghost i { font-size: 18px; }
+    .empty-state-card .import-link { display: inline-block; margin-top: var(--space-6); font-size: var(--font-size-sm); color: var(--color-text-secondary); cursor: pointer; transition: color 150ms ease; }
+    .empty-state-card .import-link:hover { color: var(--color-accent); }
+    .empty-state-card .import-link i { font-size: 14px; vertical-align: middle; margin-right: 4px; }
+
+    /* Quick tips */
+    .quick-tips { display: flex; justify-content: center; gap: var(--space-8); margin-top: var(--space-10); padding-top: var(--space-8); border-top: 1px solid #E8E8E8; }
+    .quick-tip { text-align: center; max-width: 140px; }
+    .quick-tip .tip-icon { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: var(--color-accent-soft); border-radius: var(--radius-md); color: var(--color-accent); margin: 0 auto var(--space-2); font-size: 20px; }
+    .quick-tip .tip-label { font-size: var(--font-size-xs); color: var(--color-text-secondary); line-height: 1.4; }
+
+    /* Bottom Status Bar */
+    .bottom-status { height: var(--statusbar-height); min-height: var(--statusbar-height); background: var(--color-bg-secondary); border-top: 1px solid #E8E8E8; display: flex; align-items: center; justify-content: space-between; padding: 0 var(--space-4); font-size: var(--font-size-xs); color: var(--color-text-tertiary); }
+    .bottom-status .status-left { display: flex; align-items: center; gap: var(--space-3); }
+    .bottom-status .status-left .sync-indicator { display: flex; align-items: center; gap: var(--space-1); }
+    .bottom-status .status-left .sync-indicator .sync-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--color-success); display: inline-block; }
+  </style>
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Top Navigation -->
+    <header class="top-nav">
+      <div class="logo">
+        <i class="mdi mdi-brain"></i>
+        <span>MindFlow</span>
+      </div>
+      <div class="search-bar">
+        <i class="mdi mdi-magnify search-icon"></i>
+        <input type="text" placeholder="&#25628;&#32034;&#31508;&#35760;… (&#8984;K)" />
+        <span class="kbd-hint">&#8984;K</span>
+      </div>
+      <div class="actions">
+        <button class="icon-btn" title="&#35774;&#32622;"><i class="mdi mdi-cog-outline"></i></button>
+        <div class="avatar">T</div>
+      </div>
+    </header>
+
+    <!-- Main Area -->
+    <div class="main-area">
+      <!-- Sidebar (empty state) -->
+      <aside class="sidebar">
+        <div class="sidebar-section">
+          <div class="sidebar-item">
+            <i class="mdi mdi-note-text-outline"></i>
+            <span class="item-label">&#25152;&#26377;&#31508;&#35760;</span>
+            <span class="item-count" style="background:transparent;">0</span>
+          </div>
+          <div class="sidebar-item" style="opacity:0.5;pointer-events:none;">
+            <i class="mdi mdi-calendar-text-outline"></i>
+            <span class="item-label">&#27599;&#26085;&#31508;&#35760;</span>
+          </div>
+          <div class="sidebar-item" style="opacity:0.5;pointer-events:none;">
+            <i class="mdi mdi-delete-outline"></i>
+            <span class="item-label">&#22238;&#25910;&#31449;</span>
+          </div>
+        </div>
+        <div class="sidebar-divider"></div>
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">
+            <span>&#31508;&#35760;&#26412;</span>
+            <i class="mdi mdi-plus" style="font-size:14px;color:var(--color-text-tertiary);cursor:pointer;"></i>
+          </div>
+          <div style="padding: var(--space-4) var(--space-2); text-align: center;">
+            <div style="font-size: var(--font-size-xs); color: var(--color-text-tertiary); line-height: 1.5;">
+              &#27809;&#26377;&#31508;&#35760;&#26412;<br>
+              <span style="font-size: 10px;">&#28857;&#20987; + &#24320;&#22987;&#21019;&#24314;</span>
+            </div>
+          </div>
+        </div>
+        <div class="sidebar-spacer"></div>
+        <div class="space-usage">
+          <div class="usage-bar"><div class="fill" style="width:0%;"></div></div>
+          <div class="usage-text">&#20351;&#29992; 0% &#183; 0 B / 5 GB</div>
+        </div>
+      </aside>
+
+      <!-- Main Content — Empty State -->
+      <main class="content">
+        <div class="empty-state-container">
+          <div class="empty-state-card">
+            <!-- SVG Illustration: minimal line-art brain/flow -->
+            <div class="empty-illustration">
+              <svg viewBox="0 0 160 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Brain outline -->
+                <path d="M80 105C97.673 105 112 90.673 112 73C112 61.5 106 51.5 97 46C95.5 36 88 28 78 26C74 20 67 16 60 16C49 16 40 23 37 33C27 37 20 48 20 60C20 73 28 84 39 89C41 94 46 98 53 99C54 102 57 105 61 105H80Z" stroke="#C5D9FF" stroke-width="2" fill="none"/>
+                <!-- Inner lines -->
+                <path d="M48 50 C52 42 60 38 68 42 M56 60 C58 52 66 48 74 52 M44 72 C50 65 62 60 72 64 M76 36 C80 30 92 28 100 36 M90 46 C94 40 104 38 108 46" stroke="#D5E3FF" stroke-width="1.5" stroke-dasharray="4 3"/>
+                <!-- Small dots representing nodes -->
+                <circle cx="48" cy="50" r="2.5" fill="#3B82F6" opacity="0.6"/>
+                <circle cx="56" cy="60" r="2" fill="#3B82F6" opacity="0.4"/>
+                <circle cx="44" cy="72" r="2.5" fill="#3B82F6" opacity="0.6"/>
+                <circle cx="76" cy="36" r="2" fill="#3B82F6" opacity="0.4"/>
+                <circle cx="90" cy="46" r="2.5" fill="#3B82F6" opacity="0.6"/>
+                <!-- Connection lines between nodes -->
+                <line x1="48" y1="50" x2="56" y2="60" stroke="#A0C4FF" stroke-width="1" stroke-dasharray="3 2"/>
+                <line x1="56" y1="60" x2="44" y2="72" stroke="#A0C4FF" stroke-width="1" stroke-dasharray="3 2"/>
+                <line x1="76" y1="36" x2="90" y2="46" stroke="#A0C4FF" stroke-width="1" stroke-dasharray="3 2"/>
+                <!-- Plus sign for "create" -->
+                <circle cx="120" cy="28" r="10" stroke="#3B82F6" stroke-width="1.5" fill="none"/>
+                <path d="M120 24V32M116 28H124" stroke="#3B82F6" stroke-width="1.5" stroke-linecap="round"/>
+                <!-- Small sparkle -->
+                <path d="M32 24 L34 20 L36 24 L40 26 L36 28 L34 32 L32 28 L28 26 Z" fill="#3B82F6" opacity="0.3"/>
+              </svg>
+            </div>
+
+            <h1>&#27426;&#36814;&#26469;&#21040; MindFlow</h1>
+            <p>&#24320;&#22987;&#35760;&#24405;&#20320;&#30340;&#24605;&#32771;&#65292;&#35753;&#30693;&#35782;&#36830;&#25509;&#36215;&#26469;&#12290;&#28857;&#20987;&#19979;&#26041;&#25353;&#38062;&#24320;&#22987;&#20320;&#30340;&#20027;&#31508;&#35760;&#12290;</p>
+
+            <div class="cta-group">
+              <button class="btn-primary"><i class="mdi mdi-plus"></i> &#26032;&#24314;&#31508;&#35760;</button>
+              <button class="btn-ghost"><i class="mdi mdi-playlist-plus"></i> &#21019;&#24314;&#31508;&#35760;&#26412;</button>
+            </div>
+
+            <div class="import-link">
+              <i class="mdi mdi-import"></i>
+              &#23548;&#20837;&#25968;&#25454; &#8212; &#20174; Markdown &#25110;&#20854;&#20182;&#24037;&#20855;&#23548;&#20837;&#31508;&#35760;
+            </div>
+
+            <div class="quick-tips">
+              <div class="quick-tip">
+                <div class="tip-icon"><i class="mdi mdi-keyboard"></i></div>
+                <div class="tip-label">&#29992; &#8984;N &#24555;&#36895;&#26032;&#24314;</div>
+              </div>
+              <div class="quick-tip">
+                <div class="tip-icon"><i class="mdi mdi-link-variant"></i></div>
+                <div class="tip-label">&#29992; [[ &#38142;&#25509;&#31508;&#35760;</div>
+              </div>
+              <div class="quick-tip">
+                <div class="tip-icon"><i class="mdi mdi-pound"></i></div>
+                <div class="tip-label">&#29992; # &#28155;&#21152;&#26631;&#31614;</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Bottom Status Bar -->
+    <footer class="bottom-status">
+      <div class="status-left">
+        <div class="sync-indicator">
+          <span class="sync-dot"></span>
+          <span>&#24050;&#21516;&#27493;</span>
+        </div>
+        <span>&#183;</span>
+        <span>&#21018;&#21018;</span>
+      </div>
+      <div class="status-right">
+        <span>0 &#31508;&#35760;</span>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>

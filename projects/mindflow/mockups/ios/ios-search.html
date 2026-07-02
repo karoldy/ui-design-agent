@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MindFlow iOS — 搜索</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+  <style>
+    /* ===== Reset & Base ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      height: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif;
+      background: #C8C8CC;
+      color: #000000;
+      font-size: 17px;
+      line-height: 1.47059;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    :root {
+      --ios-bg: #F2F2F7;
+      --ios-bg-elevated: #FFFFFF;
+      --ios-text: #000000;
+      --ios-text-secondary: #8E8E93;
+      --ios-accent: #3B82F6;
+      --ios-separator: #C6C6C8;
+      --ios-separator-light: #E5E5EA;
+      --ios-red: #FF3B30;
+      --ios-green: #34C759;
+      --ios-orange: #FF9500;
+      --ios-radius: 10px;
+      --iphone-w: 393px;
+      --iphone-h: 852px;
+    }
+
+    /* ===== iPhone Frame ===== */
+    .iphone-frame {
+      width: var(--iphone-w);
+      height: var(--iphone-h);
+      background: var(--ios-bg);
+      border-radius: 54px;
+      overflow: hidden;
+      position: relative;
+      box-shadow:
+        0 0 0 1px rgba(0,0,0,0.1),
+        0 8px 40px rgba(0,0,0,0.18),
+        0 24px 80px rgba(0,0,0,0.12);
+    }
+
+    .iphone-screen {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ===== Dynamic Island ===== */
+    .dynamic-island {
+      position: absolute;
+      top: 11px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 126px;
+      height: 36px;
+      background: #000;
+      border-radius: 20px;
+      z-index: 100;
+    }
+
+    /* ===== Status Bar ===== */
+    .status-bar {
+      height: 54px;
+      padding: 14px 30px 0 30px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      background: transparent;
+      position: relative;
+      z-index: 50;
+      flex-shrink: 0;
+    }
+    .status-bar .time {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      color: #000;
+      line-height: 1;
+      padding-top: 1px;
+    }
+    .status-bar .status-icons {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 14px;
+      color: #000;
+      padding-top: 2px;
+    }
+    .status-bar .status-icons i {
+      font-size: 15px;
+      line-height: 1;
+    }
+    .status-bar .status-icons .battery-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .status-bar .status-icons .battery-wrap .battery-body {
+      width: 25px;
+      height: 11.5px;
+      border: 1.5px solid #000;
+      border-radius: 2px;
+      position: relative;
+    }
+    .status-bar .status-icons .battery-wrap .battery-body .battery-fill {
+      position: absolute;
+      top: 1.5px;
+      left: 1.5px;
+      width: 16px;
+      height: 5.5px;
+      background: #34C759;
+      border-radius: 1px;
+    }
+    .status-bar .status-icons .battery-wrap .battery-tip {
+      width: 1.5px;
+      height: 4.5px;
+      background: #000;
+      border-radius: 0 1px 1px 0;
+      margin-left: 1px;
+    }
+
+    /* ===== Navigation Bar (Search mode) ===== */
+    .nav-bar {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      height: 52px;
+      padding: 6px 8px 4px 8px;
+      gap: 8px;
+      background: transparent;
+      position: relative;
+      z-index: 10;
+    }
+    .nav-bar .nav-back {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      background: none;
+      border: none;
+      font-size: 17px;
+      color: var(--ios-accent);
+      font-family: inherit;
+      cursor: pointer;
+      padding: 4px 6px;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .nav-bar .nav-back i {
+      font-size: 22px;
+    }
+    .nav-bar .nav-back:active {
+      opacity: 0.4;
+    }
+    .nav-bar .search-field {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      height: 36px;
+      background: rgba(118, 118, 128, 0.12);
+      border-radius: 10px;
+      padding: 0 8px;
+      gap: 6px;
+    }
+    .nav-bar .search-field i {
+      font-size: 16px;
+      color: var(--ios-text-secondary);
+      flex-shrink: 0;
+    }
+    .nav-bar .search-field input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      font-size: 17px;
+      font-family: inherit;
+      color: var(--ios-text);
+      outline: none;
+      line-height: 1.2;
+    }
+    .nav-bar .search-field input::placeholder {
+      color: var(--ios-text-secondary);
+    }
+    .nav-bar .search-cancel {
+      background: none;
+      border: none;
+      font-size: 17px;
+      color: var(--ios-accent);
+      font-family: inherit;
+      cursor: pointer;
+      padding: 4px 6px;
+      flex-shrink: 0;
+      line-height: 1;
+    }
+    .nav-bar .search-cancel:active {
+      opacity: 0.4;
+    }
+
+    /* ===== Search Content ===== */
+    .search-content {
+      flex: 1;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .search-content::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* ===== Section Header ===== */
+    .section-header {
+      padding: 12px 16px 6px 16px;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--ios-text);
+      letter-spacing: 0.2px;
+      background: transparent;
+    }
+    .section-header.secondary {
+      color: var(--ios-text-secondary);
+      font-size: 13px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* ===== Recent Search Tags ===== */
+    .recent-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 4px 16px 12px 16px;
+    }
+    .recent-tags .tag-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 12px;
+      background: var(--ios-bg-elevated);
+      border-radius: 16px;
+      font-size: 15px;
+      color: var(--ios-text);
+      cursor: default;
+      box-shadow: 0 0 0 0.5px rgba(0,0,0,0.06);
+    }
+    .recent-tags .tag-pill i {
+      font-size: 14px;
+      color: var(--ios-text-secondary);
+    }
+    .recent-tags .tag-pill:active {
+      background: #E0E0E5;
+    }
+    .recent-tags .tag-pill .clear-tag {
+      font-size: 14px;
+      color: var(--ios-text-secondary);
+      cursor: pointer;
+      margin-left: 2px;
+    }
+    .recent-tags .tag-pill .clear-tag:active {
+      opacity: 0.4;
+    }
+
+    /* ===== Search Result Card ===== */
+    .list-card {
+      background: var(--ios-bg-elevated);
+      border-radius: 10px;
+      margin: 0 16px 16px 16px;
+      overflow: hidden;
+      box-shadow: 0 0 0 0.5px rgba(0,0,0,0.04);
+    }
+    .search-result-item {
+      display: flex;
+      align-items: flex-start;
+      padding: 12px 16px;
+      border-bottom: 0.5px solid var(--ios-separator-light);
+      cursor: default;
+      transition: background 0.15s;
+    }
+    .search-result-item:last-child {
+      border-bottom: none;
+    }
+    .search-result-item:active {
+      background: #D9D9D9;
+    }
+    .search-result-item .item-content {
+      flex: 1;
+      min-width: 0;
+    }
+    .search-result-item .item-title {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--ios-text);
+      line-height: 1.3;
+      margin-bottom: 2px;
+    }
+    .search-result-item .item-title .highlight {
+      background: #FEF3C7;
+      color: #1A1A1A;
+      border-radius: 2px;
+      padding: 0 1px;
+    }
+    .search-result-item .item-excerpt {
+      font-size: 15px;
+      color: var(--ios-text-secondary);
+      line-height: 1.3;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 4px;
+    }
+    .search-result-item .item-excerpt .highlight {
+      background: #FEF3C7;
+      color: #1A1A1A;
+      border-radius: 2px;
+      padding: 0 1px;
+    }
+    .search-result-item .item-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .search-result-item .item-meta .tag {
+      display: inline-block;
+      font-size: 12px;
+      color: #555;
+      background: #F0F0F5;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-weight: 500;
+      line-height: 1.4;
+    }
+    .search-result-item .item-meta .tag.tag-purple {
+      background: #EDE9FE;
+      color: #5B21B6;
+    }
+    .search-result-item .item-meta .tag.tag-teal {
+      background: #CCFBF1;
+      color: #115E59;
+    }
+    .search-result-item .item-meta .tag.tag-blue {
+      background: #DBEAFE;
+      color: #1E40AF;
+    }
+    .search-result-item .item-meta .tag.tag-orange {
+      background: #FFEDD5;
+      color: #9A3412;
+    }
+
+    /* ===== No Results ===== */
+    .no-results {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      text-align: center;
+    }
+    .no-results i {
+      font-size: 48px;
+      color: var(--ios-text-secondary);
+      margin-bottom: 12px;
+      opacity: 0.5;
+    }
+    .no-results .no-results-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--ios-text);
+      margin-bottom: 8px;
+    }
+    .no-results .no-results-desc {
+      font-size: 15px;
+      color: var(--ios-text-secondary);
+      line-height: 1.4;
+    }
+
+    /* ===== Search suggestions ===== */
+    .suggestion-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      gap: 12px;
+      cursor: default;
+      background: var(--ios-bg-elevated);
+      border-bottom: 0.5px solid var(--ios-separator-light);
+    }
+    .suggestion-item:last-child {
+      border-bottom: none;
+    }
+    .suggestion-item:active {
+      background: #D9D9D9;
+    }
+    .suggestion-item i {
+      font-size: 18px;
+      color: var(--ios-text-secondary);
+      flex-shrink: 0;
+    }
+    .suggestion-item .suggestion-text {
+      font-size: 15px;
+      color: var(--ios-text-secondary);
+    }
+
+    /* ===== Home Indicator ===== */
+    .home-indicator {
+      flex-shrink: 0;
+      height: 21px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      position: relative;
+      z-index: 20;
+    }
+    .home-indicator .bar {
+      width: 134px;
+      height: 5px;
+      background: #000;
+      border-radius: 2.5px;
+      opacity: 0.2;
+    }
+  </style>
+</head>
+<body>
+
+<div class="iphone-frame">
+  <div class="iphone-screen">
+
+    <!-- Dynamic Island -->
+    <div class="dynamic-island"></div>
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span class="time">9:41</span>
+      <div class="status-icons">
+        <i class="mdi mdi-signal-cellular-3" style="font-size: 14px;"></i>
+        <i class="mdi mdi-wifi" style="font-size: 15px;"></i>
+        <div class="battery-wrap">
+          <div class="battery-body">
+            <div class="battery-fill"></div>
+          </div>
+          <div class="battery-tip"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Nav Bar (Search mode) -->
+    <div class="nav-bar">
+      <button class="nav-back" onclick="window.location.href='ios-note-list.html'">
+        <i class="mdi mdi-chevron-left"></i>
+      </button>
+      <div class="search-field">
+        <i class="mdi mdi-magnify"></i>
+        <input type="text" placeholder="搜索笔记" value="Agent" id="searchInput" autofocus>
+        <button style="background:none;border:none;cursor:pointer;color:var(--ios-text-secondary);font-size:16px;padding:2px;" onclick="clearSearch()" id="clearBtn">
+          <i class="mdi mdi-close-circle"></i>
+        </button>
+      </div>
+      <button class="search-cancel" onclick="window.location.href='ios-note-list.html'">取消</button>
+    </div>
+
+    <!-- Search Content -->
+    <div class="search-content">
+
+      <!-- Results section -->
+      <div class="section-header">搜索结果</div>
+
+      <div class="list-card">
+        <div class="search-result-item" onclick="window.location.href='ios-editor.html'">
+          <div class="item-content">
+            <div class="item-title">AI <span class="highlight">Agent</span> 技术架构设计</div>
+            <div class="item-excerpt">这是一篇关于 AI <span class="highlight">Agent</span> 技术架构设计的笔记，记录当前主流架构方案和设计思路...</div>
+            <div class="item-meta">
+              <span class="tag tag-purple">AI</span>
+              <span class="tag tag-teal">技术</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="search-result-item" onclick="void(0)">
+          <div class="item-content">
+            <div class="item-title">AI <span class="highlight">Agent</span> 应用场景分析</div>
+            <div class="item-excerpt">梳理当前主流 AI <span class="highlight">Agent</span> 的应用场景，包括客服、代码生成、数据分析、个人助理等方向...</div>
+            <div class="item-meta">
+              <span class="tag tag-purple">AI</span>
+              <span class="tag tag-blue">产品</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="search-result-item" onclick="void(0)">
+          <div class="item-content">
+            <div class="item-title">LangChain <span class="highlight">Agent</span> 框架深入解析</div>
+            <div class="item-excerpt">深入分析 LangChain <span class="highlight">Agent</span> 框架的架构设计，包括 Tool 定义、Memory 管理、Chain 编排等核心概念...</div>
+            <div class="item-meta">
+              <span class="tag tag-teal">技术</span>
+              <span class="tag tag-orange">研究</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="search-result-item" onclick="void(0)">
+          <div class="item-content">
+            <div class="item-title">Multi-<span class="highlight">Agent</span> 协作模式对比</div>
+            <div class="item-excerpt">对比 CrewAI、AutoGen、MetaGPT 等 Multi-<span class="highlight">Agent</span> 框架的协作模式和适用场景...</div>
+            <div class="item-meta">
+              <span class="tag tag-purple">AI</span>
+              <span class="tag tag-teal">技术</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Searches -->
+      <div class="section-header">最近搜索</div>
+
+      <div class="recent-tags">
+        <span class="tag-pill">
+          <i class="mdi mdi-clock-outline"></i> RAG 技术方案
+          <span class="clear-tag"><i class="mdi mdi-close"></i></span>
+        </span>
+        <span class="tag-pill">
+          <i class="mdi mdi-clock-outline"></i> LLM
+          <span class="clear-tag"><i class="mdi mdi-close"></i></span>
+        </span>
+        <span class="tag-pill">
+          <i class="mdi mdi-clock-outline"></i> 产品路线图
+          <span class="clear-tag"><i class="mdi mdi-close"></i></span>
+        </span>
+      </div>
+
+      <div style="height: 20px;"></div>
+
+    </div>
+
+    <!-- Tab Bar (from note list, for navigation context) -->
+    <div style="flex-shrink:0; height:0;"></div>
+
+    <!-- Home Indicator -->
+    <div class="home-indicator">
+      <div class="bar"></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  function clearSearch() {
+    const input = document.getElementById('searchInput');
+    input.value = '';
+    input.focus();
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Breadcrumb — 面包屑导航 | MindFlow 复合组件</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-bg-primary: #FAFAFA;
+      --color-bg-secondary: #F5F5F5;
+      --color-bg-tertiary: #EEEEEE;
+      --color-text-primary: #1A1A1A;
+      --color-text-secondary: #6B6B6B;
+      --color-text-tertiary: #9E9E9E;
+      --color-text-link: #3B82F6;
+      --color-accent: #3B82F6;
+      --color-accent-soft: #E8F0FE;
+      --color-divider: #E8E8E8;
+
+      --font-family-ui: 'Inter', system-ui, -apple-system, sans-serif;
+      --font-size-xs: 11px;
+      --font-size-sm: 13px;
+      --font-size-base: 15px;
+
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-full: 9999px;
+
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-family-ui);
+      background: var(--color-bg-primary);
+      color: var(--color-text-primary);
+      padding: var(--space-6);
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    .page-title { font-size: 22px; font-weight: 600; margin-bottom: var(--space-2); }
+    .page-desc { font-size: var(--font-size-sm); color: var(--color-text-secondary); margin-bottom: var(--space-6); line-height: 1.5; }
+    .section { margin-bottom: var(--space-8); }
+    .section-title { font-size: var(--font-size-base); font-weight: 600; margin-bottom: var(--space-3); padding-bottom: var(--space-1); border-bottom: 1px solid var(--color-divider); }
+    .section-desc { font-size: var(--font-size-xs); color: var(--color-text-secondary); margin-bottom: var(--space-3); }
+
+    .demo-card {
+      background: white;
+      border: 1px solid var(--color-divider);
+      border-radius: var(--radius-md);
+      padding: var(--space-4) var(--space-5);
+      box-shadow: var(--shadow-sm);
+      margin-bottom: var(--space-4);
+    }
+
+    .preview-label {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-secondary);
+      font-weight: 500;
+      margin-bottom: var(--space-3);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* ==========================
+       Breadcrumb Component
+       ========================== */
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: var(--space-1);
+      font-size: var(--font-size-sm);
+    }
+
+    .breadcrumb-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+      color: var(--color-text-secondary);
+      cursor: pointer;
+      padding: 2px 4px;
+      border-radius: var(--radius-sm);
+      transition: background 120ms ease, color 120ms ease;
+      text-decoration: none;
+    }
+
+    .breadcrumb-item:hover {
+      background: var(--color-bg-tertiary);
+      color: var(--color-text-primary);
+    }
+
+    .breadcrumb-item.active {
+      color: var(--color-text-primary);
+      font-weight: 600;
+      cursor: default;
+    }
+
+    .breadcrumb-item.active:hover {
+      background: none;
+    }
+
+    .breadcrumb-item .mdi {
+      font-size: 14px;
+    }
+
+    .breadcrumb-separator {
+      color: var(--color-text-tertiary);
+      font-size: 14px;
+      margin: 0 2px;
+      user-select: none;
+    }
+
+    .breadcrumb-home {
+      color: var(--color-text-secondary);
+    }
+
+    .breadcrumb-home:hover {
+      color: var(--color-accent);
+    }
+
+    /* Tag filter breadcrumb */
+    .breadcrumb-tag-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: var(--radius-full);
+      display: inline-block;
+    }
+
+    .dot-blue { background: #2563EB; }
+    .dot-purple { background: #7C3AED; }
+    .dot-pink { background: #DB2777; }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+      margin-bottom: var(--space-4);
+      align-items: center;
+    }
+
+    .controls label {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+      font-size: var(--font-size-sm);
+      cursor: pointer;
+      padding: 4px 10px;
+      border-radius: var(--radius-sm);
+      background: var(--color-bg-secondary);
+      border: 1px solid var(--color-divider);
+    }
+    .controls label:hover { background: var(--color-bg-tertiary); }
+    .controls label.active { background: var(--color-accent-soft); border-color: var(--color-accent); color: var(--color-accent); }
+  </style>
+</head>
+<body>
+  <h1 class="page-title">面包屑导航 — Breadcrumb</h1>
+  <p class="page-desc">
+    笔记列表顶部的路径导航组件。支持标准笔记路径、标签筛选路径、搜索上下文路径三种变体。
+    每级可点击，最后一级标识当前位置不可点击。分隔符使用 <code>›</code> 符号。
+  </p>
+
+  <!-- ================ SECTION: Variant: Notebook Path ================ -->
+  <div class="section">
+    <h2 class="section-title">笔记本路径 Notebook Path</h2>
+    <p class="section-desc">标准文件夹路径导航。首页 > 笔记本 > 子笔记本。最后一级为当前位置（不可点击）。</p>
+    <div class="demo-card">
+      <div class="preview-label">笔记本路径</div>
+      <nav class="breadcrumb">
+        <a class="breadcrumb-item breadcrumb-home" href="#" onclick="event.preventDefault();highlightClick(this);">
+          <span class="mdi mdi-home-outline"></span>
+        </a>
+        <span class="breadcrumb-separator">›</span>
+        <a class="breadcrumb-item" href="#" onclick="event.preventDefault();highlightClick(this);">工作</a>
+        <span class="breadcrumb-separator">›</span>
+        <a class="breadcrumb-item" href="#" onclick="event.preventDefault();highlightClick(this);">产品设计</a>
+        <span class="breadcrumb-separator">›</span>
+        <span class="breadcrumb-item active">竞品分析</span>
+      </nav>
+    </div>
+
+    <div class="demo-card">
+      <div class="preview-label">深层路径 (4 级)</div>
+      <nav class="breadcrumb">
+        <a class="breadcrumb-item breadcrumb-home" href="#" onclick="event.preventDefault();highlightClick(this);">
+          <span class="mdi mdi-home-outline"></span>
+        </a>
+        <span class="breadcrumb-separator">›</span>
+        <a class="breadcrumb-item" href="#" onclick="event.preventDefault();highlightClick(this);">个人</a>
+        <span class="breadcrumb-separator">›</span>
+        <a class="breadcrumb-item" href="#" onclick="event.preventDefault();highlightClick(this);">读书笔记</a>
+        <span class="breadcrumb-separator">›</span>
+        <a class="breadcrumb-item" href="#" onclick="event.preventDefault();highlightClick(this);">技术类</a>
+        <span class="breadcrumb-separator">›</span>
+        <span class="breadcrumb-item active">系统设计</span>
+      </nav>
+    </div>
+  </div>
+
+  <!-- ================ SECTION: Variant: Tag Filter Path ================ -->
+  <div class="section">
+    <h2 class="section-title">标签筛选路径 Tag Filter Path</h2>
+    <p class="section-desc">通过标签筛选笔记时的路径展示。标签层级以彩色圆点 + 标签名显示。</p>
+    <div class="demo-card">
+      <div class="preview-label">单标签筛选</div>
+      <nav class="breadcrumb">
+        <a class="breadcrumb-item breadcrumb-home" href="#" onclick="event.preventDefault();highlightClick(this);">
+          <span class="mdi mdi-home-outline"></span>
+        </a>
+        <span class="breadcrumb-separator">›</span>
+        <a class="breadcrumb-item" href="#" onclick="event.preventDefault();highlightClick(this);">
+          <span class="mdi mdi-tag-outline" style="font-size:13px;"></span> 标签
+        </a>
+        <span class="breadcrumb-separator">›</span>
+        <span class="breadcrumb-item active">
+          <span class="breadcrumb-tag-dot dot-blue"></span> 科技/AI/LLM
+        </span>
+      </nav>
+    </div>
+
+    <div class="demo-card">
+      <div class="preview-label">组合标签筛选 (多选)</div>
+      <nav class="breadcrumb">
+        <a class="breadcrumb-item breadcrumb-home" href="#" onclick="event.preventDefault();highlightClick(this);">
+          <span class="mdi mdi-home-outline"></span>
+        </a>
+        <span class="breadcrumb-separator">›</span>
+        <a class="breadcrumb-item" href="#" onclick="event.preventDefault();highlightClick(this);">
+          <span class="mdi mdi-tag-outline" style="font-size:13px;"></span> 标签
+        </a>
+        <span class="breadcrumb-separator">›</span>
+        <span class="breadcrumb-item active" style="font-weight:500;">
+          <span class="breadcrumb-tag-dot dot-blue"></span> 科技
+        </span>
+        <span class="breadcrumb-separator">+</span>
+        <span class="breadcrumb-item active" style="font-weight:500;">
+          <span class="breadcrumb-tag-dot dot-purple"></span> 设计
+        </span>
+        <span style="font-size:var(--font-size-xs);color:var(--color-text-tertiary);margin-left:var(--space-1);">组合筛选</span>
+      </nav>
+    </div>
+  </div>
+
+  <!-- ================ SECTION: Variant: Search Context Path ================ -->
+  <div class="section">
+    <h2 class="section-title">搜索上下文路径 Search Context Path</h2>
+    <p class="section-desc">进入搜索结果后的路径，显示搜索关键词，可点击返回列表。</p>
+    <div class="demo-card">
+      <div class="preview-label">搜索结果上下文</div>
+      <nav class="breadcrumb">
+        <a class="breadcrumb-item breadcrumb-home" href="#" onclick="event.preventDefault();highlightClick(this);">
+          <span class="mdi mdi-home-outline"></span>
+        </a>
+        <span class="breadcrumb-separator">›</span>
+        <a class="breadcrumb-item" href="#" onclick="event.preventDefault();highlightClick(this);">全部笔记</a>
+        <span class="breadcrumb-separator">›</span>
+        <span class="breadcrumb-item active">
+          <span class="mdi mdi-magnify" style="font-size:13px;color:var(--color-accent);"></span>
+          搜索：<strong style="color:var(--color-accent);">观察者模式</strong>
+          <span style="color:var(--color-text-tertiary);font-weight:400;font-size:var(--font-size-xs);margin-left:var(--space-1);">5 条结果</span>
+        </span>
+      </nav>
+    </div>
+
+    <div class="demo-card">
+      <div class="preview-label">在笔记本内搜索</div>
+      <nav class="breadcrumb">
+        <a class="breadcrumb-item breadcrumb-home" href="#" onclick="event.preventDefault();highlightClick(this);">
+          <span class="mdi mdi-home-outline"></span>
+        </a>
+        <span class="breadcrumb-separator">›</span>
+        <a class="breadcrumb-item" href="#" onclick="event.preventDefault();highlightClick(this);">工作</a>
+        <span class="breadcrumb-separator">›</span>
+        <span class="breadcrumb-item active">
+          <span class="mdi mdi-magnify" style="font-size:13px;color:var(--color-text-secondary);"></span>
+          搜索：设计系统
+        </span>
+      </nav>
+    </div>
+  </div>
+
+  <!-- ================ SECTION: States ================ -->
+  <div class="section">
+    <h2 class="section-title">交互状态 States</h2>
+    <p class="section-desc">面包屑项的 Default / Hover / Active (当前位置) 三种状态。</p>
+
+    <div class="demo-card">
+      <div class="preview-label">三种状态对比</div>
+      <nav class="breadcrumb">
+        <a class="breadcrumb-item breadcrumb-home" href="#" onclick="event.preventDefault();">
+          <span class="mdi mdi-home-outline"></span>
+        </a>
+        <span class="breadcrumb-separator">›</span>
+        <span style="display:flex;align-items:center;gap:var(--space-2);font-size:var(--font-size-xs);color:var(--color-text-secondary);padding:2px 8px;background:var(--color-bg-secondary);border-radius:var(--radius-sm);">
+          <span class="mdi mdi-circle-small"></span> Default
+        </span>
+        <span class="breadcrumb-separator">›</span>
+        <span style="display:flex;align-items:center;gap:var(--space-2);font-size:var(--font-size-xs);color:var(--color-text-primary);padding:2px 8px;background:var(--color-bg-tertiary);border-radius:var(--radius-sm);">
+          <span class="mdi mdi-cursor-default-outline" style="font-size:12px;"></span> Hover
+        </span>
+        <span class="breadcrumb-separator">›</span>
+        <span style="display:flex;align-items:center;gap:var(--space-2);font-size:var(--font-size-sm);font-weight:600;color:var(--color-text-primary);padding:2px 8px;">
+          <span class="mdi mdi-check-circle" style="font-size:12px;color:var(--color-text-tertiary);"></span> Active (当前位置)
+        </span>
+      </nav>
+
+      <div style="margin-top:var(--space-3);padding:var(--space-3);background:var(--color-bg-secondary);border-radius:var(--radius-sm);font-size:var(--font-size-xs);color:var(--color-text-secondary);">
+        <strong>设计说明：</strong>
+        <ul style="margin-top:var(--space-1);padding-left:var(--space-4);display:flex;flex-direction:column;gap:4px;">
+          <li>可点击项：secondary 色文字，<code>:hover</code> 时背景变 tertiary，文字变 primary 色</li>
+          <li>当前位置：primary 色文字 + 600 字重，无 <code>:hover</code> 效果（不可点击）</li>
+          <li>分隔符：<code>›</code> 符号，tertiary 色，#E8E8E8</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================ SECTION: Interactive Demo ================ -->
+  <div class="section">
+    <h2 class="section-title">交互演示 Interactive Demo</h2>
+    <p class="section-desc">模拟在笔记列表中的面包屑导航。点击路径项可以观察交互反馈。</p>
+
+    <div class="demo-card">
+      <div class="preview-label">点击测试</div>
+      <nav class="breadcrumb" id="interactive-breadcrumb">
+        <a class="breadcrumb-item breadcrumb-home" href="#" onclick="event.preventDefault();highlightClick(this);">
+          <span class="mdi mdi-home-outline"></span>
+        </a>
+        <span class="breadcrumb-separator">›</span>
+        <a class="breadcrumb-item" href="#" onclick="event.preventDefault();handleBreadcrumbClick(this, '全部笔记');">全部笔记</a>
+        <span class="breadcrumb-separator">›</span>
+        <a class="breadcrumb-item" href="#" onclick="event.preventDefault();handleBreadcrumbClick(this, '产品设计');">产品设计</a>
+        <span class="breadcrumb-separator">›</span>
+        <span class="breadcrumb-item active" id="current-location">竞品分析</span>
+      </nav>
+
+      <div style="margin-top:var(--space-3);padding:var(--space-2) var(--space-3);background:var(--color-bg-secondary);border-radius:var(--radius-sm);font-size:var(--font-size-xs);color:var(--color-text-secondary);display:flex;align-items:center;gap:var(--space-2);" id="click-feedback">
+        <span class="mdi mdi-information-outline" style="font-size:14px;"></span>
+        点击上方路径项切换当前位置
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function highlightClick(el) {
+      el.style.background = 'var(--color-accent-soft)';
+      setTimeout(() => el.style.background = '', 300);
+    }
+
+    function handleBreadcrumbClick(el, text) {
+      highlightClick(el);
+
+      const currentLocation = document.getElementById('current-location');
+      const feedback = document.getElementById('click-feedback');
+
+      // Mark current as clickable
+      const parent = document.getElementById('interactive-breadcrumb');
+      const items = parent.querySelectorAll('.breadcrumb-item');
+      items.forEach(item => item.classList.remove('active'));
+
+      // Make clicked item become the new last location, remove its href behavior
+      el.classList.add('active');
+      el.removeAttribute('href');
+      el.style.cursor = 'default';
+
+      // If old location had an href, restore
+      if (currentLocation && currentLocation !== el) {
+        currentLocation.classList.remove('active');
+        // Add back as clickable
+      }
+
+      // Update feedback
+      feedback.innerHTML = `<span class="mdi mdi-check-circle" style="font-size:14px;color:var(--color-success);"></span> 当前位于：<strong>${text}</strong>`;
+    }
+
+    // On page load, ensure the last active item can be demo reset
+  </script>
+</body>
+</html>

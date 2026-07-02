@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Context Menu 右键菜单 | MindFlow 组件</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-bg-primary: #FAFAFA; --color-bg-secondary: #F5F5F5; --color-bg-tertiary: #EEEEEE;
+      --color-text-primary: #1A1A1A; --color-text-secondary: #6B6B6B; --color-text-tertiary: #9E9E9E;
+      --color-text-link: #3B82F6; --color-text-on-accent: #FFFFFF;
+      --color-accent: #3B82F6; --color-accent-hover: #2563EB; --color-accent-soft: #E8F0FE;
+      --color-success: #10B981; --color-warning: #F59E0B; --color-error: #EF4444;
+      --font-family-ui: 'Inter', system-ui, -apple-system, sans-serif;
+      --font-family-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-size-xs: 11px; --font-size-sm: 13px; --font-size-base: 15px;
+      --font-size-lg: 18px; --font-size-xl: 22px; --font-size-2xl: 28px; --font-size-3xl: 36px;
+      --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 20px; --space-6: 24px;
+      --space-8: 32px; --space-10: 40px; --space-12: 48px; --space-16: 64px;
+      --radius-sm: 4px; --radius-md: 8px; --radius-lg: 12px; --radius-xl: 16px; --radius-full: 9999px;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05); --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
+      --shadow-lg: 0 8px 24px rgba(0,0,0,0.12); --shadow-xl: 0 16px 48px rgba(0,0,0,0.16);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: var(--font-family-body); background: var(--color-bg-primary); color: var(--color-text-primary); padding: var(--space-6); -webkit-font-smoothing: antialiased; }
+    .page-header { margin-bottom: var(--space-8); display: flex; align-items: flex-start; gap: var(--space-4); }
+    .page-header a { color: var(--color-accent); text-decoration: none; font-size: var(--font-size-sm); font-family: var(--font-family-ui); display: flex; align-items: center; gap: 4px; padding: 6px 12px; border-radius: var(--radius-sm); transition: background 0.15s; flex-shrink: 0; }
+    .page-header a:hover { background: var(--color-accent-soft); }
+    .page-header h1 { font-family: var(--font-family-ui); font-size: var(--font-size-2xl); font-weight: 700; }
+    .page-header p { color: var(--color-text-secondary); font-size: var(--font-size-sm); margin-top: var(--space-1); }
+    .section { margin-bottom: var(--space-10); }
+    .section-title { font-family: var(--font-family-ui); font-size: var(--font-size-base); font-weight: 600; padding-bottom: var(--space-2); margin-bottom: var(--space-4); border-bottom: 1px solid #E8E8E8; display: flex; align-items: center; gap: var(--space-2); }
+    .section-title code { font-size: var(--font-size-xs); background: var(--color-bg-secondary); padding: 2px 8px; border-radius: var(--radius-sm); color: var(--color-text-secondary); }
+    .demo-row { display: flex; flex-wrap: wrap; align-items: flex-start; gap: var(--space-4); padding: var(--space-4); background: #fff; border: 1px solid #E8E8E8; border-radius: var(--radius-md); margin-bottom: var(--space-3); }
+    .demo-row-label { width: 100%; font-size: var(--font-size-xs); color: var(--color-text-secondary); font-family: var(--font-family-ui); font-weight: 500; margin-bottom: -4px; }
+
+    /* ===== CONTEXT MENU ===== */
+    .context-menu {
+      width: 200px; background: #fff; border: 1px solid #E0E0E0;
+      border-radius: var(--radius-sm); box-shadow: var(--shadow-lg);
+      padding: 4px 0; font-family: var(--font-family-body);
+      font-size: var(--font-size-sm);
+    }
+
+    .ctx-item {
+      display: flex; align-items: center; gap: var(--space-2);
+      padding: 7px var(--space-3); cursor: pointer; transition: background 0.1s;
+      color: var(--color-text-primary); position: relative;
+    }
+    .ctx-item:hover { background: var(--color-accent-soft); color: var(--color-accent); }
+    .ctx-item .mdi:first-child { font-size: 16px; color: var(--color-text-secondary); width: 20px; text-align: center; }
+    .ctx-item:hover .mdi:first-child { color: var(--color-accent); }
+    .ctx-item .ctx-label { flex: 1; }
+    .ctx-item .ctx-shortcut {
+      font-size: var(--font-size-xs); color: var(--color-text-tertiary);
+      font-family: var(--font-family-ui); margin-left: auto;
+    }
+    .ctx-checkmark { visibility: hidden; color: var(--color-accent); margin-left: auto; }
+    .ctx-item.checked .ctx-checkmark { visibility: visible; }
+
+    /* Danger item */
+    .ctx-item.danger { color: var(--color-error); }
+    .ctx-item.danger .mdi:first-child { color: var(--color-error); }
+    .ctx-item.danger:hover { background: #FEF2F2; color: #DC2626; }
+    .ctx-item.danger:hover .mdi:first-child { color: #DC2626; }
+
+    /* Disabled item */
+    .ctx-item.disabled { color: var(--color-text-tertiary); cursor: not-allowed; }
+    .ctx-item.disabled .mdi:first-child { color: #D0D0D0; }
+    .ctx-item.disabled:hover { background: transparent; color: var(--color-text-tertiary); }
+    .ctx-item.disabled:hover .mdi:first-child { color: #D0D0D0; }
+
+    /* Separator */
+    .ctx-separator { height: 1px; background: #F0F0F0; margin: 4px 0; }
+
+    /* Group label */
+    .ctx-group-label {
+      padding: 6px var(--space-3) 2px; font-family: var(--font-family-ui);
+      font-size: 10px; color: var(--color-text-tertiary); font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.5px;
+    }
+
+    /* Submenu (nested) */
+    .ctx-item.has-submenu::after {
+      content: ''; position: absolute; right: 8px; top: 50%; margin-top: -3px;
+      border: 4px solid transparent; border-left-color: currentColor;
+    }
+    .ctx-submenu {
+      display: none; position: absolute; left: 100%; top: -4px;
+      width: 180px; background: #fff; border: 1px solid #E0E0E0;
+      border-radius: var(--radius-sm); box-shadow: var(--shadow-lg);
+      padding: 4px 0; z-index: 10;
+    }
+    .ctx-item:hover > .ctx-submenu { display: block; }
+
+    /* Demo layout */
+    .menu-demo-grid {
+      display: flex; flex-wrap: wrap; gap: var(--space-6);
+      align-items: flex-start;
+    }
+
+    /* Right click area */
+    .right-click-area {
+      width: 100%; padding: var(--space-8); text-align: center;
+      background: var(--color-bg-secondary); border: 2px dashed #D0D0D0;
+      border-radius: var(--radius-md); cursor: context-menu;
+      font-family: var(--font-family-ui); font-size: var(--font-size-sm);
+      color: var(--color-text-secondary); transition: all 0.15s;
+    }
+    .right-click-area:hover { border-color: var(--color-accent); background: var(--color-accent-soft); color: var(--color-accent); }
+
+    /* Custom context menu (shown on right click) */
+    #custom-context-menu {
+      display: none; position: fixed; z-index: 500; width: 210px;
+    }
+    #custom-context-menu.show { display: block; }
+  </style>
+</head>
+<body>
+  <div class="page-header">
+    <a href="index.html"><i class="mdi mdi-arrow-left"></i> 返回</a>
+    <div>
+      <h1>Context Menu 右键菜单</h1>
+      <p>分组菜单项、分隔线、子菜单，支持带图标、快捷键提示、选中标记、Danger 项。</p>
+    </div>
+  </div>
+
+  <!-- 结构展示 -->
+  <div class="section">
+    <div class="section-title">结构 <code>menu layout</code></div>
+    <div class="demo-row">
+      <div class="menu-demo-grid">
+        <!-- 基础菜单 -->
+        <div>
+          <div style="font-size:var(--font-size-xs);color:var(--color-text-tertiary);margin-bottom:var(--space-2);font-family:var(--font-family-ui)">基础菜单</div>
+          <div class="context-menu">
+            <div class="ctx-item"><i class="mdi mdi-pencil"></i><span class="ctx-label">重命名</span><span class="ctx-shortcut">F2</span></div>
+            <div class="ctx-item"><i class="mdi mdi-content-copy"></i><span class="ctx-label">复制</span><span class="ctx-shortcut">⌘C</span></div>
+            <div class="ctx-item"><i class="mdi mdi-content-paste"></i><span class="ctx-label">粘贴</span><span class="ctx-shortcut">⌘V</span></div>
+            <div class="ctx-separator"></div>
+            <div class="ctx-item danger"><i class="mdi mdi-delete"></i><span class="ctx-label">删除</span><span class="ctx-shortcut">⌘⌫</span></div>
+          </div>
+        </div>
+
+        <!-- 带选中标记 -->
+        <div>
+          <div style="font-size:var(--font-size-xs);color:var(--color-text-tertiary);margin-bottom:var(--space-2);font-family:var(--font-family-ui)">带选中标记</div>
+          <div class="context-menu">
+            <div class="ctx-item"><i class="mdi mdi-format-list-bulleted"></i><span class="ctx-label">列表视图</span><span class="ctx-checkmark"><i class="mdi mdi-check"></i></span></div>
+            <div class="ctx-item checked"><i class="mdi mdi-view-grid"></i><span class="ctx-label">网格视图</span><span class="ctx-checkmark"><i class="mdi mdi-check"></i></span></div>
+            <div class="ctx-item"><i class="mdi mdi-view-list"></i><span class="ctx-label">紧凑视图</span><span class="ctx-checkmark"><i class="mdi mdi-check"></i></span></div>
+          </div>
+        </div>
+
+        <!-- 带禁用项 -->
+        <div>
+          <div style="font-size:var(--font-size-xs);color:var(--color-text-tertiary);margin-bottom:var(--space-2);font-family:var(--font-family-ui)">禁用项 + 分组</div>
+          <div class="context-menu">
+            <div class="ctx-group-label">操作</div>
+            <div class="ctx-item"><i class="mdi mdi-open-in-new"></i><span class="ctx-label">在新标签页打开</span></div>
+            <div class="ctx-item"><i class="mdi mdi-bookmark-outline"></i><span class="ctx-label">收藏</span></div>
+            <div class="ctx-separator"></div>
+            <div class="ctx-group-label">分享</div>
+            <div class="ctx-item"><i class="mdi mdi-link-variant"></i><span class="ctx-label">复制链接</span></div>
+            <div class="ctx-item disabled"><i class="mdi mdi-email"></i><span class="ctx-label">通过邮件分享</span></div>
+          </div>
+        </div>
+
+        <!-- 子菜单 -->
+        <div>
+          <div style="font-size:var(--font-size-xs);color:var(--color-text-tertiary);margin-bottom:var(--space-2);font-family:var(--font-family-ui)">子菜单（嵌套）</div>
+          <div class="context-menu">
+            <div class="ctx-item"><i class="mdi mdi-format-bold"></i><span class="ctx-label">加粗</span><span class="ctx-shortcut">⌘B</span></div>
+            <div class="ctx-item"><i class="mdi mdi-format-italic"></i><span class="ctx-label">斜体</span><span class="ctx-shortcut">⌘I</span></div>
+            <div class="ctx-item has-submenu">
+              <i class="mdi mdi-format-list-bulleted"></i>
+              <span class="ctx-label">列表</span>
+              <div class="ctx-submenu">
+                <div class="ctx-item"><i class="mdi mdi-format-list-bulleted"></i><span class="ctx-label">无序列表</span></div>
+                <div class="ctx-item"><i class="mdi mdi-format-list-numbered"></i><span class="ctx-label">有序列表</span></div>
+                <div class="ctx-item"><i class="mdi mdi-format-list-checks"></i><span class="ctx-label">待办列表</span></div>
+              </div>
+            </div>
+            <div class="ctx-separator"></div>
+            <div class="ctx-item has-submenu">
+              <i class="mdi mdi-insert-link"></i>
+              <span class="ctx-label">插入</span>
+              <div class="ctx-submenu">
+                <div class="ctx-item"><i class="mdi mdi-image"></i><span class="ctx-label">图片</span></div>
+                <div class="ctx-item"><i class="mdi mdi-link"></i><span class="ctx-label">链接</span><span class="ctx-shortcut">⌘K</span></div>
+                <div class="ctx-item"><i class="mdi mdi-code-tags"></i><span class="ctx-label">代码块</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 状态变体 -->
+  <div class="section">
+    <div class="section-title">状态 <code>states</code></div>
+    <div class="demo-row">
+      <div class="menu-demo-grid">
+        <div>
+          <div style="font-size:var(--font-size-xs);color:var(--color-text-tertiary);margin-bottom:var(--space-2);font-family:var(--font-family-ui)">Default</div>
+          <div class="context-menu">
+            <div class="ctx-item"><i class="mdi mdi-pencil"></i><span class="ctx-label">默认项</span></div>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:var(--font-size-xs);color:var(--color-text-tertiary);margin-bottom:var(--space-2);font-family:var(--font-family-ui)">Hover</div>
+          <div class="context-menu">
+            <div class="ctx-item" style="background:var(--color-accent-soft);color:var(--color-accent)"><i class="mdi mdi-pencil" style="color:var(--color-accent)"></i><span class="ctx-label">悬停状态</span></div>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:var(--font-size-xs);color:var(--color-text-tertiary);margin-bottom:var(--space-2);font-family:var(--font-family-ui)">Disabled</div>
+          <div class="context-menu">
+            <div class="ctx-item disabled"><i class="mdi mdi-pencil"></i><span class="ctx-label">已禁用</span></div>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:var(--font-size-xs);color:var(--color-text-tertiary);margin-bottom:var(--space-2);font-family:var(--font-family-ui)">Danger</div>
+          <div class="context-menu">
+            <div class="ctx-item danger"><i class="mdi mdi-delete"></i><span class="ctx-label">危险操作</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 完整菜单示例 -->
+  <div class="section">
+    <div class="section-title">完整右键菜单 <code>笔记本树场景</code></div>
+    <div class="demo-row">
+      <div class="context-menu" style="width:230px">
+        <div class="ctx-item"><i class="mdi mdi-plus-circle-outline"></i><span class="ctx-label">新建子笔记本</span></div>
+        <div class="ctx-item"><i class="mdi mdi-pencil"></i><span class="ctx-label">重命名</span><span class="ctx-shortcut">F2</span></div>
+        <div class="ctx-item"><i class="mdi mdi-content-copy"></i><span class="ctx-label">复制</span><span class="ctx-shortcut">⌘C</span></div>
+        <div class="ctx-item"><i class="mdi mdi-content-paste"></i><span class="ctx-label">粘贴</span><span class="ctx-shortcut">⌘V</span></div>
+        <div class="ctx-separator"></div>
+        <div class="ctx-item"><i class="mdi mdi-export"></i><span class="ctx-label">导出为 Markdown</span></div>
+        <div class="ctx-item has-submenu">
+          <i class="mdi mdi-arrow-right-bold"></i>
+          <span class="ctx-label">移动到</span>
+          <div class="ctx-submenu">
+            <div class="ctx-item"><i class="mdi mdi-folder-outline"></i><span class="ctx-label">工作笔记</span></div>
+            <div class="ctx-item"><i class="mdi mdi-folder-outline"></i><span class="ctx-label">个人日记</span></div>
+            <div class="ctx-item"><i class="mdi mdi-folder-outline"></i><span class="ctx-label">学习笔记</span></div>
+          </div>
+        </div>
+        <div class="ctx-separator"></div>
+        <div class="ctx-item danger"><i class="mdi mdi-delete"></i><span class="ctx-label">删除笔记本</span><span class="ctx-shortcut">⌘⌫</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 交互演示 -->
+  <div class="section">
+    <div class="section-title">交互演示 <code>right-click to open</code></div>
+    <div class="demo-row" style="flex-direction:column">
+      <div class="demo-row-label">在下方区域右键点击</div>
+      <div class="right-click-area" oncontextmenu="showCustomContextMenu(event); return false;">
+        <i class="mdi mdi-cursor-default-click" style="font-size:32px;display:block;margin-bottom:8px"></i>
+        在此区域右键点击查看自定义菜单<br>
+        <span style="font-size:var(--font-size-xs);color:var(--color-text-tertiary)">或点击任意位置关闭</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom context menu that appears on right click -->
+  <div class="context-menu" id="custom-context-menu">
+    <div class="ctx-item"><i class="mdi mdi-plus-circle-outline"></i><span class="ctx-label">新建笔记</span><span class="ctx-shortcut">⌘N</span></div>
+    <div class="ctx-item"><i class="mdi mdi-pencil"></i><span class="ctx-label">重命名</span><span class="ctx-shortcut">F2</span></div>
+    <div class="ctx-separator"></div>
+    <div class="ctx-item"><i class="mdi mdi-content-copy"></i><span class="ctx-label">复制</span><span class="ctx-shortcut">⌘C</span></div>
+    <div class="ctx-item"><i class="mdi mdi-content-paste"></i><span class="ctx-label">粘贴</span><span class="ctx-shortcut">⌘V</span></div>
+    <div class="ctx-separator"></div>
+    <div class="ctx-item danger"><i class="mdi mdi-delete"></i><span class="ctx-label">删除</span></div>
+  </div>
+
+  <script>
+    function showCustomContextMenu(event) {
+      var menu = document.getElementById('custom-context-menu');
+      var x = event.clientX, y = event.clientY;
+      // Keep menu within viewport
+      var w = 210, h = menu.offsetHeight || 200;
+      if (x + w > window.innerWidth) x = window.innerWidth - w - 10;
+      if (y + h > window.innerHeight) y = window.innerHeight - h - 10;
+      menu.style.left = x + 'px';
+      menu.style.top = y + 'px';
+      menu.classList.add('show');
+      return false;
+    }
+    document.addEventListener('click', function(e) {
+      var menu = document.getElementById('custom-context-menu');
+      if (!e.target.closest('#custom-context-menu')) {
+        menu.classList.remove('show');
+      }
+    });
+    document.addEventListener('contextmenu', function(e) {
+      var menu = document.getElementById('custom-context-menu');
+      if (!e.target.closest('#custom-context-menu')) {
+        menu.classList.remove('show');
+      }
+    });
+  </script>
+</body>
+</html>

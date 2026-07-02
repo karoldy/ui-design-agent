@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UserMenu — 用户菜单 & 头像 | MindFlow 复合组件</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-bg-primary: #FAFAFA;
+      --color-bg-secondary: #F5F5F5;
+      --color-bg-tertiary: #EEEEEE;
+      --color-text-primary: #1A1A1A;
+      --color-text-secondary: #6B6B6B;
+      --color-text-tertiary: #9E9E9E;
+      --color-text-link: #3B82F6;
+      --color-text-on-accent: #FFFFFF;
+      --color-accent: #3B82F6;
+      --color-accent-hover: #2563EB;
+      --color-accent-soft: #E8F0FE;
+      --color-divider: #E8E8E8;
+      --color-success: #10B981;
+
+      --font-family-ui: 'Inter', system-ui, -apple-system, sans-serif;
+      --font-size-xs: 11px;
+      --font-size-sm: 13px;
+      --font-size-base: 15px;
+
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-xl: 16px;
+      --radius-full: 9999px;
+
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+      --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
+      --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-family-ui);
+      background: var(--color-bg-primary);
+      color: var(--color-text-primary);
+      padding: var(--space-6);
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    .page-title { font-size: 22px; font-weight: 600; margin-bottom: var(--space-2); }
+    .page-desc { font-size: var(--font-size-sm); color: var(--color-text-secondary); margin-bottom: var(--space-6); line-height: 1.5; }
+    .section { margin-bottom: var(--space-8); }
+    .section-title { font-size: 15px; font-weight: 600; margin-bottom: var(--space-3); padding-bottom: var(--space-1); border-bottom: 1px solid var(--color-divider); }
+    .section-desc { font-size: var(--font-size-xs); color: var(--color-text-secondary); margin-bottom: var(--space-3); }
+
+    .demo-card {
+      background: white;
+      border: 1px solid var(--color-divider);
+      border-radius: var(--radius-md);
+      padding: var(--space-4) var(--space-5);
+      box-shadow: var(--shadow-sm);
+      margin-bottom: var(--space-4);
+    }
+
+    .preview-label {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-secondary);
+      font-weight: 500;
+      margin-bottom: var(--space-3);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* ==============================
+       User Avatar & Menu Component
+       ============================== */
+
+    /* Simulated top bar context */
+    .topbar-demo {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      height: 48px;
+      padding: 0 var(--space-5);
+      background: white;
+      border-bottom: 1px solid var(--color-divider);
+    }
+
+    .topbar-demo .topbar-left {
+      margin-right: auto;
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .topbar-demo .topbar-logo {
+      font-size: var(--font-size-base);
+      font-weight: 600;
+      color: var(--color-text-primary);
+    }
+
+    .topbar-demo .topbar-logo .mdi {
+      font-size: 20px;
+      color: var(--color-accent);
+    }
+
+    /* Avatar component */
+    .user-area {
+      position: relative;
+    }
+
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      position: relative;
+      transition: box-shadow 150ms ease, opacity 150ms ease;
+      user-select: none;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .user-avatar:hover {
+      opacity: 0.85;
+    }
+
+    .user-avatar:active {
+      transform: scale(0.95);
+    }
+
+    .user-avatar .initials {
+      font-size: var(--font-size-sm);
+      font-weight: 600;
+      color: white;
+      text-transform: uppercase;
+    }
+
+    .user-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Avatar color variants */
+    .avatar-blue { background: var(--color-accent); }
+    .avatar-purple { background: #7C3AED; }
+    .avatar-green { background: var(--color-success); }
+    .avatar-orange { background: #EA580C; }
+
+    /* Online indicator */
+    .online-indicator {
+      position: absolute;
+      bottom: -1px;
+      right: -1px;
+      width: 10px;
+      height: 10px;
+      border-radius: var(--radius-full);
+      background: var(--color-success);
+      border: 2px solid white;
+    }
+
+    /* Dropdown menu */
+    .user-dropdown {
+      display: none;
+      position: absolute;
+      top: calc(100% + var(--space-2));
+      right: 0;
+      width: 240px;
+      background: white;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--color-divider);
+      z-index: 200;
+      overflow: hidden;
+    }
+
+    .user-dropdown.open { display: block; }
+
+    .dropdown-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-4);
+      border-bottom: 1px solid var(--color-divider);
+    }
+
+    .dropdown-user-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .dropdown-user-name {
+      font-size: var(--font-size-sm);
+      font-weight: 600;
+      color: var(--color-text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .dropdown-user-email {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-secondary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .dropdown-items {
+      padding: var(--space-1) 0;
+    }
+
+    .dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-2) var(--space-4);
+      font-size: var(--font-size-sm);
+      color: var(--color-text-primary);
+      cursor: pointer;
+      transition: background 100ms ease;
+    }
+
+    .dropdown-item:hover {
+      background: var(--color-bg-secondary);
+    }
+
+    .dropdown-item .mdi {
+      font-size: 18px;
+      color: var(--color-text-secondary);
+      width: 20px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .dropdown-item .shortcut-hint {
+      margin-left: auto;
+      font-size: var(--font-size-xs);
+      color: var(--color-text-tertiary);
+      font-weight: 500;
+    }
+
+    .dropdown-item.danger {
+      color: #EF4444;
+    }
+
+    .dropdown-item.danger .mdi {
+      color: #EF4444;
+    }
+
+    .dropdown-divider {
+      height: 1px;
+      background: var(--color-divider);
+      margin: var(--space-1) 0;
+    }
+
+    /* Avatar state comparison */
+    .avatar-row {
+      display: flex;
+      align-items: center;
+      gap: var(--space-5);
+      flex-wrap: wrap;
+    }
+
+    .avatar-state-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .avatar-state-label {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-secondary);
+    }
+  </style>
+</head>
+<body>
+  <h1 class="page-title">用户菜单 & 头像 — User Menu & Avatar</h1>
+  <p class="page-desc">
+    顶部导航栏右侧的用户区域组件。支持初始字母头像、自定义图片头像、在线状态指示器。
+    点击头像展开下拉菜单，包含用户信息、设置入口、同步、登出等操作。
+  </p>
+
+  <!-- ================ SECTION: Avatar States ================ -->
+  <div class="section">
+    <h2 class="section-title">头像状态 Avatar States</h2>
+    <p class="section-desc">Default / Hover / Online Indicator / Custom Image 四种头像状态。</p>
+
+    <div class="demo-card">
+      <div class="preview-label">头像状态对比</div>
+      <div class="avatar-row">
+        <div class="avatar-state-card">
+          <div class="user-avatar avatar-blue">
+            <span class="initials">T</span>
+          </div>
+          <span class="avatar-state-label">Default (初始字母)</span>
+        </div>
+
+        <div class="avatar-state-card">
+          <div class="user-avatar avatar-purple" style="opacity:0.85;">
+            <span class="initials">M</span>
+          </div>
+          <span class="avatar-state-label">Hover (微透明)</span>
+        </div>
+
+        <div class="avatar-state-card">
+          <div class="user-avatar avatar-green">
+            <span class="initials">Z</span>
+            <span class="online-indicator"></span>
+          </div>
+          <span class="avatar-state-label">Online (绿点指示)</span>
+        </div>
+
+        <div class="avatar-state-card">
+          <div class="user-avatar" style="background:#E8E8E8;">
+            <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#667eea,#764ba2);">
+              <span class="mdi mdi-account" style="font-size:18px;color:white;opacity:0.7;"></span>
+            </div>
+          </div>
+          <span class="avatar-state-label">自定义图片 (渐变)</span>
+        </div>
+
+        <div class="avatar-state-card">
+          <div class="user-avatar avatar-orange">
+            <span class="initials">JL</span>
+          </div>
+          <span class="avatar-state-label">双字母 (JL)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================ SECTION: Dropdown Menu ================ -->
+  <div class="section">
+    <h2 class="section-title">下拉菜单 Dropdown Menu</h2>
+    <p class="section-desc">点击头像展开的下拉菜单，包含用户信息、设置入口、快捷键提示。菜单项悬停高亮。</p>
+
+    <div class="demo-card" style="position:relative;min-height:420px;">
+      <div class="preview-label">展开状态</div>
+
+      <div style="display:flex;justify-content:flex-end;margin-bottom:var(--space-2);">
+        <!-- Trigger button (just for visual reference) -->
+        <div class="user-area">
+          <div class="user-avatar avatar-blue">
+            <span class="initials">T</span>
+            <span class="online-indicator"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Open dropdown preview -->
+      <div class="user-dropdown open" style="position:relative;box-shadow:var(--shadow-md);top:0;margin-top:0;width:100%;max-width:260px;margin-left:auto;">
+        <div class="dropdown-header">
+          <div class="user-avatar avatar-blue" style="width:36px;height:36px;">
+            <span class="initials" style="font-size:15px;">T</span>
+            <span class="online-indicator"></span>
+          </div>
+          <div class="dropdown-user-info">
+            <div class="dropdown-user-name">Turbo Su</div>
+            <div class="dropdown-user-email">turbo@example.com</div>
+          </div>
+        </div>
+        <div class="dropdown-items">
+          <div class="dropdown-item">
+            <span class="mdi mdi-account-outline"></span>
+            个人资料
+          </div>
+          <div class="dropdown-item">
+            <span class="mdi mdi-cog-outline"></span>
+            设置
+            <span class="shortcut-hint">Cmd+,</span>
+          </div>
+          <div class="dropdown-divider"></div>
+          <div class="dropdown-item">
+            <span class="mdi mdi-cloud-sync-outline"></span>
+            同步状态
+          </div>
+          <div class="dropdown-item">
+            <span class="mdi mdi-export-variant"></span>
+            导入 / 导出
+          </div>
+          <div class="dropdown-divider"></div>
+          <div class="dropdown-item">
+            <span class="mdi mdi-message-outline"></span>
+            发送反馈
+            <span class="shortcut-hint">?</span>
+          </div>
+          <div class="dropdown-item">
+            <span class="mdi mdi-information-outline"></span>
+            关于 MindFlow
+          </div>
+          <div class="dropdown-divider"></div>
+          <div class="dropdown-item danger">
+            <span class="mdi mdi-logout-variant"></span>
+            退出登录
+            <span class="shortcut-hint">Cmd+Shift+L</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================ SECTION: Interactive Demo ================ -->
+  <div class="section">
+    <h2 class="section-title">交互演示 Interactive Demo</h2>
+    <p class="section-desc">模拟顶部导航栏中的用户区域。点击头像展开/收起下拉菜单。</p>
+
+    <div class="demo-card" style="padding:0;overflow:visible;">
+      <!-- Top bar simulation -->
+      <div class="topbar-demo">
+        <div class="topbar-left">
+          <span class="mdi mdi-brain" style="font-size:22px;color:var(--color-accent);"></span>
+          <span class="topbar-logo">MindFlow</span>
+        </div>
+
+        <!-- User area -->
+        <div class="user-area" id="user-area-demo">
+          <div class="user-avatar avatar-blue" id="avatar-trigger" onclick="toggleDropdown(event)">
+            <span class="initials">T</span>
+            <span class="online-indicator"></span>
+          </div>
+          <div class="user-dropdown" id="user-dropdown-demo">
+            <div class="dropdown-header">
+              <div class="user-avatar avatar-blue" style="width:36px;height:36px;cursor:default;">
+                <span class="initials" style="font-size:15px;">T</span>
+                <span class="online-indicator"></span>
+              </div>
+              <div class="dropdown-user-info">
+                <div class="dropdown-user-name">Turbo Su</div>
+                <div class="dropdown-user-email">turbo@example.com</div>
+              </div>
+            </div>
+            <div class="dropdown-items">
+              <div class="dropdown-item" onclick="event.stopPropagation();alert('个人资料');">
+                <span class="mdi mdi-account-outline"></span>
+                个人资料
+              </div>
+              <div class="dropdown-item" onclick="event.stopPropagation();alert('设置');">
+                <span class="mdi mdi-cog-outline"></span>
+                设置
+                <span class="shortcut-hint">Cmd+,</span>
+              </div>
+              <div class="dropdown-divider"></div>
+              <div class="dropdown-item" onclick="event.stopPropagation();alert('同步状态');">
+                <span class="mdi mdi-cloud-sync-outline"></span>
+                同步状态
+              </div>
+              <div class="dropdown-item" onclick="event.stopPropagation();alert('导入/导出');">
+                <span class="mdi mdi-export-variant"></span>
+                导入 / 导出
+              </div>
+              <div class="dropdown-divider"></div>
+              <div class="dropdown-item" onclick="event.stopPropagation();alert('发送反馈');">
+                <span class="mdi mdi-message-outline"></span>
+                发送反馈
+                <span class="shortcut-hint">?</span>
+              </div>
+              <div class="dropdown-item" onclick="event.stopPropagation();alert('关于');">
+                <span class="mdi mdi-information-outline"></span>
+                关于 MindFlow
+              </div>
+              <div class="dropdown-divider"></div>
+              <div class="dropdown-item danger" onclick="event.stopPropagation();alert('退出登录');">
+                <span class="mdi mdi-logout-variant"></span>
+                退出登录
+                <span class="shortcut-hint">Cmd+Shift+L</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding:var(--space-3) var(--space-5);font-size:var(--font-size-xs);color:var(--color-text-secondary);display:flex;align-items:center;gap:var(--space-2);">
+        <span class="mdi mdi-information-outline" style="font-size:14px;"></span>
+        点击右侧头像 <strong>T</strong> 展开/收起菜单。点击菜单项查看交互反馈。
+      </div>
+    </div>
+  </div>
+
+  <!-- ================ SECTION: Menu Item States ================ -->
+  <div class="section">
+    <h2 class="section-title">菜单项状态 States</h2>
+    <p class="section-desc">下拉菜单项的 Default / Hover / Divider / Danger 状态展示。</p>
+
+    <div class="demo-card">
+      <div class="preview-label">菜单项状态</div>
+      <div class="user-dropdown open" style="position:relative;box-shadow:none;border:none;width:100%;max-width:260px;">
+        <div class="dropdown-items">
+          <div class="dropdown-item">
+            <span class="mdi mdi-account-outline"></span>
+            Default 状态
+          </div>
+          <div class="dropdown-item" style="background:var(--color-bg-secondary);">
+            <span class="mdi mdi-account-outline"></span>
+            Hover 状态 (背景高亮)
+          </div>
+          <div class="dropdown-divider"></div>
+          <div class="dropdown-item danger">
+            <span class="mdi mdi-logout-variant"></span>
+            Danger 状态 (红色)
+          </div>
+          <div style="padding:var(--space-2) var(--space-4);font-size:var(--font-size-xs);color:var(--color-text-tertiary);">
+            <span class="mdi mdi-keyboard" style="font-size:12px;"></span> 快捷键提示在右侧灰色显示
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function toggleDropdown(e) {
+      e.stopPropagation();
+      const dropdown = document.getElementById('user-dropdown-demo');
+      dropdown.classList.toggle('open');
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+      const area = document.getElementById('user-area-demo');
+      const dropdown = document.getElementById('user-dropdown-demo');
+      if (area && !area.contains(e.target)) {
+        dropdown.classList.remove('open');
+      }
+    });
+  </script>
+</body>
+</html>

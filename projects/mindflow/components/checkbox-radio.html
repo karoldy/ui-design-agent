@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkbox & Radio | MindFlow 组件</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-bg-primary: #FAFAFA; --color-bg-secondary: #F5F5F5; --color-bg-tertiary: #EEEEEE;
+      --color-text-primary: #1A1A1A; --color-text-secondary: #6B6B6B; --color-text-tertiary: #9E9E9E;
+      --color-text-link: #3B82F6; --color-text-on-accent: #FFFFFF;
+      --color-accent: #3B82F6; --color-accent-hover: #2563EB; --color-accent-soft: #E8F0FE;
+      --color-success: #10B981; --color-warning: #F59E0B; --color-error: #EF4444;
+      --font-family-ui: 'Inter', system-ui, -apple-system, sans-serif;
+      --font-family-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-size-xs: 11px; --font-size-sm: 13px; --font-size-base: 15px;
+      --font-size-lg: 18px; --font-size-xl: 22px; --font-size-2xl: 28px; --font-size-3xl: 36px;
+      --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 20px; --space-6: 24px;
+      --space-8: 32px; --space-10: 40px; --space-12: 48px; --space-16: 64px;
+      --radius-sm: 4px; --radius-md: 8px; --radius-lg: 12px; --radius-xl: 16px; --radius-full: 9999px;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05); --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
+      --shadow-lg: 0 8px 24px rgba(0,0,0,0.12); --shadow-xl: 0 16px 48px rgba(0,0,0,0.16);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: var(--font-family-body); background: var(--color-bg-primary); color: var(--color-text-primary); padding: var(--space-6); -webkit-font-smoothing: antialiased; }
+    .page-header { margin-bottom: var(--space-8); display: flex; align-items: flex-start; gap: var(--space-4); }
+    .page-header a { color: var(--color-accent); text-decoration: none; font-size: var(--font-size-sm); font-family: var(--font-family-ui); display: flex; align-items: center; gap: 4px; padding: 6px 12px; border-radius: var(--radius-sm); transition: background 0.15s; flex-shrink: 0; }
+    .page-header a:hover { background: var(--color-accent-soft); }
+    .page-header h1 { font-family: var(--font-family-ui); font-size: var(--font-size-2xl); font-weight: 700; }
+    .page-header p { color: var(--color-text-secondary); font-size: var(--font-size-sm); margin-top: var(--space-1); }
+    .section { margin-bottom: var(--space-10); }
+    .section-title { font-family: var(--font-family-ui); font-size: var(--font-size-base); font-weight: 600; padding-bottom: var(--space-2); margin-bottom: var(--space-4); border-bottom: 1px solid #E8E8E8; display: flex; align-items: center; gap: var(--space-2); }
+    .section-title code { font-size: var(--font-size-xs); background: var(--color-bg-secondary); padding: 2px 8px; border-radius: var(--radius-sm); color: var(--color-text-secondary); }
+    .demo-row { display: flex; flex-wrap: wrap; align-items: flex-start; gap: var(--space-4); padding: var(--space-4); background: #fff; border: 1px solid #E8E8E8; border-radius: var(--radius-md); margin-bottom: var(--space-3); }
+    .demo-row-label { width: 100%; font-size: var(--font-size-xs); color: var(--color-text-secondary); font-family: var(--font-family-ui); font-weight: 500; margin-bottom: -4px; }
+
+    /* ===== CHECKBOX ===== */
+    .checkbox-wrapper {
+      display: flex; align-items: flex-start; gap: 8px; cursor: pointer; user-select: none;
+    }
+    .checkbox-box {
+      width: 18px; height: 18px; min-width: 18px; border: 2px solid #B0B0B0;
+      border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s ease; margin-top: 1px; position: relative;
+    }
+    .checkbox-box .mdi {
+      font-size: 14px; color: #fff; opacity: 0; transition: opacity 0.15s;
+    }
+    .checkbox-label {
+      font-size: var(--font-size-sm); color: var(--color-text-primary); line-height: 1.5;
+      font-family: var(--font-family-body);
+    }
+    .checkbox-label-desc {
+      font-size: var(--font-size-xs); color: var(--color-text-secondary); line-height: 1.4;
+    }
+
+    /* Checked */
+    .checkbox-wrapper.checked .checkbox-box {
+      background: var(--color-accent); border-color: var(--color-accent);
+    }
+    .checkbox-wrapper.checked .checkbox-box .mdi { opacity: 1; }
+
+    /* Indeterminate */
+    .checkbox-wrapper.indeterminate .checkbox-box {
+      background: var(--color-accent); border-color: var(--color-accent);
+    }
+    .checkbox-wrapper.indeterminate .checkbox-box .mdi-check { display: none; }
+    .checkbox-wrapper.indeterminate .checkbox-box .mdi-minus-box { display: block; color: #fff; opacity: 1; }
+    .checkbox-wrapper:not(.indeterminate) .checkbox-box .mdi-minus-box { display: none; }
+
+    /* Disabled */
+    .checkbox-wrapper.disabled { cursor: not-allowed; }
+    .checkbox-wrapper.disabled .checkbox-box { background: var(--color-bg-secondary); border-color: #D0D0D0; }
+    .checkbox-wrapper.disabled.checked .checkbox-box { background: #C0C0C0; border-color: #C0C0C0; }
+    .checkbox-wrapper.disabled .checkbox-label { color: var(--color-text-tertiary); }
+
+    /* Focus */
+    .checkbox-wrapper.focused .checkbox-box { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+    .checkbox-wrapper:hover:not(.disabled) .checkbox-box { border-color: var(--color-accent); }
+
+    /* ===== RADIO ===== */
+    .radio-wrapper {
+      display: flex; align-items: flex-start; gap: 8px; cursor: pointer; user-select: none;
+    }
+    .radio-circle {
+      width: 18px; height: 18px; min-width: 18px; border: 2px solid #B0B0B0;
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s ease; margin-top: 1px; position: relative;
+    }
+    .radio-dot {
+      width: 8px; height: 8px; border-radius: 50%; background: transparent;
+      transition: all 0.15s ease;
+    }
+    .radio-label {
+      font-size: var(--font-size-sm); color: var(--color-text-primary); line-height: 1.5;
+      font-family: var(--font-family-body);
+    }
+
+    /* Selected */
+    .radio-wrapper.selected .radio-circle { border-color: var(--color-accent); }
+    .radio-wrapper.selected .radio-dot { background: var(--color-accent); }
+
+    /* Disabled */
+    .radio-wrapper.disabled { cursor: not-allowed; }
+    .radio-wrapper.disabled .radio-circle { background: var(--color-bg-secondary); border-color: #D0D0D0; }
+    .radio-wrapper.disabled .radio-label { color: var(--color-text-tertiary); }
+    .radio-wrapper.disabled.selected .radio-dot { background: #C0C0C0; }
+
+    /* Focus */
+    .radio-wrapper.focused .radio-circle { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+    .radio-wrapper:hover:not(.disabled) .radio-circle { border-color: var(--color-accent); }
+
+    /* Layout helpers */
+    .checkbox-group, .radio-group {
+      display: flex; flex-direction: column; gap: var(--space-2);
+    }
+    .checkbox-group-horizontal, .radio-group-horizontal {
+      display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-5);
+    }
+    .group-title {
+      font-family: var(--font-family-ui); font-size: var(--font-size-sm);
+      font-weight: 600; color: var(--color-text-primary); margin-bottom: var(--space-1);
+    }
+  </style>
+</head>
+<body>
+  <div class="page-header">
+    <a href="index.html"><i class="mdi mdi-arrow-left"></i> 返回</a>
+    <div>
+      <h1>Checkbox &amp; Radio</h1>
+      <p>Checkbox 三态（含 Indeterminate），Radio 选中/禁用，支持垂直、水平、分组布局。</p>
+    </div>
+  </div>
+
+  <!-- Checkbox -->
+  <div class="section">
+    <div class="section-title">Checkbox 复选框</div>
+    <div class="demo-row">
+      <div class="demo-row-label">Unchecked</div>
+      <label class="checkbox-wrapper">
+        <span class="checkbox-box"><i class="mdi mdi-check"></i></span>
+        <span class="checkbox-label">未选中</span>
+      </label>
+      <label class="checkbox-wrapper">
+        <span class="checkbox-box"><i class="mdi mdi-check"></i></span>
+        <span class="checkbox-label">另一个选项</span>
+      </label>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">Checked</div>
+      <label class="checkbox-wrapper checked">
+        <span class="checkbox-box"><i class="mdi mdi-check"></i></span>
+        <span class="checkbox-label">已选中</span>
+      </label>
+      <label class="checkbox-wrapper checked">
+        <span class="checkbox-box"><i class="mdi mdi-check"></i></span>
+        <span class="checkbox-label">已选中选项二</span>
+      </label>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">Indeterminate（半选）</div>
+      <label class="checkbox-wrapper indeterminate">
+        <span class="checkbox-box"><i class="mdi mdi-check"></i><i class="mdi mdi-minus-box"></i></span>
+        <span class="checkbox-label">部分选中（全选）</span>
+      </label>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">Disabled</div>
+      <label class="checkbox-wrapper disabled">
+        <span class="checkbox-box"><i class="mdi mdi-check"></i></span>
+        <span class="checkbox-label">禁用（未选中）</span>
+      </label>
+      <label class="checkbox-wrapper disabled checked">
+        <span class="checkbox-box"><i class="mdi mdi-check"></i></span>
+        <span class="checkbox-label">禁用（已选中）</span>
+      </label>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">Focused（聚焦态）</div>
+      <label class="checkbox-wrapper focused">
+        <span class="checkbox-box"><i class="mdi mdi-check"></i></span>
+        <span class="checkbox-label">获得焦点</span>
+      </label>
+      <label class="checkbox-wrapper checked focused">
+        <span class="checkbox-box"><i class="mdi mdi-check"></i></span>
+        <span class="checkbox-label">选中 + 聚焦</span>
+      </label>
+    </div>
+  </div>
+
+  <!-- Checkbox Layouts -->
+  <div class="section">
+    <div class="section-title">Checkbox 布局</div>
+    <div class="demo-row">
+      <div class="demo-row-label">垂直排列</div>
+      <div class="checkbox-group">
+        <label class="checkbox-wrapper"><span class="checkbox-box"><i class="mdi mdi-check"></i></span><span class="checkbox-label">工作笔记</span></label>
+        <label class="checkbox-wrapper checked"><span class="checkbox-box"><i class="mdi mdi-check"></i></span><span class="checkbox-label">个人日记</span></label>
+        <label class="checkbox-wrapper"><span class="checkbox-box"><i class="mdi mdi-check"></i></span><span class="checkbox-label">学习笔记</span></label>
+      </div>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">水平排列</div>
+      <div class="checkbox-group-horizontal">
+        <label class="checkbox-wrapper"><span class="checkbox-box"><i class="mdi mdi-check"></i></span><span class="checkbox-label">日</span></label>
+        <label class="checkbox-wrapper checked"><span class="checkbox-box"><i class="mdi mdi-check"></i></span><span class="checkbox-label">周</span></label>
+        <label class="checkbox-wrapper"><span class="checkbox-box"><i class="mdi mdi-check"></i></span><span class="checkbox-label">月</span></label>
+      </div>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">分组（带标题）</div>
+      <div>
+        <div class="checkbox-wrapper indeterminate" style="margin-bottom:var(--space-2)">
+          <span class="checkbox-box"><i class="mdi mdi-check"></i><i class="mdi mdi-minus-box"></i></span>
+          <span class="checkbox-label" style="font-weight:600">全选（部分选中）</span>
+        </div>
+        <div class="checkbox-group" style="padding-left:26px">
+          <label class="checkbox-wrapper checked"><span class="checkbox-box"><i class="mdi mdi-check"></i></span><span class="checkbox-label">设计系统</span></label>
+          <label class="checkbox-wrapper checked"><span class="checkbox-box"><i class="mdi mdi-check"></i></span><span class="checkbox-label">用户体验</span></label>
+          <label class="checkbox-wrapper"><span class="checkbox-box"><i class="mdi mdi-check"></i></span><span class="checkbox-label">前端开发</span></label>
+        </div>
+      </div>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">多行标签</div>
+      <label class="checkbox-wrapper" style="max-width:280px">
+        <span class="checkbox-box"><i class="mdi mdi-check"></i></span>
+        <span><span class="checkbox-label">同意服务条款和隐私政策</span><br><span class="checkbox-label-desc">我理解并同意 MindFlow 的《服务条款》和《隐私政策》，包括数据处理方式</span></span>
+      </label>
+    </div>
+  </div>
+
+  <!-- Radio -->
+  <div class="section">
+    <div class="section-title">Radio 单选按钮</div>
+    <div class="demo-row">
+      <div class="demo-row-label">Unselected</div>
+      <label class="radio-wrapper"><span class="radio-circle"><span class="radio-dot"></span></span><span class="radio-label">选项一</span></label>
+      <label class="radio-wrapper"><span class="radio-circle"><span class="radio-dot"></span></span><span class="radio-label">选项二</span></label>
+      <label class="radio-wrapper"><span class="radio-circle"><span class="radio-dot"></span></span><span class="radio-label">选项三</span></label>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">Selected</div>
+      <label class="radio-wrapper"><span class="radio-circle"><span class="radio-dot"></span></span><span class="radio-label">选项一</span></label>
+      <label class="radio-wrapper selected"><span class="radio-circle"><span class="radio-dot"></span></span><span class="radio-label">选项二（已选中）</span></label>
+      <label class="radio-wrapper"><span class="radio-circle"><span class="radio-dot"></span></span><span class="radio-label">选项三</span></label>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">Disabled</div>
+      <label class="radio-wrapper disabled"><span class="radio-circle"><span class="radio-dot"></span></span><span class="radio-label">禁用（未选中）</span></label>
+      <label class="radio-wrapper disabled selected"><span class="radio-circle"><span class="radio-dot"></span></span><span class="radio-label">禁用（已选中）</span></label>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">Focused</div>
+      <label class="radio-wrapper focused"><span class="radio-circle"><span class="radio-dot"></span></span><span class="radio-label">获得焦点</span></label>
+      <label class="radio-wrapper selected focused"><span class="radio-circle"><span class="radio-dot"></span></span><span class="radio-label">选中 + 聚焦</span></label>
+    </div>
+  </div>
+
+  <!-- Radio Layouts -->
+  <div class="section">
+    <div class="section-title">Radio 布局</div>
+    <div class="demo-row">
+      <div class="demo-row-label">垂直排列</div>
+      <div class="radio-group">
+        <div class="group-title">选择排序方式</div>
+        <label class="radio-wrapper selected"><span class="radio-circle"><span class="radio-dot"></span></span><span class="radio-label">最近修改</span></label>
+        <label class="radio-wrapper"><span class="radio-circle"><span class="radio-dot"></span></span><span class="radio-label">创建时间</span></label>
+        <label class="radio-wrapper"><span class="radio-circle"><span class="radio-dot"></span></span><span class="radio-label">标题 A-Z</span></label>
+      </div>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">水平排列</div>
+      <div class="radio-group-horizontal">
+        <label class="radio-wrapper selected"><span class="radio-circle"><span class="radio-dot"></span></span><span class="radio-label">精简</span></label>
+        <label class="radio-wrapper"><span class="radio-circle"><span class="radio-dot"></span></span><span class="radio-label">标准</span></label>
+        <label class="radio-wrapper"><span class="radio-circle"><span class="radio-dot"></span></span><span class="radio-label">详细</span></label>
+      </div>
+    </div>
+    <div class="demo-row">
+      <div class="demo-row-label">分组（带标题与描述）</div>
+      <div class="radio-group">
+        <div class="group-title">主题偏好</div>
+        <label class="radio-wrapper selected">
+          <span class="radio-circle"><span class="radio-dot"></span></span>
+          <span><span class="radio-label">亮色模式</span><br><span class="radio-label-desc">默认的浅色主题，适合白天使用</span></span>
+        </label>
+        <label class="radio-wrapper">
+          <span class="radio-circle"><span class="radio-dot"></span></span>
+          <span><span class="radio-label">暗色模式</span><br><span class="radio-label-desc">深色背景主题，适合夜间使用</span></span>
+        </label>
+        <label class="radio-wrapper">
+          <span class="radio-circle"><span class="radio-dot"></span></span>
+          <span><span class="radio-label">跟随系统</span><br><span class="radio-label-desc">根据系统设置自动切换</span></span>
+        </label>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

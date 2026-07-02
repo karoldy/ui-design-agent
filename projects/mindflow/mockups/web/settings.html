@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MindFlow — 设置 | 高保真 Mockup</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+  <style>
+    :root {
+      --color-bg-primary: #FAFAFA;
+      --color-bg-secondary: #F5F5F5;
+      --color-bg-tertiary: #EEEEEE;
+      --color-text-primary: #1A1A1A;
+      --color-text-secondary: #6B6B6B;
+      --color-text-tertiary: #9E9E9E;
+      --color-accent: #3B82F6;
+      --color-accent-hover: #2563EB;
+      --color-accent-soft: #E8F0FE;
+      --color-success: #10B981;
+      --color-warning: #F59E0B;
+      --color-error: #EF4444;
+      --color-border: #E8E8E8;
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-xl: 16px;
+      --radius-full: 9999px;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+      --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
+      --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+      --shadow-xl: 0 16px 48px rgba(0,0,0,0.16);
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+      --space-10: 40px;
+      --space-12: 48px;
+      --space-16: 64px;
+      --font-size-xs: 11px;
+      --font-size-sm: 13px;
+      --font-size-base: 15px;
+      --font-size-lg: 18px;
+      --font-size-xl: 22px;
+      --font-size-2xl: 28px;
+      --font-size-3xl: 36px;
+      --sidebar-width: 240px;
+      --topnav-height: 48px;
+      --statusbar-height: 28px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      height: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-size: var(--font-size-base);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .ui-font { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+
+    body {
+      background: var(--color-bg-primary);
+      color: var(--color-text-primary);
+    }
+
+    /* ===== App Layout ===== */
+    .app-layout { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+    .main-area { display: flex; flex: 1; overflow: hidden; }
+
+    /* ===== Top Nav ===== */
+    .top-nav {
+      height: var(--topnav-height); min-height: var(--topnav-height);
+      background: var(--color-bg-primary);
+      border-bottom: 1px solid var(--color-border);
+      display: flex; align-items: center;
+      padding: 0 var(--space-4); gap: var(--space-4);
+      z-index: 200;
+    }
+    .top-nav .logo {
+      display: flex; align-items: center; gap: var(--space-2);
+      font-family: 'Inter', system-ui, sans-serif; font-weight: 600;
+      font-size: var(--font-size-lg); color: var(--color-text-primary);
+      width: var(--sidebar-width); padding-left: var(--space-1); flex-shrink: 0;
+    }
+    .top-nav .logo i { color: var(--color-accent); font-size: 22px; }
+    .top-nav .search-bar { flex: 1; max-width: 440px; position: relative; margin: 0 auto; }
+    .top-nav .search-bar input {
+      width: 100%; height: 32px; border: 1px solid #E0E0E0; border-radius: var(--radius-sm);
+      background: var(--color-bg-secondary); padding: 0 var(--space-8) 0 32px;
+      font-size: var(--font-size-sm); font-family: inherit; color: var(--color-text-primary);
+      outline: none;
+    }
+    .top-nav .search-bar input::placeholder { color: var(--color-text-tertiary); }
+    .top-nav .search-bar .search-icon {
+      position: absolute; left: 8px; top: 50%; transform: translateY(-50%);
+      color: var(--color-text-tertiary); font-size: 16px; pointer-events: none;
+    }
+    .top-nav .search-bar .kbd-hint {
+      position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+      font-size: var(--font-size-xs); color: var(--color-text-tertiary);
+      background: var(--color-bg-tertiary); padding: 1px 5px; border-radius: 3px;
+      font-family: 'Inter', system-ui, sans-serif; pointer-events: none;
+    }
+    .top-nav .actions { display: flex; align-items: center; gap: var(--space-2); margin-left: auto; }
+    .top-nav .actions .icon-btn {
+      width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+      border: none; background: transparent; border-radius: var(--radius-sm);
+      color: var(--color-text-secondary); cursor: pointer; font-size: 20px;
+      transition: background 150ms ease;
+    }
+    .top-nav .actions .icon-btn:hover { background: var(--color-bg-tertiary); }
+    .top-nav .actions .icon-btn.active { color: var(--color-accent); background: var(--color-accent-soft); }
+    .top-nav .actions .avatar {
+      width: 28px; height: 28px; border-radius: var(--radius-full);
+      background: linear-gradient(135deg, #3B82F6, #6366F1); display: flex; align-items: center;
+      position: relative;
+      justify-content: center; font-size: var(--font-size-xs); font-weight: 600;
+      color: #FFFFFF; cursor: pointer;
+    }
+    .top-nav .actions .avatar .status-dot {
+      position: absolute; bottom: 0; right: 0;
+      width: 6px; height: 6px; background: var(--color-success);
+      border: 2px solid white; border-radius: var(--radius-full);
+    }
+
+    /* ===== Sidebar ===== */
+    .sidebar {
+      width: var(--sidebar-width); min-width: var(--sidebar-width);
+      background: var(--color-bg-secondary); border-right: 1px solid var(--color-border);
+      display: flex; flex-direction: column; overflow-y: auto;
+      padding: var(--space-3) 0; flex-shrink: 0;
+    }
+    .sidebar-section { padding: 0 var(--space-3); margin-bottom: var(--space-2); }
+    .sidebar-section-title {
+      display: flex; align-items: center; justify-content: space-between;
+      font-family: 'Inter', system-ui, sans-serif; font-size: var(--font-size-xs);
+      font-weight: 600; color: var(--color-text-secondary);
+      text-transform: uppercase; letter-spacing: 0.5px;
+      padding: var(--space-2) var(--space-1);
+    }
+    .sidebar-item {
+      display: flex; align-items: center; gap: var(--space-2);
+      padding: var(--space-1) var(--space-2); border-radius: var(--radius-sm);
+      cursor: pointer; font-size: var(--font-size-sm); color: var(--color-text-primary);
+      transition: background 150ms ease; height: 30px; user-select: none;
+    }
+    .sidebar-item:hover { background: var(--color-bg-tertiary); }
+    .sidebar-item.active { background: var(--color-accent-soft); color: var(--color-accent); }
+    .sidebar-item i { font-size: 16px; color: var(--color-text-secondary); flex-shrink: 0; }
+    .sidebar-item.active i { color: var(--color-accent); }
+    .sidebar-item .item-label { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .sidebar-divider { height: 1px; background: var(--color-border); margin: var(--space-2) var(--space-3); }
+    .sidebar-spacer { flex: 1; }
+    .space-usage { padding: var(--space-3); border-top: 1px solid var(--color-border); }
+    .space-usage .usage-bar { height: 4px; background: var(--color-bg-tertiary); border-radius: 2px; overflow: hidden; margin-bottom: var(--space-1); }
+    .space-usage .usage-bar .fill { height: 100%; width: 0%; background: var(--color-accent); border-radius: 2px; }
+    .space-usage .usage-text { font-size: var(--font-size-xs); color: var(--color-text-tertiary); font-family: 'Inter', system-ui, sans-serif; }
+
+    /* ===== Content ===== */
+    .content {
+      flex: 1; display: flex; flex-direction: column; overflow: hidden;
+      background: var(--color-bg-primary);
+    }
+
+    /* Settings layout */
+    .settings-container {
+      flex: 1; display: flex; overflow: hidden;
+    }
+    .settings-nav {
+      width: 200px; min-width: 200px;
+      border-right: 1px solid var(--color-border);
+      padding: var(--space-6) 0;
+      overflow-y: auto;
+      flex-shrink: 0;
+    }
+    .settings-nav-item {
+      display: flex; align-items: center; gap: var(--space-3);
+      height: 38px; padding: 0 var(--space-5);
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: var(--font-size-sm); color: var(--color-text-primary);
+      cursor: pointer; transition: all 150ms ease;
+      position: relative; user-select: none;
+    }
+    .settings-nav-item:hover { background: var(--color-bg-secondary); }
+    .settings-nav-item.active {
+      color: var(--color-accent); font-weight: 500;
+      background: var(--color-accent-soft);
+    }
+    .settings-nav-item.active::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 4px; bottom: 4px;
+      width: 3px;
+      background: var(--color-accent);
+      border-radius: 0 2px 2px 0;
+    }
+    .settings-nav-item i { font-size: 18px; color: var(--color-text-secondary); width: 20px; text-align: center; flex-shrink: 0; }
+    .settings-nav-item.active i { color: var(--color-accent); }
+
+    .settings-content {
+      flex: 1; overflow-y: auto;
+      padding: var(--space-8) var(--space-10);
+    }
+
+    .settings-section { display: none; }
+    .settings-section.active { display: block; }
+
+    .settings-section h2 {
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: var(--font-size-xl);
+      font-weight: 600;
+      color: var(--color-text-primary);
+      margin-bottom: var(--space-1);
+    }
+    .settings-section .section-desc {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+      margin-bottom: var(--space-8);
+    }
+
+    /* Settings group */
+    .settings-group {
+      background: #FFFFFF;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-6);
+      margin-bottom: var(--space-6);
+    }
+    .settings-group-title {
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: var(--font-size-sm);
+      font-weight: 600;
+      color: var(--color-text-primary);
+      margin-bottom: var(--space-5);
+      padding-bottom: var(--space-3);
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    /* Setting row */
+    .setting-row {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      padding: var(--space-3) 0;
+    }
+    .setting-row + .setting-row {
+      border-top: 1px solid #F0F0F0;
+    }
+    .setting-row .setting-info { flex: 1; min-width: 0; padding-right: var(--space-6); }
+    .setting-row .setting-label {
+      font-size: var(--font-size-base);
+      color: var(--color-text-primary);
+      font-weight: 500;
+    }
+    .setting-row .setting-hint {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+      margin-top: 2px;
+    }
+    .setting-row .setting-control { flex-shrink: 0; }
+
+    /* Form controls */
+    .form-input {
+      height: 36px; padding: 0 12px;
+      border: 1px solid #E0E0E0; border-radius: var(--radius-sm);
+      font-size: var(--font-size-sm); font-family: inherit;
+      color: var(--color-text-primary); background: #FFFFFF;
+      outline: none; transition: border-color 150ms ease, box-shadow 150ms ease;
+      min-width: 200px;
+    }
+    .form-input:focus {
+      border-color: var(--color-accent);
+      box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+    }
+    .form-input:read-only {
+      background: var(--color-bg-secondary);
+      color: var(--color-text-tertiary);
+      cursor: not-allowed;
+    }
+    .form-select {
+      height: 36px; padding: 0 32px 0 12px;
+      border: 1px solid #E0E0E0; border-radius: var(--radius-sm);
+      font-size: var(--font-size-sm); font-family: 'Inter', system-ui, sans-serif;
+      color: var(--color-text-primary); background: #FFFFFF;
+      outline: none; cursor: pointer;
+      appearance: none; -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239E9E9E' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 10px center;
+      transition: border-color 150ms ease;
+      min-width: 160px;
+    }
+    .form-select:focus { border-color: var(--color-accent); box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
+
+    /* Toggle Switch */
+    .toggle-wrap {
+      position: relative; display: inline-block;
+      width: 40px; height: 22px; flex-shrink: 0;
+    }
+    .toggle-wrap input {
+      opacity: 0; width: 0; height: 0; position: absolute;
+    }
+    .toggle-slider {
+      position: absolute; cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: #D0D0D0;
+      border-radius: var(--radius-full);
+      transition: background 200ms ease;
+    }
+    .toggle-slider::before {
+      content: '';
+      position: absolute; left: 3px; top: 3px;
+      width: 16px; height: 16px;
+      background: #FFFFFF;
+      border-radius: 50%;
+      transition: transform 200ms ease;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    }
+    .toggle-wrap input:checked + .toggle-slider { background: var(--color-accent); }
+    .toggle-wrap input:checked + .toggle-slider::before { transform: translateX(18px); }
+    .toggle-wrap input:disabled + .toggle-slider { background: var(--color-bg-tertiary); cursor: not-allowed; }
+    .toggle-wrap input:disabled + .toggle-slider::before { box-shadow: none; }
+
+    /* Buttons */
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: var(--space-2);
+      height: 36px; padding: 0 var(--space-5);
+      background: #FFFFFF; color: var(--color-text-primary);
+      border: 1px solid #E0E0E0; border-radius: var(--radius-sm);
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: var(--font-size-sm); font-weight: 500;
+      cursor: pointer; transition: all 150ms ease; white-space: nowrap;
+    }
+    .btn-secondary:hover { background: var(--color-bg-secondary); border-color: #D0D0D0; }
+    .btn-secondary:active { background: var(--color-bg-tertiary); }
+    .btn-secondary i { font-size: 18px; color: var(--color-text-secondary); }
+    .btn-primary-sm {
+      display: inline-flex; align-items: center; gap: var(--space-2);
+      height: 36px; padding: 0 var(--space-5);
+      background: var(--color-accent); color: #FFFFFF;
+      border: none; border-radius: var(--radius-sm);
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: var(--font-size-sm); font-weight: 500;
+      cursor: pointer; transition: all 150ms ease; white-space: nowrap;
+    }
+    .btn-primary-sm:hover { background: var(--color-accent-hover); }
+    .btn-primary-sm:active { transform: translateY(0); }
+    .btn-primary-sm i { font-size: 18px; }
+    .btn-danger-sm {
+      display: inline-flex; align-items: center; gap: var(--space-2);
+      height: 36px; padding: 0 var(--space-5);
+      background: #FFFFFF; color: var(--color-error);
+      border: 1px solid var(--color-error); border-radius: var(--radius-sm);
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: var(--font-size-sm); font-weight: 500;
+      cursor: pointer; transition: all 150ms ease; white-space: nowrap;
+    }
+    .btn-danger-sm:hover { background: var(--color-error); color: #FFFFFF; }
+    .btn-danger-sm:active { transform: translateY(0); }
+    .btn-danger-sm i { font-size: 18px; }
+
+    /* Avatar upload area */
+    .avatar-section {
+      display: flex; align-items: center; gap: var(--space-5);
+      padding-bottom: var(--space-5);
+      margin-bottom: var(--space-5);
+      border-bottom: 1px solid #F0F0F0;
+    }
+    .avatar-preview {
+      width: 64px; height: 64px; border-radius: var(--radius-full);
+      background: linear-gradient(135deg, var(--color-accent), #60A5FA);
+      display: flex; align-items: center; justify-content: center;
+      font-size: var(--font-size-2xl); font-weight: 600;
+      color: #FFFFFF; font-family: 'Inter', system-ui, sans-serif;
+      flex-shrink: 0; position: relative;
+      box-shadow: 0 0 0 3px var(--color-accent-soft);
+    }
+    .avatar-actions { display: flex; gap: var(--space-2); }
+
+    /* Theme cards */
+    .theme-cards {
+      display: flex; gap: var(--space-4);
+    }
+    .theme-card {
+      flex: 1; display: flex; flex-direction: column; align-items: center;
+      gap: var(--space-3); padding: var(--space-5) var(--space-3);
+      border: 2px solid var(--color-border); border-radius: var(--radius-lg);
+      cursor: pointer; transition: all 150ms ease;
+      background: #FFFFFF;
+      user-select: none;
+    }
+    .theme-card:hover { border-color: #D0D0D0; }
+    .theme-card.selected {
+      border-color: var(--color-accent);
+      background: var(--color-accent-soft);
+    }
+    .theme-card .theme-preview {
+      width: 100%; height: 48px; border-radius: var(--radius-md);
+      border: 1px solid var(--color-border); overflow: hidden;
+      display: flex;
+    }
+    .theme-card .theme-preview .tp-light { flex: 1; background: #FAFAFA; }
+    .theme-card .theme-preview .tp-dark { flex: 1; background: #1E1E1E; }
+    .theme-card .theme-preview .tp-auto {
+      flex: 1;
+      background: linear-gradient(90deg, #FAFAFA 0%, #FAFAFA 50%, #1E1E1E 50%, #1E1E1E 100%);
+    }
+    .theme-card .theme-label {
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: var(--font-size-sm); font-weight: 500;
+      color: var(--color-text-primary);
+    }
+    .theme-card.selected .theme-label { color: var(--color-accent); }
+    .theme-card .theme-check {
+      width: 20px; height: 20px; border-radius: var(--radius-full);
+      border: 2px solid var(--color-border);
+      display: flex; align-items: center; justify-content: center;
+      transition: all 150ms ease;
+    }
+    .theme-card.selected .theme-check {
+      border-color: var(--color-accent);
+      background: var(--color-accent);
+    }
+    .theme-card.selected .theme-check i {
+      color: #FFFFFF;
+      font-size: 14px;
+    }
+
+    /* Density radio group */
+    .density-group {
+      display: flex; gap: var(--space-3);
+    }
+    .density-option {
+      display: flex; align-items: center; gap: var(--space-2);
+      padding: var(--space-3) var(--space-4);
+      border: 1.5px solid var(--color-border);
+      border-radius: var(--radius-md);
+      cursor: pointer; transition: all 150ms ease;
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: var(--font-size-sm);
+      color: var(--color-text-primary);
+      background: #FFFFFF;
+      user-select: none;
+    }
+    .density-option:hover { border-color: #D0D0D0; }
+    .density-option.selected {
+      border-color: var(--color-accent);
+      background: var(--color-accent-soft);
+      color: var(--color-accent);
+    }
+    .density-option .radio-dot {
+      width: 16px; height: 16px; border-radius: var(--radius-full);
+      border: 2px solid var(--color-border);
+      display: flex; align-items: center; justify-content: center;
+      transition: all 150ms ease;
+    }
+    .density-option.selected .radio-dot {
+      border-color: var(--color-accent);
+    }
+    .density-option.selected .radio-dot::after {
+      content: '';
+      width: 8px; height: 8px;
+      background: var(--color-accent);
+      border-radius: var(--radius-full);
+    }
+
+    /* Sync status */
+    .sync-status {
+      display: flex; align-items: center; gap: var(--space-3);
+      padding: var(--space-4) var(--space-5);
+      background: var(--color-bg-secondary);
+      border-radius: var(--radius-md);
+      margin-bottom: var(--space-5);
+    }
+    .sync-status .sync-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--color-success); flex-shrink: 0;
+      position: relative;
+    }
+    .sync-status .sync-dot::after {
+      content: '';
+      position: absolute; inset: -3px;
+      border-radius: 50%;
+      border: 2px solid rgba(16,185,129,0.3);
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.3); opacity: 0.5; }
+    }
+    .sync-status .sync-info { flex: 1; }
+    .sync-status .sync-label {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-primary);
+      font-weight: 500;
+    }
+    .sync-status .sync-time {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-secondary);
+    }
+
+    /* Storage bar */
+    .storage-bar-wrap { margin-bottom: var(--space-5); }
+    .storage-bar-wrap .storage-header {
+      display: flex; justify-content: space-between;
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+      margin-bottom: var(--space-2);
+    }
+    .storage-bar-wrap .storage-bar {
+      height: 8px; background: var(--color-bg-tertiary);
+      border-radius: var(--radius-full); overflow: hidden;
+    }
+    .storage-bar-wrap .storage-bar .fill {
+      height: 100%; width: 70%;
+      background: linear-gradient(90deg, var(--color-accent), #60A5FA);
+      border-radius: var(--radius-full);
+      transition: width 300ms ease;
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.4);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 300;
+      opacity: 0; pointer-events: none;
+      transition: opacity 200ms ease;
+    }
+    .modal-overlay.visible {
+      opacity: 1; pointer-events: auto;
+    }
+    .modal-box {
+      background: #FFFFFF; border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-xl);
+      padding: var(--space-8);
+      width: 420px; max-width: 90vw;
+      transform: translateY(20px); transition: transform 200ms ease;
+    }
+    .modal-overlay.visible .modal-box { transform: translateY(0); }
+    .modal-box h3 {
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: var(--font-size-lg); font-weight: 600;
+      margin-bottom: var(--space-2);
+    }
+    .modal-box p {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+      line-height: 1.6;
+      margin-bottom: var(--space-6);
+    }
+    .modal-actions {
+      display: flex; gap: var(--space-3); justify-content: flex-end;
+    }
+    .modal-actions .btn-modal-cancel {
+      height: 36px; padding: 0 var(--space-5);
+      background: #FFFFFF; color: var(--color-text-primary);
+      border: 1px solid #E0E0E0; border-radius: var(--radius-sm);
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: var(--font-size-sm); cursor: pointer;
+      transition: background 150ms ease;
+    }
+    .modal-actions .btn-modal-cancel:hover { background: var(--color-bg-secondary); }
+    .modal-actions .btn-modal-danger {
+      height: 36px; padding: 0 var(--space-5);
+      background: var(--color-error); color: #FFFFFF;
+      border: none; border-radius: var(--radius-sm);
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: var(--font-size-sm); font-weight: 500;
+      cursor: pointer; transition: background 150ms ease;
+    }
+    .modal-actions .btn-modal-danger:hover { background: #DC2626; }
+
+    /* About section */
+    .about-info {
+      display: flex; flex-direction: column; gap: var(--space-3);
+    }
+    .about-row {
+      display: flex; align-items: center;
+      font-size: var(--font-size-sm);
+    }
+    .about-row .about-key {
+      width: 120px; flex-shrink: 0;
+      color: var(--color-text-secondary);
+    }
+    .about-row .about-value {
+      color: var(--color-text-primary);
+    }
+    .about-row a {
+      color: var(--color-accent); text-decoration: none;
+    }
+    .about-row a:hover { text-decoration: underline; }
+
+    /* Bottom Status Bar */
+    .bottom-status {
+      height: var(--statusbar-height); min-height: var(--statusbar-height);
+      background: var(--color-bg-secondary);
+      border-top: 1px solid var(--color-border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 var(--space-4);
+      font-size: var(--font-size-xs); color: var(--color-text-tertiary);
+    }
+    .bottom-status .status-left { display: flex; align-items: center; gap: var(--space-3); }
+    .bottom-status .status-left .sync-indicator { display: flex; align-items: center; gap: var(--space-1); }
+    .bottom-status .status-left .sync-indicator .sync-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--color-success); display: inline-block;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed; top: 60px; right: var(--space-6);
+      background: var(--color-text-primary); color: #fff;
+      padding: var(--space-3) var(--space-5);
+      border-radius: var(--radius-md);
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: var(--font-size-sm);
+      box-shadow: var(--shadow-lg);
+      opacity: 0; pointer-events: none;
+      transform: translateY(-10px);
+      transition: opacity 250ms ease, transform 250ms ease;
+      z-index: 1000;
+      display: flex; align-items: center; gap: var(--space-2);
+    }
+    .toast.visible {
+      opacity: 1; transform: translateY(0);
+      pointer-events: auto;
+    }
+    .toast i { font-size: 18px; }
+    .toast.success i { color: var(--color-success); }
+    .toast.error i { color: var(--color-error); }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .settings-nav { width: 56px; min-width: 56px; }
+      .settings-nav-item { justify-content: center; padding: 0; }
+      .settings-nav-item span { display: none; }
+      .settings-nav-item.active::before { display: none; }
+      .settings-content { padding: var(--space-6) var(--space-5); }
+      .theme-cards { flex-direction: column; }
+      .density-group { flex-wrap: wrap; }
+    }
+    @media (max-width: 600px) {
+      .settings-container { flex-direction: column; }
+      .settings-nav { width: 100%; min-width: auto; display: flex; overflow-x: auto; border-right: none; border-bottom: 1px solid var(--color-border); padding: 0; }
+      .settings-nav-item { white-space: nowrap; height: 44px; padding: 0 var(--space-4); flex-shrink: 0; }
+      .settings-nav-item span { display: inline; }
+      .settings-nav-item.active::before { display: none; }
+      .form-input { min-width: 120px; }
+      .form-select { min-width: 120px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-layout">
+    <!-- Top Nav -->
+    <header class="top-nav">
+      <div class="logo">
+        <i class="mdi mdi-graph-outline"></i>
+        <span>MindFlow</span>
+      </div>
+      <div class="search-bar">
+        <i class="mdi mdi-magnify search-icon"></i>
+        <input type="text" placeholder="搜索笔记… (⌘K)" />
+        <span class="kbd-hint">⌘K</span>
+      </div>
+      <div class="actions">
+        <button class="icon-btn active" title="设置"><i class="mdi mdi-cog-outline"></i></button>
+        <div class="avatar">J<span class="status-dot"></span></div>
+      </div>
+    </header>
+
+    <!-- Main Area -->
+    <div class="main-area">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="sidebar-section">
+          <div class="sidebar-item">
+            <i class="mdi mdi-note-text-outline"></i>
+            <span class="item-label">所有笔记</span>
+          </div>
+          <div class="sidebar-item" style="opacity:0.5;">
+            <i class="mdi mdi-calendar-text-outline"></i>
+            <span class="item-label">每日笔记</span>
+          </div>
+          <div class="sidebar-item" style="opacity:0.5;">
+            <i class="mdi mdi-delete-outline"></i>
+            <span class="item-label">回收站</span>
+          </div>
+        </div>
+        <div class="sidebar-divider"></div>
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">
+            <span>笔记本</span>
+            <i class="mdi mdi-plus" style="font-size:14px;color:var(--color-text-tertiary);cursor:pointer;"></i>
+          </div>
+          <div class="sidebar-item active">
+            <i class="mdi mdi-folder-open-outline"></i>
+            <span class="item-label">个人笔记</span>
+            <span style="font-size:var(--font-size-xs);color:var(--color-text-tertiary);margin-left:auto;">24</span>
+          </div>
+          <div class="sidebar-item">
+            <i class="mdi mdi-folder-outline"></i>
+            <span class="item-label">工作日志</span>
+            <span style="font-size:var(--font-size-xs);color:var(--color-text-tertiary);margin-left:auto;">12</span>
+          </div>
+          <div class="sidebar-item">
+            <i class="mdi mdi-folder-outline"></i>
+            <span class="item-label">学习笔记</span>
+            <span style="font-size:var(--font-size-xs);color:var(--color-text-tertiary);margin-left:auto;">8</span>
+          </div>
+        </div>
+        <div class="sidebar-spacer"></div>
+        <div class="space-usage">
+          <div class="usage-bar"><div class="fill" style="width:70%;"></div></div>
+          <div class="usage-text">已使用 3.5 GB / 5 GB</div>
+        </div>
+      </aside>
+
+      <!-- Content -->
+      <main class="content">
+        <div class="settings-container">
+          <!-- Settings Nav -->
+          <nav class="settings-nav">
+            <div class="settings-nav-item active" data-section="account">
+              <i class="mdi mdi-account-outline"></i>
+              <span>账户</span>
+            </div>
+            <div class="settings-nav-item" data-section="sync">
+              <i class="mdi mdi-sync"></i>
+              <span>同步</span>
+            </div>
+            <div class="settings-nav-item" data-section="editor">
+              <i class="mdi mdi-pencil-outline"></i>
+              <span>编辑器</span>
+            </div>
+            <div class="settings-nav-item" data-section="appearance">
+              <i class="mdi mdi-palette-outline"></i>
+              <span>外观</span>
+            </div>
+            <div class="settings-nav-item" data-section="data">
+              <i class="mdi mdi-database-outline"></i>
+              <span>数据</span>
+            </div>
+            <div class="settings-nav-item" data-section="about">
+              <i class="mdi mdi-information-outline"></i>
+              <span>关于</span>
+            </div>
+          </nav>
+
+          <!-- Settings Content -->
+          <div class="settings-content">
+
+            <!-- ===== Account ===== -->
+            <div class="settings-section active" id="section-account">
+              <h2>账户</h2>
+              <p class="section-desc">管理你的个人资料和账户安全</p>
+
+              <div class="settings-group">
+                <div class="settings-group-title">个人资料</div>
+                <div class="avatar-section">
+                  <div class="avatar-preview">J</div>
+                  <div class="avatar-actions">
+                    <button class="btn-secondary"><i class="mdi mdi-camera-outline"></i> 更换头像</button>
+                    <button class="btn-secondary"><i class="mdi mdi-delete-outline"></i> 移除</button>
+                  </div>
+                </div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">昵称</div>
+                  </div>
+                  <div class="setting-control">
+                    <input class="form-input" type="text" value="John Doe">
+                  </div>
+                </div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">邮箱</div>
+                    <div class="setting-hint">已验证的邮箱地址，不可修改</div>
+                  </div>
+                  <div class="setting-control">
+                    <input class="form-input" type="email" value="johndoe@example.com" readonly>
+                  </div>
+                </div>
+              </div>
+
+              <div class="settings-group">
+                <div class="settings-group-title">安全</div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">更改密码</div>
+                    <div class="setting-hint">定期更换密码可以提高账户安全性</div>
+                  </div>
+                  <div class="setting-control">
+                    <button class="btn-secondary"><i class="mdi mdi-lock-outline"></i> 更改密码</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="settings-group" style="border-color: rgba(239,68,68,0.2);">
+                <div class="settings-group-title" style="color: var(--color-error);">危险操作</div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label" style="color: var(--color-error);">注销账户</div>
+                    <div class="setting-hint">注销后所有数据将被永久删除，无法恢复</div>
+                  </div>
+                  <div class="setting-control">
+                    <button class="btn-danger-sm" id="deleteAccountBtn"><i class="mdi mdi-alert-outline"></i> 注销账户</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ===== Sync ===== -->
+            <div class="settings-section" id="section-sync">
+              <h2>同步</h2>
+              <p class="section-desc">管理云端同步设置和数据存储</p>
+
+              <div class="settings-group">
+                <div class="settings-group-title">同步状态</div>
+                <div class="sync-status">
+                  <div class="sync-dot"></div>
+                  <div class="sync-info">
+                    <div class="sync-label">已同步</div>
+                    <div class="sync-time">上次同步：2026-07-02 15:32</div>
+                  </div>
+                  <button class="btn-primary-sm"><i class="mdi mdi-sync"></i> 手动同步</button>
+                </div>
+
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">存储空间</div>
+                  </div>
+                </div>
+                <div class="storage-bar-wrap">
+                  <div class="storage-header">
+                    <span>已使用 3.5 GB</span>
+                    <span>共 5 GB</span>
+                  </div>
+                  <div class="storage-bar"><div class="fill"></div></div>
+                </div>
+
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">仅在 WiFi 下同步</div>
+                    <div class="setting-hint">开启后仅在连接 WiFi 时同步数据，节省流量</div>
+                  </div>
+                  <div class="setting-control">
+                    <label class="toggle-wrap">
+                      <input type="checkbox" checked id="wifiSync">
+                      <span class="toggle-slider"></span>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">同步日志</div>
+                    <div class="setting-hint">查看最近的同步记录</div>
+                  </div>
+                  <div class="setting-control">
+                    <button class="btn-secondary"><i class="mdi mdi-file-document-outline"></i> 查看日志</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ===== Editor ===== -->
+            <div class="settings-section" id="section-editor">
+              <h2>编辑器</h2>
+              <p class="section-desc">自定义 Markdown 编辑器的显示和行为</p>
+
+              <div class="settings-group">
+                <div class="settings-group-title">编辑体验</div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">默认字号</div>
+                  </div>
+                  <div class="setting-control">
+                    <select class="form-select">
+                      <option>13px</option>
+                      <option>14px</option>
+                      <option selected>15px</option>
+                      <option>16px</option>
+                      <option>18px</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">字体选择</div>
+                  </div>
+                  <div class="setting-control">
+                    <select class="form-select">
+                      <option selected>系统默认</option>
+                      <option>Serif</option>
+                      <option>Monospace</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">行间距</div>
+                  </div>
+                  <div class="setting-control">
+                    <select class="form-select">
+                      <option>1.4</option>
+                      <option selected>1.6</option>
+                      <option>1.8</option>
+                      <option>2.0</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">自动保存间隔</div>
+                  </div>
+                  <div class="setting-control">
+                    <select class="form-select">
+                      <option>1 秒</option>
+                      <option selected>2 秒</option>
+                      <option>5 秒</option>
+                      <option>手动</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">自动保存后同步</div>
+                    <div class="setting-hint">开启后每次自动保存立即触发云端同步</div>
+                  </div>
+                  <div class="setting-control">
+                    <label class="toggle-wrap">
+                      <input type="checkbox" checked id="autoSync">
+                      <span class="toggle-slider"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ===== Appearance ===== -->
+            <div class="settings-section" id="section-appearance">
+              <h2>外观</h2>
+              <p class="section-desc">自定义 MindFlow 的视觉风格</p>
+
+              <div class="settings-group">
+                <div class="settings-group-title">主题</div>
+                <div class="theme-cards" id="themeCards">
+                  <div class="theme-card selected" data-theme="light">
+                    <div class="theme-preview"><div class="tp-light"></div></div>
+                    <span class="theme-label">亮色</span>
+                    <div class="theme-check"><i class="mdi mdi-check"></i></div>
+                  </div>
+                  <div class="theme-card" data-theme="dark">
+                    <div class="theme-preview"><div class="tp-dark"></div></div>
+                    <span class="theme-label">暗色</span>
+                    <div class="theme-check"></div>
+                  </div>
+                  <div class="theme-card" data-theme="auto">
+                    <div class="theme-preview"><div class="tp-auto"></div></div>
+                    <span class="theme-label">跟随系统</span>
+                    <div class="theme-check"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="settings-group">
+                <div class="settings-group-title">布局</div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">侧边栏默认状态</div>
+                    <div class="setting-hint">启动时侧边栏默认展开或收起</div>
+                  </div>
+                  <div class="setting-control">
+                    <label class="toggle-wrap">
+                      <input type="checkbox" checked id="sidebarDefault">
+                      <span class="toggle-slider"></span>
+                    </label>
+                  </div>
+                </div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">笔记列表密度</div>
+                  </div>
+                  <div class="setting-control">
+                    <div class="density-group">
+                      <div class="density-option selected" data-density="comfortable">
+                        <div class="radio-dot"></div>
+                        <span>舒适</span>
+                      </div>
+                      <div class="density-option" data-density="compact">
+                        <div class="radio-dot"></div>
+                        <span>紧凑</span>
+                      </div>
+                      <div class="density-option" data-density="default">
+                        <div class="radio-dot"></div>
+                        <span>默认</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ===== Data ===== -->
+            <div class="settings-section" id="section-data">
+              <h2>数据</h2>
+              <p class="section-desc">数据导入、导出和清理</p>
+
+              <div class="settings-group">
+                <div class="settings-group-title">导出</div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">导出全部笔记</div>
+                    <div class="setting-hint">导出为 Markdown ZIP 或 JSON 格式</div>
+                  </div>
+                  <div class="setting-control" style="display:flex;gap:var(--space-2);">
+                    <button class="btn-secondary" id="exportMarkdown"><i class="mdi mdi-file-download-outline"></i> Markdown ZIP</button>
+                    <button class="btn-secondary" id="exportJSON"><i class="mdi mdi-code-json"></i> JSON</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="settings-group">
+                <div class="settings-group-title">导入</div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label">从文件导入</div>
+                    <div class="setting-hint">支持导入 Markdown 文件或 Obsidian Vault</div>
+                  </div>
+                  <div class="setting-control">
+                    <button class="btn-secondary" id="importBtn"><i class="mdi mdi-file-upload-outline"></i> 选择文件</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="settings-group" style="border-color: rgba(239,68,68,0.2);">
+                <div class="settings-group-title" style="color: var(--color-error);">危险操作</div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-label" style="color: var(--color-error);">清空所有数据</div>
+                    <div class="setting-hint">此操作不可撤销，将删除所有笔记、标签和设置</div>
+                  </div>
+                  <div class="setting-control">
+                    <button class="btn-danger-sm" id="clearDataBtn"><i class="mdi mdi-delete-forever-outline"></i> 清空数据</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ===== About ===== -->
+            <div class="settings-section" id="section-about">
+              <h2>关于</h2>
+              <p class="section-desc">MindFlow 版本信息和相关链接</p>
+
+              <div class="settings-group">
+                <div class="settings-group-title">应用信息</div>
+                <div class="about-info">
+                  <div class="about-row">
+                    <span class="about-key">应用名称</span>
+                    <span class="about-value">MindFlow</span>
+                  </div>
+                  <div class="about-row">
+                    <span class="about-key">版本号</span>
+                    <span class="about-value">v1.0.0 (Build 20260702)</span>
+                  </div>
+                  <div class="about-row">
+                    <span class="about-key">许可证</span>
+                    <span class="about-value">个人版 · 免费</span>
+                  </div>
+                  <div class="about-row">
+                    <span class="about-key">检查更新</span>
+                    <span class="about-value" style="display:flex;align-items:center;gap:var(--space-2);">
+                      <span style="color:var(--color-success);font-size:var(--font-size-xs);">已是最新版本</span>
+                      <button class="btn-secondary" style="height:28px;padding:0 var(--space-3);font-size:var(--font-size-xs);"><i class="mdi mdi-refresh"></i> 检查</button>
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="settings-group">
+                <div class="settings-group-title">相关链接</div>
+                <div class="about-info">
+                  <div class="about-row">
+                    <span class="about-key">隐私政策</span>
+                    <a href="#" class="about-value">查看隐私政策 <i class="mdi mdi-open-in-new" style="font-size:14px;vertical-align:middle;"></i></a>
+                  </div>
+                  <div class="about-row">
+                    <span class="about-key">服务条款</span>
+                    <a href="#" class="about-value">查看服务条款 <i class="mdi mdi-open-in-new" style="font-size:14px;vertical-align:middle;"></i></a>
+                  </div>
+                  <div class="about-row">
+                    <span class="about-key">反馈</span>
+                    <a href="#" class="about-value">feedback@mindflow.app <i class="mdi mdi-open-in-new" style="font-size:14px;vertical-align:middle;"></i></a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Bottom Status Bar -->
+    <footer class="bottom-status">
+      <div class="status-left">
+        <div class="sync-indicator">
+          <span class="sync-dot"></span>
+          <span>已同步</span>
+        </div>
+        <span>·</span>
+        <span>刚刚</span>
+      </div>
+      <div class="status-right">
+        <span>44 笔记</span>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Confirm Modal -->
+  <div class="modal-overlay" id="confirmModal">
+    <div class="modal-box">
+      <h3 id="modalTitle">确认操作</h3>
+      <p id="modalDesc">此操作不可撤销，请确认是否继续。</p>
+      <div class="modal-actions">
+        <button class="btn-modal-cancel" id="modalCancel">取消</button>
+        <button class="btn-modal-danger" id="modalConfirm">确认</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast">
+    <i class="mdi"></i>
+    <span class="toast-msg"></span>
+  </div>
+
+  <script>
+    (function() {
+      let toastTimer = null;
+
+      function showToast(msg, type) {
+        const t = document.getElementById('toast');
+        t.querySelector('i').className = 'mdi ' + (type === 'success' ? 'mdi-check-circle' : 'mdi-alert-circle');
+        t.className = 'toast ' + type;
+        t.querySelector('.toast-msg').textContent = msg;
+        t.classList.add('visible');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(function() { t.classList.remove('visible'); }, 2500);
+      }
+
+      // === Settings nav ===
+      const navItems = document.querySelectorAll('.settings-nav-item');
+      function switchSection(id) {
+        document.querySelectorAll('.settings-section').forEach(s => s.classList.remove('active'));
+        navItems.forEach(n => n.classList.remove('active'));
+        document.getElementById('section-' + id).classList.add('active');
+        document.querySelector('.settings-nav-item[data-section="' + id + '"]').classList.add('active');
+      }
+      navItems.forEach(item => {
+        item.addEventListener('click', function() {
+          switchSection(this.dataset.section);
+        });
+      });
+
+      // === Theme cards ===
+      document.querySelectorAll('.theme-card').forEach(card => {
+        card.addEventListener('click', function() {
+          document.querySelectorAll('.theme-card').forEach(c => c.classList.remove('selected'));
+          this.classList.add('selected');
+        });
+      });
+
+      // === Density options ===
+      document.querySelectorAll('.density-option').forEach(opt => {
+        opt.addEventListener('click', function() {
+          const parent = this.closest('.density-group');
+          parent.querySelectorAll('.density-option').forEach(o => o.classList.remove('selected'));
+          this.classList.add('selected');
+        });
+      });
+
+      // === Modal ===
+      const modal = document.getElementById('confirmModal');
+      const modalTitle = document.getElementById('modalTitle');
+      const modalDesc = document.getElementById('modalDesc');
+      let modalCallback = null;
+
+      function openModal(title, desc, cb) {
+        modalTitle.textContent = title;
+        modalDesc.textContent = desc;
+        modal.classList.add('visible');
+        modalCallback = cb;
+      }
+      document.getElementById('modalCancel').addEventListener('click', function() {
+        modal.classList.remove('visible');
+      });
+      modal.addEventListener('click', function(e) {
+        if (e.target === modal) modal.classList.remove('visible');
+      });
+      document.getElementById('modalConfirm').addEventListener('click', function() {
+        if (modalCallback) modalCallback();
+        modal.classList.remove('visible');
+      });
+
+      // === Delete account ===
+      document.getElementById('deleteAccountBtn').addEventListener('click', function() {
+        openModal('注销账户', '确定要注销账户吗？所有数据将被永久删除，无法恢复。', function() {
+          showToast('账户已注销', 'success');
+        });
+      });
+
+      // === Clear data ===
+      document.getElementById('clearDataBtn').addEventListener('click', function() {
+        openModal('清空所有数据', '确定要清空所有数据吗？此操作将删除所有笔记、标签和设置，无法撤销。', function() {
+          showToast('所有数据已清空', 'success');
+        });
+      });
+
+      // === Export buttons ===
+      document.getElementById('exportMarkdown').addEventListener('click', function() {
+        showToast('正在导出 Markdown ZIP…', 'success');
+      });
+      document.getElementById('exportJSON').addEventListener('click', function() {
+        showToast('正在导出 JSON…', 'success');
+      });
+
+      // === Import ===
+      document.getElementById('importBtn').addEventListener('click', function() {
+        showToast('正在打开文件选择…', 'success');
+      });
+
+      // === Sync button ===
+      document.querySelector('.sync-status .btn-primary-sm').addEventListener('click', function() {
+        const btn = this;
+        btn.innerHTML = '<i class="mdi mdi-sync mdi-spin"></i> 同步中…';
+        btn.disabled = true;
+        setTimeout(function() {
+          btn.innerHTML = '<i class="mdi mdi-sync"></i> 手动同步';
+          btn.disabled = false;
+          showToast('同步完成', 'success');
+        }, 1500);
+      });
+
+      // === Check update ===
+      document.querySelector('#section-about .btn-secondary').addEventListener('click', function() {
+        showToast('已是最新版本 v1.0.0', 'success');
+      });
+
+    })();
+  </script>
+</body>
+</html>

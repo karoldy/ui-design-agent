@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MindFlow Android — 编辑器</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+  <style>
+    /* ===== Material 3 Token ===== */
+    :root {
+      --md-primary: #3B5F90;
+      --md-on-primary: #FFFFFF;
+      --md-primary-container: #D6E3FF;
+      --md-on-primary-container: #001B3E;
+      --md-surface: #FFFBFE;
+      --md-surface-variant: #F3F0F4;
+      --md-on-surface: #1C1B1F;
+      --md-on-surface-variant: #49454F;
+      --md-outline: #79747E;
+      --md-outline-variant: #CAC4D0;
+      --md-error: #BA1A1A;
+      --md-shadow: rgba(0,0,0,0.08);
+      --md-elevation-1: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.12);
+      --md-elevation-2: 0 2px 6px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.10);
+      --md-elevation-3: 0 4px 12px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.08);
+      --md-radius-sm: 8px;
+      --md-radius-md: 12px;
+      --md-radius-lg: 16px;
+      --md-radius-xl: 28px;
+      --md-radius-full: 9999px;
+      --pixel-8-width: 412px;
+      --pixel-8-height: 915px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Roboto', system-ui, -apple-system, sans-serif;
+      background: #E6E1E5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .device-frame {
+      width: var(--pixel-8-width);
+      height: var(--pixel-8-height);
+      background: var(--md-surface);
+      border-radius: 40px;
+      overflow: hidden;
+      box-shadow:
+        0 0 0 1px rgba(0,0,0,0.1),
+        0 20px 60px rgba(0,0,0,0.15),
+        0 8px 24px rgba(0,0,0,0.1);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+
+    /* ===== Status Bar ===== */
+    .status-bar {
+      height: 36px;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      flex-shrink: 0;
+    }
+    .status-bar .time { font-size: 14px; font-weight: 500; color: var(--md-on-surface); }
+    .status-bar .status-icons { display: flex; align-items: center; gap: 6px; color: var(--md-on-surface); font-size: 14px; }
+    .status-bar .status-icons i { font-size: 16px; }
+    .camera-cutout {
+      position: absolute;
+      top: 10px; left: 50%; transform: translateX(-50%);
+      width: 10px; height: 10px; border-radius: 50%; background: #1C1B1F; opacity: 0.9;
+    }
+
+    /* ===== Top App Bar (Medium) ===== */
+    .top-app-bar {
+      display: flex;
+      align-items: center;
+      padding: 0 4px 0 4px;
+      flex-shrink: 0;
+      height: 56px;
+    }
+    .top-app-bar .back-btn {
+      width: 48px; height: 48px; border-radius: var(--md-radius-full);
+      border: none; background: transparent; color: var(--md-on-surface);
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: background 0.2s;
+    }
+    .top-app-bar .back-btn:hover { background: rgba(59, 95, 144, 0.08); }
+    .top-app-bar .back-btn i { font-size: 24px; }
+    .top-app-bar .title-area {
+      flex: 1;
+      padding: 0 8px;
+    }
+    .top-app-bar .title-input {
+      width: 100%;
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--md-on-surface);
+      background: transparent;
+      border: none;
+      outline: none;
+      font-family: 'Roboto', sans-serif;
+      padding: 4px 0;
+    }
+    .top-app-bar .title-input::placeholder { color: var(--md-outline); }
+    .top-app-bar .right-actions {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+    }
+    .top-app-bar .action-btn {
+      width: 48px; height: 48px; border-radius: var(--md-radius-full);
+      border: none; background: transparent; color: var(--md-on-surface-variant);
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s;
+    }
+    .top-app-bar .action-btn:hover { background: rgba(59, 95, 144, 0.08); }
+    .top-app-bar .action-btn i { font-size: 24px; }
+
+    /* Save indicator */
+    .save-indicator {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      color: var(--md-on-surface-variant);
+      padding: 0 8px;
+    }
+    .save-indicator i { font-size: 16px; }
+    .save-indicator.saved { color: #10B981; }
+    .save-indicator.saving { color: var(--md-primary); }
+    .save-indicator.error { color: var(--md-error); }
+
+    /* ===== Formatting Toolbar ===== */
+    .format-bar {
+      display: flex;
+      align-items: center;
+      padding: 4px 8px;
+      gap: 2px;
+      border-bottom: 1px solid var(--md-outline-variant);
+      flex-shrink: 0;
+      overflow-x: auto;
+    }
+    .format-bar::-webkit-scrollbar { height: 0; }
+    .format-btn {
+      width: 40px; height: 40px; border-radius: var(--md-radius-sm);
+      border: none; background: transparent; color: var(--md-on-surface-variant);
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      font-size: 16px; font-weight: 500; font-family: 'Roboto', sans-serif;
+      transition: background 0.15s; flex-shrink: 0;
+    }
+    .format-btn i { font-size: 20px; }
+    .format-btn:hover { background: var(--md-surface-variant); }
+    .format-btn.active { background: var(--md-primary-container); color: var(--md-on-primary-container); }
+    .format-separator {
+      width: 1px; height: 24px; background: var(--md-outline-variant);
+      margin: 0 4px; flex-shrink: 0;
+    }
+
+    /* ===== Editor Content ===== */
+    .editor-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 20px 80px 20px;
+      background: var(--md-surface);
+    }
+    .editor-content::-webkit-scrollbar { width: 0; }
+
+    .editor-content .content-area {
+      min-height: 100%;
+      outline: none;
+      font-size: 16px;
+      line-height: 1.8;
+      color: var(--md-on-surface);
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+    .editor-content .content-area:focus { outline: none; }
+    .editor-content .content-area [contenteditable="true"]:empty:before {
+      content: attr(data-placeholder);
+      color: var(--md-outline);
+    }
+    .editor-content h2 {
+      font-size: 20px;
+      font-weight: 600;
+      margin: 20px 0 8px 0;
+      line-height: 1.3;
+    }
+    .editor-content h3 {
+      font-size: 17px;
+      font-weight: 600;
+      margin: 16px 0 6px 0;
+      line-height: 1.4;
+    }
+    .editor-content p {
+      margin-bottom: 8px;
+    }
+    .editor-content .wiki-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      background: var(--md-primary-container);
+      color: var(--md-on-primary-container);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .editor-content .wiki-link i {
+      font-size: 14px;
+    }
+    .editor-content .tag-inline {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      padding: 2px 6px;
+      background: var(--md-surface-variant);
+      color: var(--md-on-surface-variant);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+    }
+    .editor-content .tag-inline i {
+      font-size: 12px;
+      opacity: 0.6;
+    }
+    .editor-content .bullet-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+    .editor-content .bullet-item .bullet {
+      flex-shrink: 0;
+      width: 4px; height: 4px;
+      border-radius: 50%;
+      background: var(--md-on-surface-variant);
+      margin-top: 10px;
+    }
+    .editor-content .bullet-item .bullet-content {
+      flex: 1;
+    }
+    .editor-content blockquote {
+      border-left: 3px solid var(--md-primary);
+      margin: 8px 0;
+      padding: 4px 12px;
+      color: var(--md-on-surface-variant);
+      font-style: italic;
+      background: var(--md-surface-variant);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    }
+    .editor-content .inline-code {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 14px;
+      background: var(--md-surface-variant);
+      padding: 1px 6px;
+      border-radius: 4px;
+      color: var(--md-on-surface);
+    }
+    .editor-content .bold { font-weight: 700; }
+    .editor-content .italic { font-style: italic; }
+
+    /* ===== Keyboard Accessory Bar ===== */
+    .keyboard-accessory {
+      display: flex;
+      align-items: center;
+      padding: 6px 12px;
+      gap: 4px;
+      border-top: 1px solid var(--md-outline-variant);
+      flex-shrink: 0;
+      background: var(--md-surface);
+    }
+    .accessory-btn {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      border: none;
+      background: transparent;
+      color: var(--md-on-surface-variant);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: 'Roboto', sans-serif;
+      transition: background 0.15s;
+    }
+    .accessory-btn i { font-size: 20px; }
+    .accessory-btn:hover { background: var(--md-surface-variant); }
+    .accessory-btn:active { background: rgba(59, 95, 144, 0.1); }
+    .accessory-spacer { flex: 1; }
+    .accessory-btn .key-hint {
+      font-size: 11px;
+      opacity: 0.6;
+    }
+
+    /* ===== Bottom Sheet ===== */
+    .bottom-sheet-overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.32);
+      z-index: 50;
+      display: none;
+      transition: opacity 0.3s;
+    }
+    .bottom-sheet-overlay.active {
+      display: block;
+    }
+    .bottom-sheet {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      background: var(--md-surface);
+      border-radius: var(--md-radius-xl) var(--md-radius-xl) 0 0;
+      z-index: 51;
+      max-height: 50%;
+      display: flex;
+      flex-direction: column;
+      transform: translateY(100%);
+      transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1);
+      box-shadow: 0 -8px 24px rgba(0,0,0,0.12);
+    }
+    .bottom-sheet.active {
+      transform: translateY(0);
+    }
+    .bottom-sheet .sheet-handle {
+      width: 32px;
+      height: 4px;
+      border-radius: 2px;
+      background: var(--md-outline);
+      margin: 8px auto;
+      flex-shrink: 0;
+    }
+    .bottom-sheet .sheet-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px 16px 12px 16px;
+      flex-shrink: 0;
+    }
+    .bottom-sheet .sheet-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--md-on-surface);
+    }
+    .bottom-sheet .sheet-close {
+      width: 40px; height: 40px; border-radius: var(--md-radius-full);
+      border: none; background: transparent; color: var(--md-on-surface-variant);
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+    }
+    .bottom-sheet .sheet-search {
+      margin: 0 16px 12px 16px;
+      padding: 0 16px;
+      height: 48px;
+      border-radius: var(--md-radius-sm);
+      border: 1px solid var(--md-outline);
+      background: var(--md-surface);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .bottom-sheet .sheet-search input {
+      flex: 1;
+      border: none;
+      outline: none;
+      font-size: 14px;
+      font-family: 'Roboto', sans-serif;
+      color: var(--md-on-surface);
+      background: transparent;
+    }
+    .bottom-sheet .sheet-search i { color: var(--md-on-surface-variant); font-size: 20px; }
+    .bottom-sheet .sheet-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0 16px 16px 16px;
+    }
+    .bottom-sheet .sheet-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .bottom-sheet .sheet-item:hover { background: var(--md-surface-variant); }
+    .bottom-sheet .sheet-item .sheet-item-icon {
+      width: 36px; height: 36px;
+      border-radius: var(--radius-sm);
+      background: var(--md-primary-container);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--md-on-primary-container);
+      flex-shrink: 0;
+    }
+    .bottom-sheet .sheet-item .sheet-item-icon i { font-size: 18px; }
+    .bottom-sheet .sheet-item .sheet-item-info { flex: 1; min-width: 0; }
+    .bottom-sheet .sheet-item .sheet-item-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--md-on-surface);
+    }
+    .bottom-sheet .sheet-item .sheet-item-sub {
+      font-size: 12px;
+      color: var(--md-on-surface-variant);
+    }
+
+    /* ===== Save indicator bar ===== */
+    .status-line {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px 16px;
+      font-size: 12px;
+      color: var(--md-on-surface-variant);
+      border-top: 1px solid var(--md-outline-variant);
+      flex-shrink: 0;
+      background: var(--md-surface);
+    }
+    .status-line .status-left {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .status-line .status-left i { font-size: 14px; }
+    .status-line .chars {
+      opacity: 0.6;
+    }
+
+    /* ===== Demo Controls ===== */
+    .demo-controls {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+      z-index: 200;
+      background: rgba(28, 27, 31, 0.9);
+      padding: 8px 16px;
+      border-radius: var(--md-radius-xl);
+      backdrop-filter: blur(12px);
+    }
+    .demo-controls button {
+      padding: 6px 14px;
+      border-radius: var(--md-radius-full);
+      border: none;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      background: rgba(255, 255, 255, 0.15);
+      color: #FFF;
+      font-family: 'Roboto', sans-serif;
+      transition: background 0.2s;
+    }
+    .demo-controls button:hover { background: rgba(255, 255, 255, 0.25); }
+    .demo-controls button.active { background: var(--md-primary); color: var(--md-on-primary); }
+
+    @media (max-width: 480px) {
+      body { padding: 0; }
+      .device-frame { width: 100%; height: 100vh; border-radius: 0; box-shadow: none; }
+      .demo-controls { display: none; }
+    }
+
+    /* ===== Ripple ===== */
+    .ripple {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(59, 95, 144, 0.15);
+      transform: scale(0);
+      animation: ripple-anim 0.6s ease-out;
+      pointer-events: none;
+    }
+    @keyframes ripple-anim {
+      to { transform: scale(4); opacity: 0; }
+    }
+
+    /* Cursor blink */
+    .cursor-blink {
+      display: inline-block;
+      width: 2px;
+      height: 18px;
+      background: var(--md-primary);
+      animation: blink 1s step-end infinite;
+      vertical-align: text-bottom;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="device-frame" id="deviceFrame">
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span class="time">09:41</span>
+      <div class="camera-cutout"></div>
+      <div class="status-icons">
+        <i class="mdi mdi-signal-cellular-3"></i>
+        <i class="mdi mdi-wifi"></i>
+        <i class="mdi mdi-battery-50"></i>
+      </div>
+    </div>
+
+    <!-- Top App Bar -->
+    <div class="top-app-bar">
+      <button class="back-btn" id="backBtn" title="返回">
+        <i class="mdi mdi-arrow-left"></i>
+      </button>
+      <div class="title-area">
+        <input class="title-input" type="text" value="AI Agent 技术架构设计" placeholder="无标题笔记" />
+      </div>
+      <div class="right-actions">
+        <div class="save-indicator saved" id="saveIndicator">
+          <i class="mdi mdi-check-circle"></i>
+          <span>已保存</span>
+        </div>
+        <button class="action-btn" id="saveBtn" title="保存">
+          <i class="mdi mdi-check-bold" style="color:var(--md-primary)"></i>
+        </button>
+        <button class="action-btn" id="editorMoreBtn" title="更多">
+          <i class="mdi mdi-dots-vertical"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Formatting Toolbar -->
+    <div class="format-bar">
+      <button class="format-btn" title="粗体"><i class="mdi mdi-format-bold"></i></button>
+      <button class="format-btn" title="斜体"><i class="mdi mdi-format-italic"></i></button>
+      <button class="format-btn" title="删除线"><i class="mdi mdi-format-strikethrough-variant"></i></button>
+      <button class="format-btn" title="代码"><i class="mdi mdi-code-tags"></i></button>
+      <div class="format-separator"></div>
+      <button class="format-btn" title="标题"><i class="mdi mdi-format-header-pound"></i></button>
+      <button class="format-btn" title="无序列表"><i class="mdi mdi-format-list-bulleted"></i></button>
+      <button class="format-btn" title="有序列表"><i class="mdi mdi-format-list-numbered"></i></button>
+      <button class="format-btn" title="引用块"><i class="mdi mdi-format-quote-open"></i></button>
+      <button class="format-btn" title="待办列表"><i class="mdi mdi-checkbox-marked-outline"></i></button>
+      <div class="format-separator"></div>
+      <button class="format-btn" title="链接"><i class="mdi mdi-link-variant"></i></button>
+      <button class="format-btn" title="图片"><i class="mdi mdi-image-outline"></i></button>
+      <button class="format-btn" title="分割线"><i class="mdi mdi-minus"></i></button>
+    </div>
+
+    <!-- Editor Content -->
+    <div class="editor-content">
+      <div class="content-area" id="editorArea">
+        <p>这是一篇关于 <span class="bold">AI Agent</span> 的技术架构设计笔记，涵盖 <span class="italic">多智能体协作</span>、记忆管理与推理规划等核心模块。</p>
+
+        <h2>系统架构概览</h2>
+        <p>整体架构分为三个层次：感知层、推理层和执行层。感知层负责多模态输入解析，推理层基于 <span class="inline-code">LLM</span> 进行决策规划，执行层调用外部工具完成具体任务。</p>
+
+        <blockquote>一个 Agent 的核心能力取决于其记忆系统的设计 —— 长期记忆决定了 Agent 能否从历史经验中学习，短期记忆则影响对话上下文的理解连贯性。</blockquote>
+
+        <h3>关键组件</h3>
+        <div class="bullet-item">
+          <span class="bullet"></span>
+          <span class="bullet-content"><span class="bold">Tool Use</span>：通过 Function Calling 调用外部 API，实现信息检索、代码执行等操作</span>
+        </div>
+        <div class="bullet-item">
+          <span class="bullet"></span>
+          <span class="bullet-content"><span class="bold">Memory Manager</span>：管理短期对话缓存与长期向量存储，支持 RAG 检索增强</span>
+        </div>
+        <div class="bullet-item">
+          <span class="bullet"></span>
+          <span class="bullet-content"><span class="bold">Planner</span>：基于 ReAct 模式的思考-行动-观察循环，动态调整执行策略</span>
+        </div>
+
+        <br>
+        <!-- Wiki link -->
+        <a class="wiki-link" href="#" onclick="event.preventDefault(); showLinkSheet();">
+          <i class="mdi mdi-link-variant"></i> RAG 技术方案研究
+        </a>
+
+        <br><br>
+        <!-- Inline tags -->
+        <span class="tag-inline"><i class="mdi mdi-pound"></i>AI/Agent</span>
+        <span class="tag-inline" style="margin-left:4px;"><i class="mdi mdi-pound"></i>LLM</span>
+
+        <p><br>接下来还需要补充 <span class="inline-code">multi-agent</span> 协作模式下的通信协议设计…</p>
+
+        <span class="cursor-blink"></span>
+      </div>
+    </div>
+
+    <!-- Status Line -->
+    <div class="status-line">
+      <div class="status-left">
+        <i class="mdi mdi-check-circle" style="color:#10B981"></i>
+        <span>已保存</span>
+      </div>
+      <span class="chars">342 字 · 2 个链接</span>
+    </div>
+
+    <!-- Keyboard Accessory Bar -->
+    <div class="keyboard-accessory">
+      <button class="accessory-btn" id="wikiTrigger" data-type="link">
+        <i class="mdi mdi-link-variant"></i> [[
+      </button>
+      <button class="accessory-btn" id="tagTrigger" data-type="tag">
+        <i class="mdi mdi-pound"></i> #
+      </button>
+      <button class="accessory-btn">
+        <i class="mdi mdi-at"></i> @
+      </button>
+      <div class="accessory-spacer"></div>
+      <button class="accessory-btn">
+        <i class="mdi mdi-image-outline"></i>
+      </button>
+      <button class="accessory-btn">
+        <i class="mdi mdi-paperclip"></i>
+      </button>
+    </div>
+
+    <!-- Bottom Sheet Overlay -->
+    <div class="bottom-sheet-overlay" id="sheetOverlay"></div>
+
+    <!-- Bottom Sheet - Wiki Link Picker -->
+    <div class="bottom-sheet" id="linkSheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-header">
+        <span class="sheet-title">链接笔记</span>
+        <button class="sheet-close" id="linkSheetClose"><i class="mdi mdi-close"></i></button>
+      </div>
+      <div class="sheet-search">
+        <i class="mdi mdi-magnify"></i>
+        <input type="text" placeholder="搜索笔记…" />
+      </div>
+      <div class="sheet-list">
+        <div class="sheet-item" onclick="selectLink(this)">
+          <div class="sheet-item-icon"><i class="mdi mdi-file-document-outline"></i></div>
+          <div class="sheet-item-info">
+            <div class="sheet-item-title">RAG 技术方案研究</div>
+            <div class="sheet-item-sub">对比 LangChain / LlamaIndex / Haystack</div>
+          </div>
+        </div>
+        <div class="sheet-item" onclick="selectLink(this)">
+          <div class="sheet-item-icon"><i class="mdi mdi-file-document-outline"></i></div>
+          <div class="sheet-item-info">
+            <div class="sheet-item-title">产品设计方案 v3</div>
+            <div class="sheet-item-sub">仪表盘重构 · 用户反馈循环</div>
+          </div>
+        </div>
+        <div class="sheet-item" onclick="selectLink(this)">
+          <div class="sheet-item-icon"><i class="mdi mdi-file-document-outline"></i></div>
+          <div class="sheet-item-info">
+            <div class="sheet-item-title">AI Agent 应用场景</div>
+            <div class="sheet-item-sub">客服自动化的 80% 场景覆盖</div>
+          </div>
+        </div>
+        <div class="sheet-item" onclick="selectLink(this)">
+          <div class="sheet-item-icon"><i class="mdi mdi-file-document-outline"></i></div>
+          <div class="sheet-item-info">
+            <div class="sheet-item-title">用户访谈记录 - 2026年6月</div>
+            <div class="sheet-item-sub">5 名用户的深度访谈</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Sheet - Tag Picker -->
+    <div class="bottom-sheet" id="tagSheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-header">
+        <span class="sheet-title">选择标签</span>
+        <button class="sheet-close" id="tagSheetClose"><i class="mdi mdi-close"></i></button>
+      </div>
+      <div class="sheet-search">
+        <i class="mdi mdi-magnify"></i>
+        <input type="text" placeholder="搜索标签…" />
+      </div>
+      <div class="sheet-list">
+        <div class="sheet-item" onclick="selectTag(this)">
+          <div class="sheet-item-icon" style="background: #D6E3FF;"><i class="mdi mdi-pound" style="color:#001B3E;"></i></div>
+          <div class="sheet-item-info">
+            <div class="sheet-item-title">AI/Agent</div>
+            <div class="sheet-item-sub">12 篇笔记</div>
+          </div>
+        </div>
+        <div class="sheet-item" onclick="selectTag(this)">
+          <div class="sheet-item-icon" style="background: #EDE9FE;"><i class="mdi mdi-pound" style="color:#4C1D95;"></i></div>
+          <div class="sheet-item-info">
+            <div class="sheet-item-title">LLM</div>
+            <div class="sheet-item-sub">8 篇笔记</div>
+          </div>
+        </div>
+        <div class="sheet-item" onclick="selectTag(this)">
+          <div class="sheet-item-icon" style="background: #D1FAE5;"><i class="mdi mdi-pound" style="color:#047857;"></i></div>
+          <div class="sheet-item-info">
+            <div class="sheet-item-title">设计</div>
+            <div class="sheet-item-sub">15 篇笔记</div>
+          </div>
+        </div>
+        <div class="sheet-item" onclick="selectTag(this)">
+          <div class="sheet-item-icon" style="background: #FCE7F3;"><i class="mdi mdi-pound" style="color:#BE185D;"></i></div>
+          <div class="sheet-item-info">
+            <div class="sheet-item-title">产品</div>
+            <div class="sheet-item-sub">20 篇笔记</div>
+          </div>
+        </div>
+        <div class="sheet-item" onclick="selectTag(this)">
+          <div class="sheet-item-icon" style="background: #FEF3C7;"><i class="mdi mdi-pound" style="color:#B45309;"></i></div>
+          <div class="sheet-item-info">
+            <div class="sheet-item-title">研究</div>
+            <div class="sheet-item-sub">6 篇笔记</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Demo Controls -->
+  <div class="demo-controls">
+    <button class="active" id="demoEdit">编辑中</button>
+    <button id="demoSaving">保存中</button>
+    <button id="demoSaved">已保存</button>
+    <button id="demoSheet">显示 Sheet</button>
+  </div>
+
+  <script>
+    const saveIndicator = document.getElementById('saveIndicator');
+    const demoEdit = document.getElementById('demoEdit');
+    const demoSaving = document.getElementById('demoSaving');
+    const demoSaved = document.getElementById('demoSaved');
+    const demoSheet = document.getElementById('demoSheet');
+
+    // ===== State Switcher =====
+    function setEditorState(state) {
+      document.querySelectorAll('.demo-controls button').forEach(b => b.classList.remove('active'));
+      if (state === 'edit') {
+        demoEdit.classList.add('active');
+        saveIndicator.className = 'save-indicator';
+        saveIndicator.innerHTML = '<i class="mdi mdi-circle-edit-outline"></i><span>未保存</span>';
+      } else if (state === 'saving') {
+        demoSaving.classList.add('active');
+        saveIndicator.className = 'save-indicator saving';
+        saveIndicator.innerHTML = '<i class="mdi mdi-sync"></i><span>保存中…</span>';
+      } else if (state === 'saved') {
+        demoSaved.classList.add('active');
+        saveIndicator.className = 'save-indicator saved';
+        saveIndicator.innerHTML = '<i class="mdi mdi-check-circle"></i><span>已保存</span>';
+      }
+    }
+
+    demoEdit.addEventListener('click', () => setEditorState('edit'));
+    demoSaving.addEventListener('click', () => setEditorState('saving'));
+    demoSaved.addEventListener('click', () => setEditorState('saved'));
+
+    // ===== Back Button =====
+    document.getElementById('backBtn').addEventListener('click', () => {
+      showToast('返回笔记列表');
+    });
+
+    // ===== Save Button =====
+    document.getElementById('saveBtn').addEventListener('click', () => {
+      setEditorState('saving');
+      setTimeout(() => setEditorState('saved'), 1200);
+    });
+
+    // ===== Bottom Sheets =====
+    const sheetOverlay = document.getElementById('sheetOverlay');
+    const linkSheet = document.getElementById('linkSheet');
+    const tagSheet = document.getElementById('tagSheet');
+
+    function openSheet(sheet) {
+      sheetOverlay.classList.add('active');
+      sheet.classList.add('active');
+    }
+
+    function closeAllSheets() {
+      sheetOverlay.classList.remove('active');
+      linkSheet.classList.remove('active');
+      tagSheet.classList.remove('active');
+    }
+
+    document.getElementById('wikiTrigger').addEventListener('click', () => {
+      openSheet(linkSheet);
+    });
+
+    document.getElementById('tagTrigger').addEventListener('click', () => {
+      openSheet(tagSheet);
+    });
+
+    function showLinkSheet() {
+      openSheet(linkSheet);
+    }
+
+    document.getElementById('linkSheetClose').addEventListener('click', closeAllSheets);
+    document.getElementById('tagSheetClose').addEventListener('click', closeAllSheets);
+    sheetOverlay.addEventListener('click', closeAllSheets);
+
+    function selectLink(el) {
+      const title = el.querySelector('.sheet-item-title').textContent;
+      closeAllSheets();
+      showToast('已链接: ' + title);
+    }
+
+    function selectTag(el) {
+      const title = el.querySelector('.sheet-item-title').textContent;
+      closeAllSheets();
+      showToast('已添加标签: ' + title);
+    }
+
+    // ===== Demo Sheet =====
+    demoSheet.addEventListener('click', () => {
+      openSheet(linkSheet);
+    });
+
+    // ===== Format Buttons =====
+    document.querySelectorAll('.format-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        this.classList.toggle('active');
+      });
+    });
+
+    // ===== Toast =====
+    function showToast(msg) {
+      const existing = document.querySelector('.editor-toast');
+      if (existing) existing.remove();
+      const toast = document.createElement('div');
+      toast.className = 'editor-toast';
+      toast.textContent = msg;
+      Object.assign(toast.style, {
+        position: 'absolute',
+        bottom: '140px',
+        left: '16px',
+        right: '16px',
+        background: '#332D41',
+        color: '#FFFBFE',
+        padding: '14px 16px',
+        borderRadius: '8px',
+        fontSize: '14px',
+        fontWeight: '500',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+        zIndex: '100',
+        transition: 'transform 0.3s cubic-bezier(0.2,0,0,1), opacity 0.3s',
+        transform: 'translateY(0)',
+        opacity: '1'
+      });
+      document.getElementById('deviceFrame').appendChild(toast);
+      setTimeout(() => {
+        toast.style.transform = 'translateY(120px)';
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 300);
+      }, 2000);
+    }
+
+    // ===== Ripple =====
+    document.querySelectorAll('.action-btn, .format-btn, .accessory-btn, .back-btn').forEach(el => {
+      el.addEventListener('mousedown', function(e) {
+        const rect = this.getBoundingClientRect();
+        const frameRect = document.getElementById('deviceFrame').getBoundingClientRect();
+        const ripple = document.createElement('span');
+        ripple.className = 'ripple';
+        const size = Math.max(rect.width, rect.height);
+        ripple.style.width = ripple.style.height = size + 'px';
+        ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+        ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+        this.appendChild(ripple);
+        ripple.addEventListener('animationend', () => ripple.remove());
+      });
+    });
+  </script>
+</body>
+</html>
